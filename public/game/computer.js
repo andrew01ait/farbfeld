@@ -1,3 +1,4 @@
+import {bonusPoints} from './bonus-fields.js';
 import {createGame,canAct,rollGame,applyMove,findMove,randomInt,availableDice,neighbors,COLORS,FIRST,LATER,score,enableMines,canUseMine,chooseComputerMineTarget,applyMineAttack} from './engine.js';
 import {boardFor} from './boards.js';
 
@@ -14,9 +15,9 @@ export const validComputerDifficulty=value=>COMPUTER_LEVELS.some(level=>level.id
 export const computerDifficulty=game=>validComputerDifficulty(game?.computerDifficulty)?game.computerDifficulty:'easy';
 export const computerLevel=game=>COMPUTER_LEVELS.find(level=>level.id===computerDifficulty(game));
 
-export function createComputerGame(hiddenScores=false,boardId='classic',difficulty='medium',withMines=false){
+export function createComputerGame(hiddenScores=false,boardId='classic',difficulty='medium',withMines=false,withBonusFields=false){
  if(!validComputerDifficulty(difficulty))throw Error('Wähle Leicht, Mittel oder Schwer.');
- const game={...createGame(['Du','Computer'],'computer',[],{hiddenScores,boardId}),computerDifficulty:difficulty};
+ const game={...createGame(['Du','Computer'],'computer',[],{hiddenScores,boardId,bonusFields:withBonusFields===true}),computerDifficulty:difficulty};
  return withMines===true?enableMines(game):game;
 }
 
@@ -106,10 +107,11 @@ function nextTurnValue(game,pid){
 }
 
 function privateAnalysis(game,pid){
- if(!game.hiddenScores)return game;
+ const publicGame={...game};delete publicGame.bonuses;
+ if(!game.hiddenScores)return publicGame;
  // Do not let concealed human marks, scores or jokers affect a hard decision,
  // including indirectly via an engine simulation's end-of-game result.
- return {...game,players:game.players.map((p,i)=>i===pid?p:{...p,marks:Array(105).fill(false),columns:Array(15).fill(null),colors:Object.fromEntries(COLORS.map(c=>[c,null])),jokers:8,lastMove:[],passes:0})};
+ return {...publicGame,players:game.players.map((p,i)=>i===pid?p:{...p,marks:Array(105).fill(false),columns:Array(15).fill(null),colors:Object.fromEntries(COLORS.map(c=>[c,null])),jokers:8,lastMove:[],passes:0})};
 }
 
 function hardMove(game,pid,moves){
@@ -127,7 +129,7 @@ function hardMove(game,pid,moves){
    next=applyMove(next,opponent,response&&response.value>0?response.move:{pass:true});
   }
   if(next.status==='finished'&&!game.hiddenScores){
-   const own=score(next.players[pid],next),other=score(next.players[opponent],next),margin=own.total-other.total,tie=own.jokers-other.jokers;
+   const own=score(next.players[pid],next),other=score(next.players[opponent],next),margin=own.total+bonusPoints(game,pid)-other.total-bonusPoints(game,opponent),tie=own.jokers-other.jokers;
    value=(margin>0||margin===0&&tie>0?1000:margin<0||margin===0&&tie<0?-1000:0)+margin+tie*0.01;
   }else if(next.status!=='finished'){
    // Finish the hypothetical current round for the future-dice model without

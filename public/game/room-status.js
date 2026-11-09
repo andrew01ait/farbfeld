@@ -12,6 +12,7 @@ export function homeRoomStatus(game,playerId){
  if(!game)return {kind:'lobby',text:'Lobby · Partie noch nicht gestartet',button:'Öffnen'};
  const pid=game.players.findIndex(player=>player.id===playerId);
  if(pid<0)return {kind:'unknown',text:'Spielerzugang prüfen',button:'Öffnen'};
+ if(game.players[pid].left)return {kind:'finished',text:'Partie verlassen · −10 Punkte',button:'Verlauf'};
  if(game.status==='finished')return {kind:'finished',text:'Partie beendet · Ergebnis ansehen',button:'Ergebnis'};
  if(game.phase==='roll'&&game.active===pid)return {kind:'turn',text:'Du bist dran · würfeln',button:'Weiterspielen'};
  if(game.phase==='choose'&&canAct(game,pid))return {kind:'turn',text:'Du bist dran · Felder wählen',button:'Weiterspielen'};

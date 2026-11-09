@@ -1,16 +1,24 @@
 # Farbfeld
 
-<!-- farbfeld-version: 1.16.0 -->
+<!-- farbfeld-version: 1.17.0 -->
+
+## Neu 1.17.0: Bonusfelder, Random und gemeinsame Minen
+
+Drei geheime **Bonusfelder** vergeben je +2 an alle ersten Finder desselben Wurfs; Bekanntgabe erst nach der gemeinsamen Wertung, Punkte bleiben trotz Minen erhalten. **Random** erzeugt bei jedem neuen Start ein gemeinsames, gespeichert fortsetzbares Brett. Die optionale **Mine** trifft ein gewähltes Zielfeld bei allen aktiven Gegnern, einmal pro Person für insgesamt fünf Punkte. Die Explosion dauert drei Sekunden; Schadensmarkierungen bleiben bis Ende des nächsten Wurfs. Leere Ziele verursachen beim jeweiligen Gegner keinerlei Schaden.
+
+**Partie verlassen** gibt sofort einen einmaligen Verlaufseintrag mit −10 Punkten und Niederlage. Die anderen spielen weiter; die letzte aktive Person gewinnt sofort. Im Internet wandert die Gastgeberrolle weiter. Offline bleibt das ursprüngliche Gastgeber-Handy als Zuschauer und Verbindung geöffnet; Verbindungsverlust pausiert sicher, ohne neue Autorität zu erfinden. Alle beteiligten Apps für neue Regeln auf 1.17.0 aktualisieren. [Bonusfelder](docs/bonus-fields.md) · [Minen](docs/mines.md) · [Random](docs/random-board.md) · [Aussteigen](docs/leaving.md).
+
+
 
 ## New in 1.16.0
 
 - Optional local A/B diagnostics for offline pairing and synchronization, including JSON download/copy and bounded recovery after reload. See [the two-phone test guide](docs/offline-diagnostics.md).
-- Opt-in **Minenangriff testen** when starting a new computer match. One attack per player, five-point cost, blind hidden-board targeting and complete misses on empty targets. See [mine rules and scoring](docs/mines.md). Human multiplayer remains outside this prototype.
+- Opt-in **Minenangriff testen** when starting a new computer match. One attack per player, five-point cost, blind hidden-board targeting and complete misses on empty targets. See [mine rules and scoring](docs/mines.md). Group mines are supported from 1.17.0.
 
 
 An installable, offline-ready dice game PWA with solo play, computer opponents, local and online multiplayer, and push notifications.
 
-[Play Farbfeld](https://farbfeld-andrew.endruuu.chatgpt.site/play) · [Version 1.16.0](public/version.json) · [Documentation](docs/README.md)
+[Play Farbfeld](https://farbfeld-andrew.endruuu.chatgpt.site/play) · [Version 1.17.0](public/version.json) · [Documentation](docs/README.md)
 
 The game interface is in German. Farbfeld needs no user account. It is an independent implementation of the basic rules of *Noch mal!* by Inka and Markus Brand (Schmidt Spiele), using its own interface and assets; this repository is not an official publisher release.
 
@@ -68,7 +76,7 @@ The tests use synthetic rooms, in-memory/local databases, generated cryptographi
 | `tests/` | Rules, API, storage, PWA, Web Push and compatibility regressions |
 | `docs/` | Architecture and feature guides |
 
-The PWA atomically prepares 36 offline assets. <!-- PWA enthält 38 atomar vorbereitete Offline-Dateien. -->
+The PWA atomically prepares 36 offline assets. <!-- PWA enthält 40 atomar vorbereitete Offline-Dateien. -->
 
 ## Deployment
 

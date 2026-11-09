@@ -1,10 +1,18 @@
 # Abläufe
 
-<!-- farbfeld-version: 1.16.0 -->
+<!-- farbfeld-version: 1.17.0 -->
+
+## Neu 1.17.0: Bonusfelder, Random und gemeinsame Minen
+
+Drei geheime **Bonusfelder** vergeben je +2 an alle ersten Finder desselben Wurfs; Bekanntgabe erst nach der gemeinsamen Wertung, Punkte bleiben trotz Minen erhalten. **Random** erzeugt bei jedem neuen Start ein gemeinsames, gespeichert fortsetzbares Brett. Die optionale **Mine** trifft ein gewähltes Zielfeld bei allen aktiven Gegnern, einmal pro Person für insgesamt fünf Punkte. Die Explosion dauert drei Sekunden; Schadensmarkierungen bleiben bis Ende des nächsten Wurfs. Leere Ziele verursachen beim jeweiligen Gegner keinerlei Schaden.
+
+**Partie verlassen** gibt sofort einen einmaligen Verlaufseintrag mit −10 Punkten und Niederlage. Die anderen spielen weiter; die letzte aktive Person gewinnt sofort. Im Internet wandert die Gastgeberrolle weiter. Offline bleibt das ursprüngliche Gastgeber-Handy als Zuschauer und Verbindung geöffnet; Verbindungsverlust pausiert sicher, ohne neue Autorität zu erfinden. Alle beteiligten Apps für neue Regeln auf 1.17.0 aktualisieren. [Bonusfelder](bonus-fields.md) · [Minen](mines.md) · [Random](random-board.md) · [Aussteigen](leaving.md).
+
+
 
 ## Neu 1.16.0: Offline-Testprotokoll und optionale Computer-Minen
 
-Ein freiwilliges lokales A/B-Testprotokoll hilft bei Offline-Kopplung und Spielabgleich; es ist aus Einstellungen und Kopplungsdialogen exportierbar. [Testanleitung und Datenschema](offline-diagnostics.md). Die neue Startoption **Minenangriff testen** gilt vorerst nur gegen den Computer: gegnerischer Farbabschluss schaltet einen einmaligen Angriff für fünf Punkte frei. Ein leeres Zielfeld ist ein vollständiger Fehlschlag ohne Nachbarschaden. Nach einem Treffer gehen Erstboni sofort an den verbleibenden vollständigen Halter; ohne Halter werden sie erneut frei. Wiedervervollständigen bei bestehendem Halter erhält den Späterbonus. [Regeln, verdeckte Zielwahl und Wertung](mines.md).
+Ein freiwilliges lokales A/B-Testprotokoll hilft bei Offline-Kopplung und Spielabgleich; es ist aus Einstellungen und Kopplungsdialogen exportierbar. [Testanleitung und Datenschema](offline-diagnostics.md). Die neue Startoption **Minenangriff testen** wurde in 1.16.0 zunächst gegen den Computer erprobt; ab 1.17.0 gilt sie für alle Mehrspielerarten: gegnerischer Farbabschluss schaltet einen einmaligen Angriff für fünf Punkte frei. Ein leeres Zielfeld ist ein vollständiger Fehlschlag ohne Nachbarschaden. Nach einem Treffer gehen Erstboni sofort an den verbleibenden vollständigen Halter; ohne Halter werden sie erneut frei. Wiedervervollständigen bei bestehendem Halter erhält den Späterbonus. [Regeln, verdeckte Zielwahl und Wertung](mines.md).
 
 
 ## Start einer Internet-Revanche
@@ -71,7 +79,7 @@ In den ersten drei Würfen bleiben alle Würfel verfügbar. Danach stehen den an
 
 ## Profil nach Spielende
 
-Ein bestätigter Endstand erzeugt pro Spiel-ID höchstens einen lokalen Ergebniseintrag mit eigener Spielerrolle. Der kompakte Statistikverlauf erhält ihn auch dann, wenn die sichtbare 100er-Ergebnisliste später weiterläuft. Der Statistik-Button öffnet standardmäßig **Mit anderen**; **Computer** und **Solo** sind eigene Bereiche mit getrennten Bestwerten, Durchschnitten und Serien. Die Ergebnisliste folgt dieser Auswahl. Namen in der Gegnerbilanz öffnen direkte Siege/Remis/Niederlagen, Siegquote, eigene Punktwerte, Serien und fünf letzte Duelle. Rücksprung erhält den gewählten Bereich. Geteilte Gesamtsiege zählen zur Bereichsserie, ein direktes Remis unterbricht die Gegner-Siegesserie. Abbruch zählt nicht. Backups sichern die Statistik mit; Import führt IDs zusammen. Alte Ergebnisse ohne eindeutige Rolle bleiben gekennzeichnet. Details: [statistics.md](statistics.md).
+Ein bestätigter Endstand erzeugt pro Spiel-ID höchstens einen lokalen Ergebniseintrag mit eigener Spielerrolle. Der kompakte Statistikverlauf erhält ihn auch dann, wenn die sichtbare 100er-Ergebnisliste später weiterläuft. Der Statistik-Button öffnet standardmäßig **Mit anderen**; **Computer** und **Solo** sind eigene Bereiche mit getrennten Bestwerten, Durchschnitten und Serien. Die Ergebnisliste folgt dieser Auswahl. Namen in der Gegnerbilanz öffnen direkte Siege/Remis/Niederlagen, Siegquote, eigene Punktwerte, Serien und fünf letzte Duelle. Rücksprung erhält den gewählten Bereich. Geteilte Gesamtsiege zählen zur Bereichsserie, ein direktes Remis unterbricht die Gegner-Siegesserie. Solo-Abbruch und verworfene Kopplungen zählen nicht. Bestätigtes Multiplayer-Aussteigen zählt sofort als −10-Punkte-Niederlage. Backups sichern die Statistik mit; Import führt IDs zusammen. Alte Ergebnisse ohne eindeutige Rolle bleiben gekennzeichnet. Details: [statistics.md](statistics.md).
 
 ## Internet-Spielraum und weitere Partien
 
@@ -177,3 +185,9 @@ Eine neue eigene Gelegenheit oder das Spielende wird nach dem Spiel-Commit an be
 
 Einstellungen → Benachrichtigungen → Internet-Push testen. Aktualisierten Worker und aktivierte Registrierung prüfen, dann authentifizierten Selbsttest senden. Der Server beansprucht eine globale Minutensperre und protokolliert den Transport. Das Gerät prüft die aktuelle Testfreigabe, fordert genau eine Anzeige an und quittiert das Ergebnis; ein offenes Fenster aktualisiert sich ohne weitere HTTP-Abfrage. Falls die Quittung später eintrifft, ist sie über Push-Status prüfen lesbar. Der lokale Geräteanzeige-Test bleibt eigenständig. Kein Gegnerzug oder Raumwechsel für den Test nötig, kein späterer Erinnerungsstau.
 
+
+## Neue Startregeln und Ausstieg
+
+Startdialog/Lobby → Brett und unabhängige Minen-/Bonusoption wählen → Fähigkeiten prüfen → genau ein Random-Layout und drei geheime Bonusorte erzeugen → gemeinsamen Zustand speichern. Normale bestätigte Treffer reservieren Boni bis Rundenende. Farbabschluss → andere Minen freischalten → kurze Bereitschaftsmeldung → Ziel für alle Gegner → autoritativer Commit → drei Sekunden Effekt → Schadensindikatoren bis Ende des nächsten Wurfs, eigener Entwurf bleibt erhalten.
+
+× → sichtbare −10-Punkte-Bestätigung → autorisierter Ausstieg → einmalige Niederlage im Verlauf → aktive Gruppe setzt fort. Bei letzter aktiver Person sofort Endwertung und Sieg, auch bei niedrigerem Rohstand. Gemeinsam weitergegebenes Handy speichert zusätzlich den verbliebenen Sieger. Internet-Gastgeber wechselt atomar; ursprünglicher Offline-Gastgeber bleibt sichtbarer Zuschauer mit Keep-open-Hinweis. Relayverlust → Pause → Abgleich mit ursprünglichem Gastgeber; ausgeschiedene Gäste dürfen schließen. [Details](leaving.md).

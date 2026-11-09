@@ -175,6 +175,8 @@ export class DirectUi{
       case 'direct-copy':{const area=document.querySelector('#direct-qr-text');try{await navigator.clipboard.writeText(area.value);this.toast('Verbindungsdaten kopiert.');}catch{area.focus();area.select();this.toast('Text markiert. Bitte über das Textmenü kopieren.');}}break;
       case 'direct-invite':case 'direct-reconnect-member':await this.run(async()=>{this.enter();this.wait('Einladung vorbereiten …');await this.session.invite(action==='direct-reconnect-member'?Number(button?.dataset.pid):null);});break;
       case 'direct-cancel-pair':this.cancelUi();this.session.cancelPairing();this.close();this.enter();break;
+      case 'direct-mines':await this.run(()=>this.session.act('options',{mines:!this.session.snapshot.mines}));break;
+      case 'direct-bonus':await this.run(()=>this.session.act('options',{bonusFields:!this.session.snapshot.bonusFields}));break;
       case 'direct-hidden':await this.run(()=>this.session.act('options',{hiddenScores:!this.session.snapshot.hiddenScores}));break;
       case 'direct-start':await this.run(()=>this.session.act('start'));break;
       case 'direct-discard':this.discard();break;

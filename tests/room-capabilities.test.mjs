@@ -1,11 +1,12 @@
+import {RANDOM_BOARD_FEATURE,boardFor} from '../public/game/boards.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import ts from 'typescript';
 import {DatabaseSync} from 'node:sqlite';
 import {pathToFileURL} from 'node:url';
-import {createGame,rollGame} from '../public/game/engine.js';
-const all=['hidden-scores-v1','boards-v1','reactions-v1'],old=['hidden-scores-v1'];
+import {createGame,rollGame,BONUS_FEATURE,bonusPoints,MINE_FEATURE,LEAVE_FEATURE,rankings,score} from '../public/game/engine.js';
+const all=['hidden-scores-v1','boards-v1','reactions-v1',BONUS_FEATURE,RANDOM_BOARD_FEATURE,MINE_FEATURE,LEAVE_FEATURE],old=['hidden-scores-v1'];
 const origin='https://farbfeld.test',code='ABCD2345';
 async function harness(t){
  const sql=new DatabaseSync(':memory:');t.after(()=>sql.close());
@@ -24,7 +25,7 @@ async function harness(t){
  const state=()=>{const row=sql.prepare('SELECT state,version FROM rooms WHERE code = ?').get(code);return {...row,room:JSON.parse(row.state)};};
  const get=async(token='fixture-guest',features=all)=>{const response=await api.GET(new Request(origin+'/api/rooms?code='+code,{headers:{...(token?{'X-Player-Token':token}:{}),...(features===null?{}:{'X-Farbfeld-Features':features.join(',')})}}));return {status:response.status,data:await response.json()};};
  const post=async(action,version,extra={})=>{const response=await api.POST(new Request(origin+'/api/rooms',{method:'POST',headers:{'Content-Type':'application/json','X-Player-Token':'fixture-host'},body:JSON.stringify({action,code,version,features:all,...extra})}));return {status:response.status,data:await response.json()};};
- return {sql,room,state,get,post,scheduled,setBeforeSave:fn=>beforeSave=fn,get writes(){return writes;}};
+ return {sql,room,state,get,post,api,scheduled,setBeforeSave:fn=>beforeSave=fn,get writes(){return writes;}};
 }
 test('Alter Raum: normaler Abruf aus aktualisiertem Gästeclient schaltet Bretter für alle frei, auch ohne hello',async t=>{
  const h=await harness(t),before=h.state();
@@ -68,4 +69,47 @@ test('Laufende Varianten prüfen die tatsächliche Unterstützung weiter und än
  h.sql.prepare('UPDATE rooms SET state = ? WHERE code = ?').run(JSON.stringify(h.room),code);
  const oldClient=await h.get('fixture-guest',old);assert.equal(oldClient.status,409);assert.match(oldClient.data.error,/1\.6\.0/);assert.deepEqual(h.state().room.game,h.room.game);assert.deepEqual(h.state().room.members[1].features,old);
  const currentClient=await h.get();assert.equal(currentClient.status,200);assert.equal(currentClient.data.game.boardId,'river');assert.deepEqual(h.state().room.game,h.room.game);assert.equal(h.scheduled.length,0);
+});
+
+test('Bonusfelder: nur Gastgeber, Lobby und bestätigte aktuelle Apps dürfen die Startregel ändern',async t=>{
+ const h=await harness(t);assert.equal((await h.post('options',11,{bonusFields:true})).status,409);assert.equal(h.state().room.bonusFields,undefined);
+ const refreshed=await h.get();assert.equal(refreshed.data.supportsBonusFields,true);assert.deepEqual(refreshed.data.bonusUpdateNeeded,[]);
+ const version=h.state().version,guest=await h.api.POST(new Request(origin+'/api/rooms',{method:'POST',headers:{'Content-Type':'application/json','X-Player-Token':'fixture-guest'},body:JSON.stringify({action:'options',code,version,features:all,bonusFields:true})}));assert.equal(guest.status,403);
+ const enabled=await h.post('options',version,{bonusFields:true});assert.equal(enabled.status,200);assert.equal(enabled.data.bonusFields,true);
+ const started=await h.post('start',enabled.data.version);assert.equal(started.status,200);assert.equal(started.data.game.bonuses.fields,undefined);assert.equal(h.state().room.game.bonuses.fields.length,3);
+ assert.equal((await h.post('options',started.data.version,{bonusFields:false})).status,409);
+ const before=h.state().room.game;assert.equal((await h.get('fixture-guest',old)).status,409);assert.deepEqual(h.state().room.game,before);assert.equal((await h.get()).status,200);
+});
+test('Raum-Bonuswertung teilt erste Rundentreffer, lässt keine Positionen durchsickern und ändert keine Push-Regeln',async t=>{
+ const h=await harness(t);await h.get();let result=await h.post('options',h.state().version,{bonusFields:true});result=await h.post('start',result.data.version);
+ const raw=h.state().room;raw.game.phase='choose';raw.game.dice={colors:['g','b','o'],numbers:[1,2,3]};raw.game.bonuses.fields=[7,8,9].map(index=>({index,claim:null,pending:[]}));h.sql.prepare('UPDATE rooms SET state = ? WHERE code = ?').run(JSON.stringify(raw),code);
+ result=await h.post('move',h.state().version,{move:{ci:0,ni:0,cells:[7]}});assert.equal(result.status,200);assert.deepEqual(result.data.game.bonuses,{schema:1,enabled:true,awards:[],remaining:3});
+ const response=await h.api.POST(new Request(origin+'/api/rooms',{method:'POST',headers:{'Content-Type':'application/json','X-Player-Token':'fixture-guest'},body:JSON.stringify({action:'move',code,version:result.data.version,features:all,move:{ci:0,ni:0,cells:[7]}})}));assert.equal(response.status,200);const shared=await response.json();
+ assert.equal(shared.game.bonuses.fields,undefined);assert.deepEqual(shared.game.bonuses.awards,[{slot:0,round:1,winners:[0,1]}]);assert.equal(bonusPoints(shared.game,0),2);assert.equal(bonusPoints(shared.game,1),2);assert.equal(bonusPoints(h.state().room.game,0),2);
+ assert(!JSON.stringify(shared.game.bonuses).includes('index'));assert(!JSON.stringify(shared.game.bonuses).includes('pending'));
+ await Promise.allSettled(h.scheduled);
+});
+
+test('Random: Server erzeugt einen gemeinsamen gespeicherten Plan und verlangt passende Apps',async t=>{
+ const h=await harness(t);assert.equal((await h.post('options',11,{boardId:'random'})).status,409);await h.get();
+ let response=await h.post('options',h.state().version,{boardId:'random',bonusFields:true});assert.equal(response.status,200);response=await h.post('start',response.data.version);assert.equal(response.status,200);
+ const persisted=h.state().room.game;assert.equal(persisted.boardId,'random');assert.deepEqual(response.data.game.boardLayout,persisted.boardLayout);assert.equal(response.data.game.bonuses.fields,undefined);
+ const guest=await h.get();assert.deepEqual(guest.data.game.boardLayout,persisted.boardLayout);assert.deepEqual(boardFor(guest.data.game).cells,boardFor(persisted).cells);
+ const older=all.filter(f=>f!==RANDOM_BOARD_FEATURE);assert.equal((await h.get('fixture-guest',older)).status,409);assert.deepEqual(h.state().room.game,persisted);
+});
+
+test('Raum-Gastgeber verlässt: Rolle wandert weiter, ein letzter Spieler gewinnt und alte Zugänge werden zur Revanche entfernt',async t=>{
+ const h=await harness(t);await h.get();const room=h.state().room;room.members.push({id:'third',token:'fixture-third',name:'Third',features:all});h.sql.prepare('UPDATE rooms SET state = ? WHERE code = ?').run(JSON.stringify(room),code);
+ let response=await h.post('start',h.state().version);assert.equal(response.status,200);const gameId=response.data.game.gameId;
+ response=await h.post('leave',response.data.version,{gameId});assert.equal(response.status,200);assert.equal(response.data.hostId,'guest');assert(response.data.game.players[0].left);assert.equal(response.data.game.status,'playing');assert.equal(response.data.game.active,1);
+ assert.equal((await h.post('rename',response.data.version,{roomName:'No longer host'})).status,403);
+ const as=async(token,action,extra={})=>{const r=await h.api.POST(new Request(origin+'/api/rooms',{method:'POST',headers:{'Content-Type':'application/json','X-Player-Token':token},body:JSON.stringify({action,code,version:h.state().version,features:all,...extra})}));return {status:r.status,data:await r.json()};};
+ response=await as('fixture-third','leave',{gameId});assert.equal(response.status,200);assert.equal(response.data.game.status,'finished');assert.equal(rankings(response.data.game)[0].index,1);assert.equal(score(response.data.game.players[0],response.data.game).total,-10);
+ response=await as('fixture-guest','rematch');assert.equal(response.status,200);assert.deepEqual(response.data.members.map(m=>m.id),['guest']);assert.equal((await h.get('fixture-host')).status,403);assert.equal((await as('fixture-guest','start')).status,400);
+});
+test('Raum-Minen treffen alle Gegner atomar; falsche Identität, Wiederholungen und fremde Partien ändern nichts',async t=>{
+ const h=await harness(t);await h.get();let response=await h.post('options',h.state().version,{mines:true});assert.equal(response.status,200);response=await h.post('start',response.data.version);const room=h.state().room;room.game.phase='choose';room.game.dice={colors:['g','b','o'],numbers:[1,2,3]};room.game.mines.unlocked.fill(true);room.game.players[1].marks[52]=true;h.sql.prepare('UPDATE rooms SET state = ? WHERE code = ?').run(JSON.stringify(room),code);
+ assert.equal((await h.post('mine',h.state().version,{target:52,gameId:'wrong',round:1})).status,409);
+ const before=h.state().version;response=await h.post('mine',before,{target:52,gameId:room.game.gameId,round:1,pid:1});assert.equal(response.status,200);assert.equal(h.state().room.game.mines.used[0],true);assert.equal(h.state().room.game.mines.used[1],false);assert.equal(h.state().room.game.players[1].marks[52],false);
+ assert.equal((await h.post('mine',before,{target:52,gameId:room.game.gameId,round:1})).status,409);assert.equal(h.state().version,before+1);
 });

@@ -1,14 +1,14 @@
 import { env,waitUntil } from 'cloudflare:workers';
-import {createGame,rollGame,applyMove,score} from '../../../public/game/engine.js';
+import {createGame,rollGame,applyMove,score,BONUS_FEATURE,bonusFieldsEnabled,MINE_FEATURE,minesEnabled,applyMineAttack,LEAVE_FEATURE,leaveGame} from '../../../public/game/engine.js';
 import {projectGame,HIDDEN_FEATURE} from '../../../public/game/game-info.js';
-import {BOARD_FEATURE,requireBoardId} from '../../../public/game/boards.js';
+import {BOARD_FEATURE,RANDOM_BOARD_FEATURE,requireBoardId} from '../../../public/game/boards.js';
 import {REACTION_FEATURE,REACTION_EXTRA_FEATURE,reactionFeature,REACTION_TTL,REACTION_INTERVAL,validReactionId,validateReaction} from '../../../public/game/reactions.js';
 import {enqueueRoomNotices,drainPushOutbox} from '../../../lib/notifications.js';
 import {roomSkipStatus,homeRoomStatus} from '../../../public/game/room-status.js';
 import {noteRoomPresence,readRoomPresence} from '../../../lib/room-presence.js';
 import {ROOM_RETENTION,retentionInfo,markRoomUsed,cleanupRooms} from '../../../lib/room-retention.js';
 type Member={id:string;token:string;name:string;features?:string[]};
-type Room={members:Member[];hostId:string;game:any;createdAt:number;lastActionAt?:number;roomName?:string;hiddenScores?:boolean;boardId?:string;rematchOf?:string;lastAbort?:{by:string;gameId:string;round:number}};
+type Room={members:Member[];hostId:string;game:any;createdAt:number;lastActionAt?:number;roomName?:string;hiddenScores?:boolean;boardId?:string;bonusFields?:boolean;mines?:boolean;rematchOf?:string;lastAbort?:{by:string;gameId:string;round:number}};
 type ReactionRow={id:string;sender_id:string;emoji:string;created_at:number;scale_percent:number;motion:string};
 const json=(data:unknown,status=200)=>Response.json(data,{status,headers:{'Cache-Control':'no-store'}});
 const roomCode=()=>Array.from(crypto.getRandomValues(new Uint8Array(8)),x=>'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[x%32]).join('');
@@ -20,14 +20,18 @@ function cleanRoomName(value:unknown){
  if(name.length>48)throw Error('Der Raumname darf höchstens 48 Zeichen lang sein.');
  return name;
 }
-const features=(value:any)=>[HIDDEN_FEATURE,BOARD_FEATURE,REACTION_FEATURE,REACTION_EXTRA_FEATURE].filter(feature=>Array.isArray(value)&&value.includes(feature));
+const features=(value:any)=>[HIDDEN_FEATURE,BOARD_FEATURE,REACTION_FEATURE,REACTION_EXTRA_FEATURE,BONUS_FEATURE,RANDOM_BOARD_FEATURE,MINE_FEATURE,LEAVE_FEATURE].filter(feature=>Array.isArray(value)&&value.includes(feature));
 const supports=(room:Room,feature:string)=>room.members.every(member=>member.features?.includes(feature));
 const needsGameClock=(room:Room)=>room.game?.status==='playing'&&!(Number.isSafeInteger(room.lastActionAt)&&(room.lastActionAt??0)>0);
 function view(room:Room,version:number,viewer:string,retention?:any){
  const skip=roomSkipStatus(room);
- return {...(retention?retentionInfo(retention):{}),...skip,canSkip:room.hostId===viewer&&skip.canSkip,members:room.members.map(({id,name})=>({id,name})),hostId:room.hostId,roomName:room.roomName||'',hiddenScores:!!room.hiddenScores,boardId:room.boardId||'classic',supportsHidden:supports(room,HIDDEN_FEATURE),supportsBoards:supports(room,BOARD_FEATURE),boardUpdateNeeded:room.members.filter(member=>!member.features?.includes(BOARD_FEATURE)).map(member=>member.name),game:projectGame(room.game,room.game?.players.findIndex((p:any)=>p.id===viewer)??-1),version,lastAbort:room.lastAbort};
+ return {...(retention?retentionInfo(retention):{}),...skip,canSkip:room.hostId===viewer&&skip.canSkip,members:room.members.map(({id,name})=>({id,name})),hostId:room.hostId,roomName:room.roomName||'',hiddenScores:!!room.hiddenScores,boardId:room.boardId||'classic',mines:room.mines===true,supportsLeave:room.members.every(member=>room.game?.players.find((p:any)=>p.id===member.id)?.left||member.features?.includes(LEAVE_FEATURE)),supportsMines:supports(room,MINE_FEATURE),mineUpdateNeeded:room.members.filter(member=>!member.features?.includes(MINE_FEATURE)).map(member=>member.name),bonusFields:room.bonusFields===true,supportsBonusFields:supports(room,BONUS_FEATURE),bonusUpdateNeeded:room.members.filter(member=>!member.features?.includes(BONUS_FEATURE)).map(member=>member.name),supportsHidden:supports(room,HIDDEN_FEATURE),supportsBoards:supports(room,BOARD_FEATURE),supportsRandomBoard:supports(room,RANDOM_BOARD_FEATURE),randomUpdateNeeded:room.members.filter(member=>!member.features?.includes(RANDOM_BOARD_FEATURE)).map(member=>member.name),boardUpdateNeeded:room.members.filter(member=>!member.features?.includes(BOARD_FEATURE)).map(member=>member.name),game:projectGame(room.game,room.game?.players.findIndex((p:any)=>p.id===viewer)??-1),version,lastAbort:room.lastAbort};
 }
 function clientError(room:Room,clientFeatures:string[]){
+ if(room.game?.players.some((p:any)=>p.left)&&!clientFeatures.includes(LEAVE_FEATURE))return 'Diese Partie benötigt Farbfeld 1.17.0 oder neuer. Bitte aktualisieren.';
+ if(minesEnabled(room.game)&&!clientFeatures.includes(MINE_FEATURE))return 'Diese Minenpartie benötigt Farbfeld 1.17.0 oder neuer. Bitte aktualisieren.';
+ if(room.game?.boardId==='random'&&!clientFeatures.includes(RANDOM_BOARD_FEATURE))return 'Dieses Zufallsbrett benötigt Farbfeld 1.17.0 oder neuer. Bitte aktualisieren.';
+ if(bonusFieldsEnabled(room.game)&&!clientFeatures.includes(BONUS_FEATURE))return 'Diese Bonuspartie benötigt Farbfeld 1.17.0 oder neuer. Bitte aktualisieren.';
  if(room.game?.boardId&&room.game.boardId!=='classic'&&!clientFeatures.includes(BOARD_FEATURE))return 'Dieses Spielbrett benötigt Farbfeld 1.6.0 oder neuer. Bitte aktualisieren.';
  if(room.game?.hiddenScores&&room.game.status!=='finished'&&!clientFeatures.includes(HIDDEN_FEATURE))return 'Diese Partie spielt verdeckt. Bitte Farbfeld auf Version 1.5.0 oder neuer aktualisieren.';
  return null;
@@ -103,7 +107,7 @@ export async function POST(req:Request){
     const row:any=found.get(session.code);if(!row)return {code:session.code,access:'missing'};
     const room:Room=JSON.parse(row.state),pid=room.members.findIndex(m=>m.token===session.token);if(pid<0)return {code:session.code,access:'denied'};
     const game=room.game,ended=game?.status==='finished';
-    return {code:session.code,access:'ok',roomName:room.roomName||'',memberCount:room.members.length,gameStatus:game?.status||'lobby',round:game?.round||null,version:row.version,turn:homeRoomStatus(game,room.members[pid].id),noticeEvent:game&&(ended||homeRoomStatus(game,room.members[pid].id).kind==='turn')?(ended?game.gameId+':finished':game.gameId+':'+game.round+':turn'):null,...retentionInfo(row),...(ended?{result:{id:game.gameId,date:new Date().toISOString(),mode:'room',players:game.players.map((p:any)=>({name:p.name,total:score(p,game).total,jokers:p.jokers})),score:score(game.players[pid],game).total,ownPid:pid,rounds:game.round,boardId:game.boardId||'classic'}}:{})};
+    return {code:session.code,access:'ok',roomName:room.roomName||'',memberCount:room.members.length,gameStatus:game?.status||'lobby',round:game?.round||null,version:row.version,turn:homeRoomStatus(game,room.members[pid].id),noticeEvent:game&&(ended||homeRoomStatus(game,room.members[pid].id).kind==='turn')?(ended?game.gameId+':finished':game.gameId+':'+game.round+':turn'):null,...retentionInfo(row),...(ended?{result:{id:game.gameId,date:new Date().toISOString(),mode:'room',players:game.players.map((p:any)=>({name:p.name,total:score(p,game).total,jokers:p.jokers,...(p.left?{left:true}:{})})),score:score(game.players[pid],game).total,ownPid:pid,rounds:game.round,boardId:game.boardId||'classic'}}:{})};
    });
    const active=sessions.find((session:any)=>session.code===body.activeCode),activeRow:any=active&&found.get(active.code);let reactionView:any={};
    if(activeRow){const activeRoom:Room=JSON.parse(activeRow.state),member=activeRoom.members.find(m=>m.token===active.token);if(member)reactionView={reactionRoom:active.code,reactionPlayerId:member.id,reactionGameId:activeRoom.game?.gameId||'',reactions:await recentReactions(active.code,activeRoom,member.id)};}
@@ -112,8 +116,11 @@ export async function POST(req:Request){
   if(action==='create'){
    const name=cleanName(body.name);if(!name)return json({error:'Wie heißt du?'},400);
    const boardId=requireBoardId(body.boardId);if(boardId!=='classic'&&!clientFeatures.includes(BOARD_FEATURE))return json({error:'Dieses Spielbrett benötigt Farbfeld 1.6.0.'},409);
+   if(body.mines===true&&!clientFeatures.includes(MINE_FEATURE))return json({error:'Minen benötigen Farbfeld 1.17.0 oder neuer.'},409);
+   if(body.bonusFields===true&&!clientFeatures.includes(BONUS_FEATURE))return json({error:'Bonusfelder benötigen Farbfeld 1.17.0 oder neuer.'},409);
+   if(boardId==='random'&&!clientFeatures.includes(RANDOM_BOARD_FEATURE))return json({error:'Random benötigt Farbfeld 1.17.0 oder neuer.'},409);
    const member={id:crypto.randomUUID(),token:crypto.randomUUID(),name,features:clientFeatures};
-   const room:Room={members:[member],hostId:member.id,game:null,createdAt:Date.now(),roomName:cleanRoomName(body.roomName),hiddenScores:body.hiddenScores===true,boardId};
+   const room:Room={members:[member],hostId:member.id,game:null,createdAt:Date.now(),roomName:cleanRoomName(body.roomName),hiddenScores:body.hiddenScores===true,boardId,bonusFields:body.bonusFields===true,mines:body.mines===true};
    for(let tries=0;tries<3;tries++){
     const now=Date.now(),code=roomCode(),result=await env.DB!.prepare('INSERT OR IGNORE INTO rooms (code,state,version,expires_at,last_used_at) VALUES (?,?,1,?,?)').bind(code,JSON.stringify(room),now+ROOM_RETENTION,now).run();
     if(result.meta.changes){waitUntil(cleanupRooms(env.DB!,{excludeCode:code}).catch(()=>{}));return json({...view(room,1,member.id,{last_used_at:now,expires_at:now+ROOM_RETENTION}),code,token:member.token,playerId:member.id});}
@@ -129,6 +136,9 @@ export async function POST(req:Request){
    if(me){const used=await markRoomUsed(env.DB!,code);waitUntil(cleanupRooms(env.DB!,{excludeCode:code}).catch(()=>{}));await noteRoomPresence(env.DB!,code,me.id);return json({...view(room,row.version,me.id,used),code,token:me.token,playerId:me.id});}
    if(room.game)return json({error:'Die Partie hat schon begonnen.'},409);
    if(room.members.length>=6)return json({error:'Dieser Raum ist mit 6 Personen voll.'},409);
+   if(room.boardId==='random'&&!clientFeatures.includes(RANDOM_BOARD_FEATURE))return json({error:'Dieser Raum nutzt Random. Bitte Farbfeld auf Version 1.17.0 oder neuer aktualisieren.'},409);
+   if(room.mines&&!clientFeatures.includes(MINE_FEATURE))return json({error:'Dieser Raum spielt mit Minen. Bitte Farbfeld 1.17.0 oder neuer öffnen.'},409);
+   if(room.bonusFields&&!clientFeatures.includes(BONUS_FEATURE))return json({error:'Dieser Raum spielt mit Bonusfeldern. Bitte Farbfeld auf Version 1.17.0 oder neuer aktualisieren.'},409);
    if(room.hiddenScores&&!clientFeatures.includes(HIDDEN_FEATURE))return json({error:'Dieser Raum spielt verdeckt. Bitte Farbfeld auf Version 1.5.0 oder neuer aktualisieren.'},400);
    if(room.boardId&&room.boardId!=='classic'&&!clientFeatures.includes(BOARD_FEATURE))return json({error:'Dieses Spielbrett benötigt Farbfeld 1.6.0 oder neuer.'},400);
    const name=cleanName(body.name);if(!name)return json({error:'Bitte gib deinen Namen ein.'},400);
@@ -158,21 +168,34 @@ export async function POST(req:Request){
     if(room.members.length<2)return json({error:'Warte auf mindestens eine weitere Person.'},400);
     if(room.hiddenScores&&!supports(room,HIDDEN_FEATURE))return json({error:'Für verdeckte Punkte müssen alle Handys Version 1.5.0 oder neuer öffnen.'},409);
     if(room.boardId&&room.boardId!=='classic'&&!supports(room,BOARD_FEATURE))return json({error:'Für dieses Spielbrett müssen alle Handys Version 1.6.0 oder neuer öffnen.'},409);
-    room.game=createGame(room.members.map(m=>m.name),'room',room.members.map(m=>m.id),{hiddenScores:!!room.hiddenScores,boardId:requireBoardId(room.boardId)});room.game.gameId=crypto.randomUUID();
+    if(room.boardId==='random'&&(!clientFeatures.includes(RANDOM_BOARD_FEATURE)||!supports(room,RANDOM_BOARD_FEATURE)))return json({error:'Für Random müssen alle Handys Version 1.17.0 oder neuer öffnen.'},409);
+    if(room.mines&&(!clientFeatures.includes(MINE_FEATURE)||!supports(room,MINE_FEATURE)))return json({error:'Für Minen müssen alle Handys Version 1.17.0 oder neuer öffnen.'},409);
+    if(room.bonusFields&&(!clientFeatures.includes(BONUS_FEATURE)||!supports(room,BONUS_FEATURE)))return json({error:'Für Bonusfelder müssen alle Handys Version 1.17.0 oder neuer öffnen.'},409);
+    room.game=createGame(room.members.map(m=>m.name),'room',room.members.map(m=>m.id),{hiddenScores:!!room.hiddenScores,boardId:requireBoardId(room.boardId),bonusFields:room.bonusFields===true,mines:room.mines===true});room.game.gameId=crypto.randomUUID();
     if(room.rematchOf){room.game.rematchOf=room.rematchOf;room.game.rematchBy=me.id;delete room.rematchOf;}
     room.lastActionAt=Date.now();delete room.lastAbort;
    }else if(action==='options'){
     if(me.id!==room.hostId)return json({error:'Nur der Gastgeber kann die Spielart wählen.'},403);
     if(room.game)return json({error:'Die Spielart steht während der Partie fest.'},409);
     if(body.hiddenScores===true&&!supports(room,HIDDEN_FEATURE))return json({error:'Für verdeckte Punkte müssen alle Handys Version 1.5.0 oder neuer öffnen.'},409);
+    if('mines'in body){if(typeof body.mines!=='boolean')return json({error:'Bitte Minen ein- oder ausschalten.'},400);if(body.mines&&(!clientFeatures.includes(MINE_FEATURE)||!supports(room,MINE_FEATURE)))return json({error:'Für Minen müssen alle Handys Version 1.17.0 oder neuer öffnen.'},409);room.mines=body.mines;}
+    if('bonusFields'in body){if(typeof body.bonusFields!=='boolean')return json({error:'Bitte Bonusfelder ein- oder ausschalten.'},400);if(body.bonusFields&&(!clientFeatures.includes(BONUS_FEATURE)||!supports(room,BONUS_FEATURE)))return json({error:'Für Bonusfelder müssen alle Handys Version 1.17.0 oder neuer öffnen.'},409);room.bonusFields=body.bonusFields;}
     if('hiddenScores'in body)room.hiddenScores=body.hiddenScores===true;
-    if('boardId'in body){const boardId=requireBoardId(body.boardId);if(boardId!=='classic'&&!supports(room,BOARD_FEATURE))return json({error:'Für dieses Spielbrett müssen alle Handys Version 1.6.0 oder neuer öffnen.'},409);room.boardId=boardId;}
+    if('boardId'in body){const boardId=requireBoardId(body.boardId);if(boardId==='random'&&(!clientFeatures.includes(RANDOM_BOARD_FEATURE)||!supports(room,RANDOM_BOARD_FEATURE)))return json({error:'Für Random müssen alle Handys Version 1.17.0 oder neuer öffnen.'},409);if(boardId!=='classic'&&!supports(room,BOARD_FEATURE))return json({error:'Für dieses Spielbrett müssen alle Handys Version 1.6.0 oder neuer öffnen.'},409);room.boardId=boardId;}
    }else if(action==='abort'){
     if(room.game?.status!=='playing')return json({error:'Es läuft keine Partie mehr.'},409);
     room.lastAbort={by:me.name,gameId:room.game.gameId,round:room.game.round};room.game=null;delete room.lastActionAt;
    }else if(action==='roll'){
     if(!room.game||room.game.players[room.game.active].id!==me.id)return json({error:'Die aktive Person würfelt.'},403);
     room.game=rollGame(room.game);room.lastActionAt=Date.now();
+   }else if(action==='leave'){
+    if(!room.game||body.gameId!==room.game.gameId)return json({error:'Diese Partie wurde inzwischen beendet oder ersetzt.'},409);
+    if(!clientFeatures.includes(LEAVE_FEATURE)||room.members.some(member=>!room.game.players.find((p:any)=>p.id===member.id)?.left&&!member.features?.includes(LEAVE_FEATURE)))return json({error:'Zum gemeinsamen Verlassen müssen alle aktiven Apps Version 1.17.0 oder neuer öffnen.'},409);
+    room.game=leaveGame(room.game,room.game.players.findIndex((p:any)=>p.id===me!.id));room.lastActionAt=Date.now();
+    if(room.hostId===me.id){const successor=room.game.players.find((p:any)=>!p.left);if(successor)room.hostId=successor.id;}
+   }else if(action==='mine'){
+    if(!room.game||body.gameId!==room.game.gameId||body.round!==room.game.round)return json({error:'Dieser Minenangriff gehört nicht mehr zur aktuellen Spielsituation.'},409);
+    room.game=applyMineAttack(room.game,room.game.players.findIndex((p:any)=>p.id===me!.id),body.target);room.lastActionAt=Date.now();
    }else if(action==='move'){
     if(!room.game)return json({error:'Das Spiel hat noch nicht begonnen.'},400);
     room.game=applyMove(room.game,room.game.players.findIndex((p:any)=>p.id===me!.id),body.move);room.lastActionAt=Date.now();
@@ -182,7 +205,7 @@ export async function POST(req:Request){
     room.game=applyMove(room.game,Number(body.pid),{pass:true});room.lastActionAt=Date.now();
    }else if(action==='rematch'){
     if(me.id!==room.hostId||room.game?.status!=='finished')return json({error:'Eine neue Partie kann der Gastgeber nach Spielende starten.'},403);
-    room.rematchOf=room.game.gameId;
+    room.rematchOf=room.game.gameId;room.members=room.members.filter(member=>!room.game.players.find((p:any)=>p.id===member.id)?.left);
     room.game=null;delete room.lastActionAt;
    }else return json({error:'Unbekannte Aktion.'},400);
   }
@@ -191,7 +214,7 @@ export async function POST(req:Request){
   if(!result.meta.changes)return json({error:'Gleichzeitiger Zug. Bitte versuche es erneut.'},409);
   if(['open','hello','join'].includes(action))waitUntil(cleanupRooms(env.DB!,{excludeCode:code}).catch(()=>{}));
   await noteRoomPresence(env.DB!,code,me!.id);
-  if(['start','roll','move','skip'].includes(action)){
+  if(['start','roll','move','skip','leave'].includes(action)){
    try{await enqueueRoomNotices(env,code,previousGame,room.game);waitUntil(drainPushOutbox(env).catch(()=>console.error('Farbfeld push queue processing failed')));}
    catch{console.error('Farbfeld push queue persistence failed');}
   }

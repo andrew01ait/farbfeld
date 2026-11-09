@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createGame,rollGame,applyMove} from '../public/game/engine.js';
 import {nextLocalPlayer,turnOrder,mayInspect,playerRole,turnDescription,ownTurnKey} from '../public/game/view-state.js';
-import {boardLayout,pinchScale,clampZoom} from '../public/game/board-view.js';
+import {boardLayout,pinchScale,clampZoom,innerBoardWidth} from '../public/game/board-view.js';
 
 test('Lokales Spiel: andere Namen übertragen niemals die Kontrolle',()=>{
  const game=createGame(['Robin','Bea'],'local');
@@ -74,4 +74,9 @@ test('Parallel bestätigte fremde Züge erhalten die eigene unbestätigte Auswah
  for(let pid=1;pid<5;pid++){game=applyMove(game,pid,{pass:true});assert.equal(ownTurnKey(game,5),key);}
  game=applyMove(game,5,{pass:true});assert.notEqual(ownTurnKey(game,5),key);
  assert.equal(game.round,2);assert.equal(playerRole(game,1),'Würfelt');
+});
+
+test('Einpassen nutzt die Innenbreite ohne Scroll-Padding und schneidet die letzte Spalte nicht ab',()=>{
+ assert.equal(innerBoardWidth(324,2,2),320);assert.equal(innerBoardWidth(300,4.5,5.5),290);assert.equal(innerBoardWidth(20,30,30),1);
+ for(const client of [251,284,324,343,650]){const width=innerBoardWidth(client,2,2),scale=width/638;assert(Math.floor(638*scale)+4<=client);assert.equal(boardLayout(width,400,true).width,width);}
 });

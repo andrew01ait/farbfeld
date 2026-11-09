@@ -1,6 +1,6 @@
-import {createGame,rollGame,applyMove,COLORS} from './engine.js';
+import {createGame,rollGame,applyMove,COLORS,BONUS_FEATURE,bonusFieldsEnabled,validBonusState,MINE_FEATURE,minesEnabled,validMineState,applyMineAttack,LEAVE_FEATURE,leaveGame,validLeavingState} from './engine.js';
 import {projectGame,HIDDEN_FEATURE} from './game-info.js';
-import {BOARD_FEATURE,requireBoardId,validBoardId} from './boards.js';
+import {BOARD_FEATURE,RANDOM_BOARD_FEATURE,requireBoardId,validBoardId,validGameBoard} from './boards.js';
 import {REACTION_FEATURE,REACTION_EXTRA_FEATURE,reactionFeature,REACTION_INTERVAL,reactionFor,reactionEffect,validReactionId,validateReaction} from './reactions.js';
 export const DIRECT_PROTOCOL=2;
 export const MAX_DIRECT_PLAYERS=6;
@@ -28,29 +28,33 @@ export function guestRecord(offer,guestName,previous=null){
   return {schema:1,role:'guest',pid,secret:offer.secret,name:name(guestName)||previous?.name||'Person '+(pid+1),seen:[],pending:resume?previous.pending:null,snapshot:resume?clone(previous.snapshot):{sessionId:offer.sessionId,version:0,members,game:null}};
 }
 export function validRecord(record){
-  return record?.schema===1&&['host','guest'].includes(record.role)&&secret(record.secret)&&Array.isArray(record.seen)&&record.seen.every(a=>a&&typeof a.id==='string'&&Number.isInteger(a.actor)&&a.actor>=0&&a.actor<MAX_DIRECT_PLAYERS)&&validSnapshot(record.snapshot)&&(!record.snapshot.game||(record.role==='host'?!record.snapshot.game.players.some(p=>p.hidden):!record.snapshot.game.players[record.pid??1]?.hidden))&&(record.role!=='guest'||seat(record.pid??1)&&(record.pid??1)<record.snapshot.members.length)&&(record.role!=='host'||!record.guestSecrets||typeof record.guestSecrets==='object'&&Object.entries(record.guestSecrets).every(([i,key])=>seat(Number(i))&&secret(key)))&&(!record.pending||(record.pending.type==='action'&&[1,DIRECT_PROTOCOL].includes(record.pending.protocol)&&record.pending.sessionId===record.snapshot.sessionId&&typeof record.pending.actionId==='string'&&Number.isSafeInteger(record.pending.version)&&record.pending.payload&&typeof record.pending.payload==='object'));
+  return (record?.role!=='host'||validBonusState(record.snapshot?.game)&&validMineState(record.snapshot?.game))&&record?.schema===1&&['host','guest'].includes(record.role)&&secret(record.secret)&&Array.isArray(record.seen)&&record.seen.every(a=>a&&typeof a.id==='string'&&Number.isInteger(a.actor)&&a.actor>=0&&a.actor<MAX_DIRECT_PLAYERS)&&validSnapshot(record.snapshot)&&(!record.snapshot.game||(record.role==='host'?!record.snapshot.game.players.some(p=>p.hidden):!record.snapshot.game.players[record.pid??1]?.hidden))&&(record.role!=='guest'||seat(record.pid??1)&&(record.pid??1)<record.snapshot.members.length)&&(record.role!=='host'||!record.guestSecrets||typeof record.guestSecrets==='object'&&Object.entries(record.guestSecrets).every(([i,key])=>seat(Number(i))&&secret(key)))&&(!record.pending||(record.pending.type==='action'&&[1,DIRECT_PROTOCOL].includes(record.pending.protocol)&&record.pending.sessionId===record.snapshot.sessionId&&typeof record.pending.actionId==='string'&&Number.isSafeInteger(record.pending.version)&&record.pending.payload&&typeof record.pending.payload==='object'));
 }
 export function validSnapshot(s){
   if(!s||typeof s.sessionId!=='string'||s.sessionId.length>80||!Number.isSafeInteger(s.version)||s.version<0||!Array.isArray(s.members)||s.members.length<2||s.members.length>MAX_DIRECT_PLAYERS||!s.members.every((m,i)=>m&&m.id===s.sessionId+':'+i&&typeof m.name==='string'&&m.name.length<=24))return false;
-  if(!validBoardId(s.boardId))return false;
+  if(!validBoardId(s.boardId)||s.bonusFields!==undefined&&typeof s.bonusFields!=='boolean'||s.mines!==undefined&&typeof s.mines!=='boolean')return false;
   const g=s.game,n=s.members.length;if(!g)return true;
-  return validBoardId(g.boardId)&&g.schema===1&&g.mode==='direct'&&Array.isArray(g.players)&&g.players.length===n&&g.players.every((p,i)=>p.id===s.members[i].id&&typeof p.name==='string'&&(p.hidden===true?g.hiddenScores===true&&g.status!=='finished':Array.isArray(p.marks)&&p.marks.length===105&&p.marks.every(x=>typeof x==='boolean')&&Number.isInteger(p.jokers)&&p.jokers>=0&&p.jokers<=8&&Array.isArray(p.columns)&&p.columns.length===15&&p.columns.every(x=>x===null||Number.isInteger(x)&&x>=0&&x<=5)&&Array.isArray(p.lastMove)&&COLORS.every(c=>p.colors?.[c]===null||[3,5].includes(p.colors?.[c]))))&&Number.isInteger(g.active)&&g.active>=0&&g.active<n&&Number.isSafeInteger(g.round)&&g.round>=1&&['roll','choose','finished'].includes(g.phase)&&['playing','finished'].includes(g.status)&&Array.isArray(g.submitted)&&new Set(g.submitted).size===g.submitted.length&&g.submitted.every(i=>Number.isInteger(i)&&i>=0&&i<n)&&Array.isArray(g.columnClaims)&&g.columnClaims.length===15&&COLORS.every(c=>g.colorClaims?.[c]===null||Number.isInteger(g.colorClaims?.[c]))&&Array.isArray(g.log)&&(g.phase!=='choose'||g.dice&&g.dice.colors?.length===3&&g.dice.numbers?.length===3);
+  return validLeavingState(g)&&validMineState(g,{allowProjection:true})&&validBonusState(g,{allowProjection:true})&&validGameBoard(g)&&g.schema===1&&g.mode==='direct'&&Array.isArray(g.players)&&g.players.length===n&&g.players.every((p,i)=>p.id===s.members[i].id&&typeof p.name==='string'&&(p.hidden===true?g.hiddenScores===true&&g.status!=='finished':Array.isArray(p.marks)&&p.marks.length===105&&p.marks.every(x=>typeof x==='boolean')&&Number.isInteger(p.jokers)&&p.jokers>=0&&p.jokers<=8&&Array.isArray(p.columns)&&p.columns.length===15&&p.columns.every(x=>x===null||Number.isInteger(x)&&x>=0&&x<=5)&&Array.isArray(p.lastMove)&&COLORS.every(c=>p.colors?.[c]===null||[3,5].includes(p.colors?.[c]))))&&Number.isInteger(g.active)&&g.active>=0&&g.active<n&&Number.isSafeInteger(g.round)&&g.round>=1&&['roll','choose','finished'].includes(g.phase)&&['playing','finished'].includes(g.status)&&Array.isArray(g.submitted)&&new Set(g.submitted).size===g.submitted.length&&g.submitted.every(i=>Number.isInteger(i)&&i>=0&&i<n)&&Array.isArray(g.columnClaims)&&g.columnClaims.length===15&&COLORS.every(c=>g.colorClaims?.[c]===null||Number.isInteger(g.colorClaims?.[c]))&&Array.isArray(g.log)&&(g.phase!=='choose'||g.dice&&g.dice.colors?.length===3&&g.dice.numbers?.length===3);
 }
 export class DirectGame {
   constructor(record,{save=()=>{},onChange=()=>{},onError=()=>{},onReaction=()=>{},now=()=>Date.now(),rng}={}){
     if(!validRecord(record))throw Error('Der gespeicherte Direkt-Spielstand ist unvollständig.');
     this.record=clone(record);this.save=save;this.onChange=onChange;this.onError=onError;this.onReaction=onReaction;this.now=now;this.reactionSeen=new Set();this.reactionTimes=new Map();this.rng=rng;
     if(this.record.pending)this.record.pending.protocol=DIRECT_PROTOCOL;
-    if(this.record.role==='host')this.record.snapshot.capabilities=[...new Set([...(Array.isArray(this.snapshot.capabilities)?this.snapshot.capabilities:[]),'abort-v1','group-v2',HIDDEN_FEATURE,BOARD_FEATURE,REACTION_FEATURE,REACTION_EXTRA_FEATURE])];
+    if(this.record.role==='host')this.record.snapshot.capabilities=[...new Set([...(Array.isArray(this.snapshot.capabilities)?this.snapshot.capabilities:[]),'abort-v1','group-v2',HIDDEN_FEATURE,BOARD_FEATURE,REACTION_FEATURE,REACTION_EXTRA_FEATURE,BONUS_FEATURE,RANDOM_BOARD_FEATURE,MINE_FEATURE,LEAVE_FEATURE])];
     this.links=new Map();this.remoteOnline=[];this.transportReady=false;this.ready=false;this.send=null;this.sentPending=false;this.storageFailed=false;
   }
   get snapshot(){return this.record.snapshot;}
   get pid(){return this.record.role==='host'?0:this.record.pid??1;}
   get pending(){return this.record.pending;}
   get supportsBoards(){return this.pid===0?[...this.links.values()].every(link=>link.authenticated&&link.features?.includes(BOARD_FEATURE)):!!this.snapshot.capabilities?.includes(BOARD_FEATURE);}
+  get supportsRandomBoard(){return this.pid===0?[...this.links.values()].every(link=>link.authenticated&&link.features?.includes(RANDOM_BOARD_FEATURE)):!!this.snapshot.capabilities?.includes(RANDOM_BOARD_FEATURE);}
+  get supportsLeave(){return this.pid===0?[...this.links].every(([pid,link])=>this.snapshot.game?.players[pid]?.left||link.authenticated&&link.features?.includes(LEAVE_FEATURE)):!!this.snapshot.capabilities?.includes(LEAVE_FEATURE);}
+  get supportsMines(){return this.pid===0?[...this.links.values()].every(link=>link.authenticated&&link.features?.includes(MINE_FEATURE)):!!this.snapshot.capabilities?.includes(MINE_FEATURE);}
+  get supportsBonusFields(){return this.pid===0?[...this.links.values()].every(link=>link.authenticated&&link.features?.includes(BONUS_FEATURE)):!!this.snapshot.capabilities?.includes(BONUS_FEATURE);}
   get online(){return this.pid===0?[0,...[...this.links].filter(([,link])=>link.connected&&link.authenticated).map(([pid])=>pid)]:this.remoteOnline;}
   connected(pid){return this.pid===0?pid===0||!!(this.links.get(pid)?.connected&&this.links.get(pid)?.authenticated):this.transportReady&&this.remoteOnline.includes(pid);}
-  refresh(){if(this.pid===0){this.transportReady=[...this.links.values()].some(link=>link.connected);this.ready=!this.storageFailed&&this.snapshot.members.every((member,pid)=>member.name&&this.connected(pid));}}
+  refresh(){if(this.pid===0){this.transportReady=[...this.links.values()].some(link=>link.connected);this.ready=!this.storageFailed&&this.snapshot.members.every((member,pid)=>this.snapshot.game?.players[pid]?.left||member.name&&this.connected(pid));}}
   envelope(type,payload={},actionId=uid(),version=this.snapshot.version){
     return {protocol:DIRECT_PROTOCOL,sessionId:this.snapshot.sessionId,version,actionId,type,payload};
   }
@@ -72,7 +76,7 @@ export class DirectGame {
       this.links.set(actor,{send,connected:true,authenticated:false});this.refresh();this.broadcast();
     }else{
       this.send=send;this.transportReady=true;this.ready=false;
-      this.transmit(this.envelope('hello',{secret:this.record.secret,name:this.record.name,features:[HIDDEN_FEATURE,BOARD_FEATURE,REACTION_FEATURE,REACTION_EXTRA_FEATURE]}));
+      this.transmit(this.envelope('hello',{secret:this.record.secret,name:this.record.name,features:[HIDDEN_FEATURE,BOARD_FEATURE,REACTION_FEATURE,REACTION_EXTRA_FEATURE,BONUS_FEATURE,RANDOM_BOARD_FEATURE,MINE_FEATURE,LEAVE_FEATURE]}));
     }
     this.emit();
   }
@@ -123,6 +127,10 @@ export class DirectGame {
         const key=actor===1?this.record.secret:this.record.guestSecrets?.[actor];
         if(!key||m.payload.secret!==key){this.onError('Das andere Handy gehört nicht zu diesem Platz in der Partie.');return;}
         if(this.snapshot.game?.boardId&&this.snapshot.game.boardId!=='classic'&&!m.payload.features?.includes(BOARD_FEATURE)){this.onError('Für dieses Spielbrett bitte alle Apps auf Version 1.6.0 oder neuer aktualisieren.');return;}
+        if(this.snapshot.game?.boardId==='random'&&!m.payload.features?.includes(RANDOM_BOARD_FEATURE)){this.onError('Dieses Zufallsbrett benötigt Farbfeld 1.17.0 oder neuer. Bitte alle Apps aktualisieren.');return;}
+        if(this.snapshot.game?.players.some(p=>p.left)&&!m.payload.features?.includes(LEAVE_FEATURE)){this.onError('Diese Partie benötigt Farbfeld 1.17.0 oder neuer. Bitte alle Apps aktualisieren.');return;}
+        if(minesEnabled(this.snapshot.game)&&!m.payload.features?.includes(MINE_FEATURE)){this.onError('Diese Minenpartie benötigt Farbfeld 1.17.0 oder neuer. Bitte alle Apps aktualisieren.');return;}
+        if(bonusFieldsEnabled(this.snapshot.game)&&!m.payload.features?.includes(BONUS_FEATURE)){this.onError('Diese Bonuspartie benötigt Farbfeld 1.17.0 oder neuer. Bitte alle Apps aktualisieren.');return;}
         const next=clone(this.record);
         if(!next.snapshot.game&&name(m.payload.name)&&next.snapshot.members[actor].name!==name(m.payload.name)){next.snapshot.members[actor].name=name(m.payload.name);next.snapshot.version++;}
         if(!this.persist(next))return;
@@ -185,6 +193,10 @@ export class DirectGame {
     if(!this.ready||this.storageFailed)throw Error('Die Direktverbindung ist unterbrochen oder ein Handy fehlt. Die Partie pausiert bis alle wieder verbunden sind.');
     if(this.pending)throw Error('Dein Zug wird noch vom Gastgeber bestätigt.');
     if(action==='abort'&&!this.snapshot.capabilities?.includes('abort-v1'))throw Error('Für den gemeinsamen Abbruch bitte auch die Gastgeber-App aktualisieren.');
+    if((payload.bonusFields===true||bonusFieldsEnabled(this.snapshot.game))&&!this.snapshot.capabilities?.includes(BONUS_FEATURE))throw Error('Für Bonusfelder bitte auch die Gastgeber-App auf Version 1.17.0 oder neuer aktualisieren.');
+    if((payload.boardId==='random'||this.snapshot.game?.boardId==='random')&&!this.snapshot.capabilities?.includes(RANDOM_BOARD_FEATURE))throw Error('Für Random bitte auch die Gastgeber-App auf Version 1.17.0 oder neuer aktualisieren.');
+    if((payload.mines===true||minesEnabled(this.snapshot.game))&&!this.snapshot.capabilities?.includes(MINE_FEATURE))throw Error('Für Minen bitte auch die Gastgeber-App auf Version 1.17.0 oder neuer aktualisieren.');
+    if(action==='leave'&&!this.snapshot.capabilities?.includes(LEAVE_FEATURE))throw Error('Zum Verlassen bitte die Gastgeber-App auf Version 1.17.0 oder neuer aktualisieren.');
     const message=this.envelope('action',{...payload,action,gameId:this.snapshot.game?.gameId??null,round:this.snapshot.game?.round??null});
     if(this.pid===0){this.apply(message,0,true);return message.actionId;}
     const next=clone(this.record);next.pending=message;
@@ -196,30 +208,40 @@ export class DirectGame {
     if(duplicate){this.transmit(this.state(message.actionId,null,actor),actor);return;}
     try{
       if(!this.ready||this.storageFailed)throw Error('Die Partie pausiert bis zur Wiederverbindung aller Handys.');
-      const {action,move,gameId,round}=message.payload;
+      const {action,move,target,gameId,round}=message.payload;
       // Independent players may confirm the same roll concurrently. Rules still
       // validate their own sheet, dice and submitted flag against the latest state.
-      const sameRoll=action==='move'&&this.snapshot.game&&gameId===this.snapshot.game.gameId&&round===this.snapshot.game.round&&message.version<=this.snapshot.version;
+      const sameRoll=['move','mine','leave'].includes(action)&&this.snapshot.game&&gameId===this.snapshot.game.gameId&&round===this.snapshot.game.round&&message.version<=this.snapshot.version;
       if(message.version!==this.snapshot.version&&!sameRoll)throw Error('Der Spielstand wurde inzwischen aktualisiert. Bitte wähle deinen Zug erneut.');
+      if(['mine','leave'].includes(action)&&(!this.snapshot.game||gameId!==this.snapshot.game.gameId||round!==this.snapshot.game.round))throw Error('Diese Aktion gehört nicht mehr zur aktuellen Partie oder Runde.');
       const next=clone(this.record),s=next.snapshot;
       if(action==='start'){
         if(actor!==0)throw Error('Nur der Gastgeber kann die Partie starten.');
         if(s.game)throw Error('Die Partie läuft bereits.');
         if(s.members.some(m=>!m.name))throw Error('Es fehlen noch Mitspielende.');
         if(s.boardId&&s.boardId!=='classic'&&!this.supportsBoards)throw Error('Für dieses Spielbrett müssen alle Handys Version 1.6.0 oder neuer öffnen.');
-        s.game=createGame(s.members.map(m=>m.name),'direct',s.members.map(m=>m.id),{hiddenScores:!!s.hiddenScores,boardId:requireBoardId(s.boardId)});s.game.gameId=uid();delete s.lastAbort;
+        if(s.boardId==='random'&&!this.supportsRandomBoard)throw Error('Für Random müssen alle Handys Version 1.17.0 oder neuer öffnen.');
+        if(s.mines&&!this.supportsMines)throw Error('Für Minen müssen alle Handys Version 1.17.0 oder neuer öffnen.');
+        if(s.bonusFields&&!this.supportsBonusFields)throw Error('Für Bonusfelder müssen alle Handys Version 1.17.0 oder neuer öffnen.');
+        s.game=createGame(s.members.map(m=>m.name),'direct',s.members.map(m=>m.id),{hiddenScores:!!s.hiddenScores,boardId:requireBoardId(s.boardId),bonusFields:s.bonusFields===true,mines:s.mines===true});s.game.gameId=uid();delete s.lastAbort;
       }else if(action==='options'){
         if(actor!==0)throw Error('Nur der Gastgeber kann die Spielart wählen.');
         if(s.game)throw Error('Die Spielart steht während der Partie fest.');
         if(message.payload.hiddenScores===true&&[...this.links.values()].some(link=>!link.features?.includes(HIDDEN_FEATURE)))throw Error('Für verdeckte Punkte müssen alle Handys Version 1.5.0 oder neuer öffnen.');
+        if('mines'in message.payload){if(typeof message.payload.mines!=='boolean')throw Error('Bitte Minen ein- oder ausschalten.');if(message.payload.mines&&!this.supportsMines)throw Error('Für Minen müssen alle Handys Version 1.17.0 oder neuer öffnen.');s.mines=message.payload.mines;}
+        if('bonusFields'in message.payload){if(typeof message.payload.bonusFields!=='boolean')throw Error('Bitte Bonusfelder ein- oder ausschalten.');if(message.payload.bonusFields&&!this.supportsBonusFields)throw Error('Für Bonusfelder müssen alle Handys Version 1.17.0 oder neuer öffnen.');s.bonusFields=message.payload.bonusFields;}
         if('hiddenScores'in message.payload)s.hiddenScores=message.payload.hiddenScores===true;
-        if('boardId'in message.payload){const boardId=requireBoardId(message.payload.boardId);if(boardId!=='classic'&&!this.supportsBoards)throw Error('Für dieses Spielbrett müssen alle Handys Version 1.6.0 oder neuer öffnen.');s.boardId=boardId;}
+        if('boardId'in message.payload){const boardId=requireBoardId(message.payload.boardId);if(boardId==='random'&&!this.supportsRandomBoard)throw Error('Für Random müssen alle Handys Version 1.17.0 oder neuer öffnen.');if(boardId!=='classic'&&!this.supportsBoards)throw Error('Für dieses Spielbrett müssen alle Handys Version 1.6.0 oder neuer öffnen.');s.boardId=boardId;}
       }else if(action==='abort'){
         if(s.game?.status!=='playing')throw Error('Es läuft keine Partie mehr.');
         s.lastAbort={by:s.members[actor].name,gameId:s.game.gameId,round:s.game.round};s.game=null;
       }else if(action==='roll'){
         if(!s.game||s.game.active!==actor)throw Error('Die aktive Person würfelt.');
         s.game=rollGame(s.game,this.rng);
+      }else if(action==='leave'){
+        if(!this.supportsLeave)throw Error('Zum gemeinsamen Verlassen müssen die aktiven Handys Version 1.17.0 oder neuer öffnen.');s.game=leaveGame(s.game,actor);
+      }else if(action==='mine'){
+        if(!s.game)throw Error('Die Partie wurde noch nicht gestartet.');s.game=applyMineAttack(s.game,actor,target,this.rng);
       }else if(action==='move'){
         if(!s.game)throw Error('Die Partie wurde noch nicht gestartet.');
         if(!move||typeof move!=='object')throw Error('Der Zug ist unvollständig.');

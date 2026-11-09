@@ -1,10 +1,18 @@
 # Architektur
 
-<!-- farbfeld-version: 1.16.0 -->
+<!-- farbfeld-version: 1.17.0 -->
+
+## Neu 1.17.0: Bonusfelder, Random und gemeinsame Minen
+
+Drei geheime **Bonusfelder** vergeben je +2 an alle ersten Finder desselben Wurfs; Bekanntgabe erst nach der gemeinsamen Wertung, Punkte bleiben trotz Minen erhalten. **Random** erzeugt bei jedem neuen Start ein gemeinsames, gespeichert fortsetzbares Brett. Die optionale **Mine** trifft ein gewähltes Zielfeld bei allen aktiven Gegnern, einmal pro Person für insgesamt fünf Punkte. Die Explosion dauert drei Sekunden; Schadensmarkierungen bleiben bis Ende des nächsten Wurfs. Leere Ziele verursachen beim jeweiligen Gegner keinerlei Schaden.
+
+**Partie verlassen** gibt sofort einen einmaligen Verlaufseintrag mit −10 Punkten und Niederlage. Die anderen spielen weiter; die letzte aktive Person gewinnt sofort. Im Internet wandert die Gastgeberrolle weiter. Offline bleibt das ursprüngliche Gastgeber-Handy als Zuschauer und Verbindung geöffnet; Verbindungsverlust pausiert sicher, ohne neue Autorität zu erfinden. Alle beteiligten Apps für neue Regeln auf 1.17.0 aktualisieren. [Bonusfelder](bonus-fields.md) · [Minen](mines.md) · [Random](random-board.md) · [Aussteigen](leaving.md).
+
+
 
 ## Neu 1.16.0: Offline-Testprotokoll und optionale Computer-Minen
 
-Ein freiwilliges lokales A/B-Testprotokoll hilft bei Offline-Kopplung und Spielabgleich; es ist aus Einstellungen und Kopplungsdialogen exportierbar. [Testanleitung und Datenschema](offline-diagnostics.md). Die neue Startoption **Minenangriff testen** gilt vorerst nur gegen den Computer: gegnerischer Farbabschluss schaltet einen einmaligen Angriff für fünf Punkte frei. Ein leeres Zielfeld ist ein vollständiger Fehlschlag ohne Nachbarschaden. Nach einem Treffer gehen Erstboni sofort an den verbleibenden vollständigen Halter; ohne Halter werden sie erneut frei. Wiedervervollständigen bei bestehendem Halter erhält den Späterbonus. [Regeln, verdeckte Zielwahl und Wertung](mines.md).
+Ein freiwilliges lokales A/B-Testprotokoll hilft bei Offline-Kopplung und Spielabgleich; es ist aus Einstellungen und Kopplungsdialogen exportierbar. [Testanleitung und Datenschema](offline-diagnostics.md). Die neue Startoption **Minenangriff testen** wurde in 1.16.0 zunächst gegen den Computer erprobt; ab 1.17.0 gilt sie für alle Mehrspielerarten: gegnerischer Farbabschluss schaltet einen einmaligen Angriff für fünf Punkte frei. Ein leeres Zielfeld ist ein vollständiger Fehlschlag ohne Nachbarschaden. Nach einem Treffer gehen Erstboni sofort an den verbleibenden vollständigen Halter; ohne Halter werden sie erneut frei. Wiedervervollständigen bei bestehendem Halter erhält den Späterbonus. [Regeln, verdeckte Zielwahl und Wertung](mines.md).
 
 
 ## Revanche-Ereignis 1.15.0
@@ -86,7 +94,7 @@ QR-Daten enthalten vollständige Angebote/Antworten mit lokalen ICE-Kandidaten. 
 | `farbfeld.direct.v1` | Direktstand und persönliche Kopplungsdaten | dieses Gerät, nicht im Export |
 | `farbfeld.reactions.seen.v1` | begrenzte Anzeigecursor für Raumreaktionen | dieses Gerät, außerhalb der Spielbackups |
 | `farbfeld.prefs.v1`, `farbfeld.history.v1` | Design/Optionen und Ergebnisse | dieses Gerät, lokaler Export |
-| Offline-Cache `farbfeld-v<Version>` | 38 statische Dateien | atomarer Service-Worker-Cache |
+| Offline-Cache `farbfeld-v<Version>` | 40 statische Dateien | atomarer Service-Worker-Cache |
 | IndexedDB `farbfeld.notifications.v1` | Opt-in, Gerätegeheimnis, Deduplizierung | Notification-Worker, nicht im Export |
 | D1 `room_presence` | gedrosselte Rückmeldungen je Raum/Mitglied, getrennt von Zugversionen | authentifizierter Raumzugang |
 | D1 `rooms` | Raumzustand, Version, letzte Nutzung und Bereinigungstermin | autorisierte Spieler-API |
@@ -176,3 +184,9 @@ Der bestehende Worker erzeugt nach einem bestätigten Spielereignis denselben ve
 
 Der Service Worker führt eine Statusprüfung und höchstens einen Quittungs-POST pro empfangenem Push aus. Kein Timer und keine automatische Wiederholung. Lokale Worker-Nachrichten aktualisieren offene Einstellungen; spätere Diagnose erfolgt per bestehendem manuellem Statusknopf. Migration 0007 ergänzt nur eine optionale Textspalte; Cache-Dateizahl und Spiel-/Direktformate bleiben erhalten.
 
+
+## Gemeinsamer Regelzustand ab 1.17.0
+
+`engine.js` ist weiterhin alleinige Regelautorität. Bonuskoordinaten und reservierte Treffer bleiben vollständig beim Server/Offlinehost; alle Gäste sehen nur veröffentlichte Bonusgewinne. `boards.js` erzeugt und prüft ein geteiltes Random-Layout bei Start. `boardFor(game)` nutzt diesen gespeicherten Plan für UI, Hinweise, Computer und Wertung. Minen werden vor der normalen Auswahl als eigene atomare Aktion mit per-Gegner-Ergebnissen gespeichert; Abschlussrunden erlauben korrekte Erst-/Späterboni bei mehr als zwei Personen.
+
+`leaveGame` markiert statt zu löschen: stabile Plätze, keine nachträgliche Würfeländerung, beendete Beiträge blockieren keinen Rundenabschluss. Eine aktive Person beendet die Partie unmittelbar. Internet überträgt `hostId` im selben CAS-Commit; erst Revanche entfernt Ausgestiegene aus der Mitgliedsliste. Direkt bleibt Platz 0 dauerhafte Autorität und Relay, auch als Zuschauer; die Bereitschaft verlangt nur noch aktive Gäste plus Relay. Keine hostlose Fortsetzung bei Verbindungsabbruch. Lokale Ausstiegs- und Endresultate werden getrennt dedupliziert, unbekannte verdeckte Gegnersummen bleiben absent. Neue additive Fähigkeiten erlauben sichere Mischversionserkennung ohne Schema-/Protokollwechsel.

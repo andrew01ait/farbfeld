@@ -1,6 +1,17 @@
 # Änderungsprotokoll
 
-<!-- farbfeld-version: 1.16.0 -->
+<!-- farbfeld-version: 1.17.0 -->
+
+## 1.17.0 – 2026-11-09
+
+- Optionale Bonusfelder in allen Startarten: drei zufällig versteckte gemeinsame Felder, je zwei Punkte für alle Treffer im ersten gemeinsamen Trefferwurf. Bekanntgabe erst nach allen Auswahlen, keine Koordinaten oder vorzeitigen Treffer in UI/Netzwerkprojektionen.
+- Dauerhafte eigene Bonuswertung, auch nach Minenschaden an bestätigten oder bereits gewerteten Treffern; kein Wiederverdienen, kein Übertragen dieser Prämien. Separate Punktezeile und Ranglisten-/Ergebnis-/Statistikwertung.
+- Gastgeberwahl und additive Fähigkeit bonus-fields-v1 für Räume und Direktpartien; alte Apps bleiben bei Standardpartien kompatibel. Computerplanung liest keine geheimen Positionen. 40 atomare Offline-Dateien, keine SQL-Migration oder neue Push-Art.
+- Minen auf ausdrücklichen Wunsch für alle Multiplayerarten mit bis zu sechs Personen; ein Zielfeld gegen alle aktiven Gegner, fünf Punkte insgesamt. Chronologische Abschlussregister erhalten korrekte Erstboni und Gleichstände; verborgene Gegnerdaten bleiben geschützt.
+- Drei Sekunden Explosion, sichtbare Zellen im Blickfeld und Schadensmarker bis Ende des nächsten Wurfs; Freischalt-Hinweis, kompakte Statusleiste/Anleitung und sauber ausgerichtete kurze Startoptionen.
+- Random als vierte Brettwahl: begrenzt erzeugter ausgewogener Plan pro Start, identisch für alle, gespeichert über Wiederaufnahme. Einpassen berücksichtigt Innenabstände und schneidet die rechte Spalte nicht ab.
+- Bestätigtes Aussteigen: sofort −10 und Niederlage, Gruppe spielt weiter, letzter aktiver Spieler gewinnt unabhängig vom negativen Rohstand. Internet-Gastgeberwechsel atomar; Offline-Gastgeber bleibt ausdrücklich Zuschauer/Relay, Verlust pausiert sicher und ausgeschiedene Gäste blockieren nicht.
+- 390 automatisierte Regressionen bestanden; zwölf echte gerenderte Handy-/Tablet-/Desktop-Größen für Einrichtung, Gruppenansicht und Einpassen ohne Seitenüberlauf. Random-Neuladen, echte lokale Freischaltung, Drei-Sekunden-Effekt, Schaden und fünf aufeinanderfolgende Ausstiege bis zum negativen letzten Sieger im Browser geprüft. Physische Zwei-Handy-/Hotspot- und Balanceprüfung bleibt separat.
 
 ## 1.16.0 – 2026-11-09
 

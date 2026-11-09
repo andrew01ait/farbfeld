@@ -1,6 +1,16 @@
 # Responsive QA
 
-<!-- farbfeld-version: 1.16.0 -->
+<!-- farbfeld-version: 1.17.0 -->
+
+## Release 1.17.0
+
+**390 automatisierte Regressionen** decken die gemeinsame Implementierung ab. Regel-/Direkt-/Raumtests prüfen sechs Gegnerplätze, Miss/Hit je Gegner, unveränderten Schützen, einmalige Kosten, Bonus-Gleichstände, chronologische Erstansprüche, Gastgeberwechsel, letzten negativen Sieger, gleichzeitige/alte Aktionen, Relayverlust und Wiederaufnahme. Raum-/Kopplungs-API und TypeScript bestanden. Kein Produktivspiel und keine Testnachricht an Nutzergeräte.
+
+Gerenderte lokale Vorschau am 09.11.2026: Einrichtung mit vier Brettkacheln und drei ausgerichteten Optionen, Sechsergruppe mit langen Namen, kompakte Minenleiste, verdeckter Ziel-Dialog und Einpassen in **allen zwölf** unten gelisteten Größen geprüft. Dokument-Scrollbreite entspricht jeweils Clientbreite. Checkboxen 22×22; Koordinatenauswahlen 46 Pixel; Zünden 52–68 Pixel hoch. Minenleiste 58–60 Pixel hoch. Einpassen: Scroll-/Clientbreite identisch und rechter Rand der O-Zelle innerhalb der Fläche; etwa bei 393×851 exakt 324/324 statt vorher 328/324. Kleine Felder beim Einpassen sind erwartbar; Zoom/Koordinatenauswahl bleiben verfügbar.
+
+Im Browser bestätigt: echte lokale Computer-Farbvollendung löst Mine-bereit-Hinweis aus; dreisekündige Explosion und sichtbare Schadensmarker, kein gegnerischer Schaden in verdeckter Ziel-/Nachansicht (105 gedruckte Zellen, null Kreuze), Random mit identischen 105 Farben nach Neuladen, Sechser-Bonus mit kompakter gemeinsamer Meldung. Fünf bestätigte Ausstiege lassen die letzte Person trotz −20 gegenüber −10 gewinnen. Zweierfall zeigt −22 als Sieg, einen einmaligen −10-Ausstieg sowie getrennten Siegerdatensatz im gemeinsamen Verlauf; Neuladen/wiederholter Datensatz verdoppelt nichts. Handy-/Tablet-Messungen erfolgen in einem real gerenderten eingebetteten CSS-Viewport, keine physische Telefonemulation. Physische Android-Touch-/WLAN-/Hotspot-, Hostrelay- und Balanceabnahme bleiben separat.
+
+
 
 ## Prüfumfang 1.16.0
 

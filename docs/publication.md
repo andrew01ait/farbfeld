@@ -1,6 +1,10 @@
 # Public source snapshot
 
-<!-- farbfeld-version: 1.16.0 -->
+<!-- farbfeld-version: 1.17.0 -->
+
+## Update 1.17.0 — 9 November 2026
+
+Optional hidden bonusfields, a shared persisted Random board, mines against every active opponent and explicit −10-point forfeits with continued play, Internet host succession and last-survivor wins. The original offline host remains spectator/relay; automatic offline authority migration is not implemented. Guides cover rules, privacy, capability checks, recovery and device-testing limits. 390 regressions passed in both sources, with both API integrations, TypeScript, documentation checks and the portable production build. Twelve viewport sizes were rendered. Physical two-phone networking and balance remain separate. Public generic configuration and synthetic identities are preserved. No private screenshots, hosting identifiers, user games, real subscriptions or test Pushes are included.
 
 ## Update 1.16.0 — 9 November 2026
 

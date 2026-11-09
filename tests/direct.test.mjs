@@ -1,7 +1,8 @@
+import {RANDOM_BOARD_FEATURE,boardFor,validGameBoard} from '../public/game/boards.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {DirectGame,hostRecord,guestRecord,validRecord,DIRECT_PROTOCOL} from '../public/game/direct-game.js';
-import {findMove,BOARD,COLORS} from '../public/game/engine.js';
+import {findMove,BOARD,COLORS,BONUS_FEATURE,bonusPoints,validBonusState} from '../public/game/engine.js';
 import {LAN_RTC_CONFIG,validateHandshake,waitForIce} from '../public/game/direct-connection.js';
 function pair({records=null}={}){
   const out=[],errors=[],saved={};
@@ -147,4 +148,44 @@ test('Bestehende Zweier-Speicherstände und eine ausstehende Protokoll-1-Aktion 
  assert.equal(resumed.host.snapshot.game.round,2);assert.equal(resumed.host.snapshot.game.log.length,2);
  assert.deepEqual(resumed.host.snapshot,resumed.guest.snapshot);
  assert.equal(resumed.host.record.schema,1);assert.equal(resumed.guest.record.schema,1);
+});
+
+test('Direkte Bonuspartie hält Positionen geheim, vergibt beide Rundentreffer und dedupliziert verlorene Quittungen',()=>{
+ const p=pair();p.host.act('options',{bonusFields:true});p.flush();p.host.act('start');p.flush();
+ let g=p.host.snapshot.game;g.phase='choose';g.dice={colors:['g','b','o'],numbers:[1,2,3]};g.bonuses.fields=[7,8,9].map(index=>({index,claim:null,pending:[]}));p.sync();
+ assert.equal(p.guest.snapshot.game.bonuses.fields,undefined);assert.equal(p.guest.snapshot.game.bonuses.awards.length,0);
+ p.host.act('move',{move:{ci:0,ni:0,cells:[7]}});p.flush();assert.equal(p.guest.snapshot.game.bonuses.awards.length,0);
+ p.dropHost(true);p.guest.act('move',{move:{ci:0,ni:0,cells:[7]}});p.flush();assert(p.guest.pending);
+ assert.equal(bonusPoints(p.host.snapshot.game,0),2);assert.equal(bonusPoints(p.host.snapshot.game,1),2);
+ const originalFields=p.host.snapshot.game.bonuses.fields.map(f=>f.index),resumed=pair({records:p.saved});
+ assert.equal(resumed.guest.pending,null);assert.deepEqual(resumed.host.snapshot.game.bonuses.fields.map(f=>f.index),originalFields);
+ for(const pid of [0,1])assert.equal(bonusPoints(resumed.guest.snapshot.game,pid),2);
+ assert(validBonusState(resumed.host.snapshot.game));assert(validBonusState(resumed.guest.snapshot.game,{allowProjection:true}));assert.equal(resumed.guest.snapshot.game.bonuses.fields,undefined);
+ assert.throws(()=>resumed.host.act('options',{bonusFields:false}),/während/);
+});
+test('Bonusoption und Start verlangen aktuelle Gegenstellen; Standardspiele bleiben mit alten Fähigkeiten möglich',()=>{
+ const p=pair();p.host.links.get(1).features=p.host.links.get(1).features.filter(f=>f!==BONUS_FEATURE);
+ assert.throws(()=>p.host.act('options',{bonusFields:true}),/1\.17\.0/);p.host.record.snapshot.bonusFields=true;
+ assert.throws(()=>p.host.act('start'),/1\.17\.0/);p.host.act('options',{bonusFields:false});p.host.act('start');p.flush();assert.equal(p.host.snapshot.game.bonuses,undefined);
+ const active=pair();active.host.act('options',{bonusFields:true});active.host.act('start');active.flush();active.host.pause(1);active.host.attach(()=>{},1);
+ active.host.receive(JSON.stringify(active.guest.envelope('hello',{secret:active.guest.record.secret,name:'Guest',features:['hidden-scores-v1','boards-v1']})),1);
+ assert.equal(active.host.links.get(1).authenticated,false);assert.equal(active.host.ready,false);assert.match(active.errors.at(-1),/1\.17\.0/);
+});
+test('Bonus-Revanchen ziehen neu, behalten die Startwahl und nehmen keine alten Prämien mit',()=>{
+ const p=pair();p.host.act('options',{bonusFields:true});p.host.act('start');p.flush();const previousId=p.host.snapshot.game.gameId;
+ p.host.record.snapshot.game.bonuses.fields[0].claim={round:1,winners:[0]};p.host.record.snapshot.game.status='finished';p.host.record.snapshot.game.phase='finished';
+ p.host.act('rematch');p.flush();assert.equal(p.host.snapshot.bonusFields,true);p.host.act('start');p.flush();
+ assert.notEqual(p.host.snapshot.game.gameId,previousId);assert.equal(bonusPoints(p.host.snapshot.game,0),0);assert(p.host.snapshot.game.bonuses.fields.every(f=>f.claim===null&&f.pending.length===0));assert.equal(p.guest.snapshot.game.bonuses.awards.length,0);
+});
+
+test('Random-Direktpartie teilt genau einen Plan und behält ihn bei der Wiederverbindung',()=>{
+ const p=pair();p.host.act('options',{boardId:'random',bonusFields:true});p.flush();p.host.act('start');p.flush();
+ const layout=structuredClone(p.host.snapshot.game.boardLayout);assert(validGameBoard(p.host.snapshot.game));assert.deepEqual(p.guest.snapshot.game.boardLayout,layout);assert.deepEqual(boardFor(p.guest.snapshot.game).cells,boardFor(p.host.snapshot.game).cells);
+ const resumed=pair({records:p.saved});assert.deepEqual(resumed.host.snapshot.game.boardLayout,layout);assert.deepEqual(resumed.guest.snapshot.game.boardLayout,layout);
+ resumed.host.record.snapshot.game.status='finished';resumed.host.record.snapshot.game.phase='finished';resumed.host.act('rematch');resumed.flush();resumed.host.act('start');resumed.flush();
+ assert.equal(resumed.host.snapshot.game.boardId,'random');assert(validGameBoard(resumed.host.snapshot.game));assert.deepEqual(resumed.guest.snapshot.game.boardLayout,resumed.host.snapshot.game.boardLayout);assert.notDeepEqual(resumed.host.snapshot.game.boardLayout,layout);
+});
+test('Random kann mit alten Gegenstellen weder gewählt noch aus einer früheren Lobby gestartet werden',()=>{
+ const p=pair();p.host.links.get(1).features=p.host.links.get(1).features.filter(f=>f!==RANDOM_BOARD_FEATURE);assert.throws(()=>p.host.act('options',{boardId:'random'}),/1\.17\.0/);
+ p.host.record.snapshot.boardId='random';assert.throws(()=>p.host.act('start'),/1\.17\.0/);p.host.act('options',{boardId:'classic'});p.host.act('start');p.flush();assert.equal(p.host.snapshot.game.boardId,'classic');
 });

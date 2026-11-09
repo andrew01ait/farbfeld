@@ -369,9 +369,9 @@ test('Outbox: maximal vier Versuche, auch nach Neustart; Zeitvorgabe des Provide
  await drainPushOutbox(f.env,{now:at+90000,send});assert.equal(calls,4);assert.equal(f.sql.prepare('SELECT state FROM notification_dispatches').get().state,'stopped');
  const g=await fixture();try{g.commit(after);await enqueueRoomNotices(g.env,g.code,before,after,{now:g.now});let count=0;
   const throttled=async()=>{count++;return new Response(null,{status:count===1?429:201,headers:{'Retry-After':'120'}});};
-  await drainPushOutbox(g.env,{now:g.now,send:throttled});assert.equal(count,1);
-  await drainPushOutbox(g.env,{now:g.now+119000,send:throttled});assert.equal(count,1);
-  await drainPushOutbox(g.env,{now:g.now+120000,send:throttled});assert.equal(count,2);
+  await drainPushOutbox(g.env,{now:g.now,clock:()=>g.now,send:throttled});assert.equal(count,1);
+  await drainPushOutbox(g.env,{now:g.now+119000,clock:()=>g.now+119000,send:throttled});assert.equal(count,1);
+  await drainPushOutbox(g.env,{now:g.now+120000,clock:()=>g.now+120000,send:throttled});assert.equal(count,2);
  }finally{g.sql.close();}
 });
 test('Outbox: überholte, abgemeldete, ersetzte und deaktivierte Ziele werden vor Versand verworfen',async()=>{

@@ -1,6 +1,6 @@
 # Geräteprofil und Statistik
 
-<!-- farbfeld-version: 1.16.0 -->
+<!-- farbfeld-version: 1.17.0 -->
 
 ## Dateinamen beim Sichern
 
@@ -18,7 +18,7 @@ Auf der Startseite **Statistik** (Diagramm-Icon) oder in den Einstellungen **Pro
 
 Die Bereiche beeinflussen einander nicht. Eine Computerniederlage unterbricht beispielsweise keine Siegesserie gegen Menschen; ein Solo-Bestwert überschreibt keinen anderen Bestwert. **Ergebnisse** öffnet nur die letzten sichtbaren Ergebnisse des ausgewählten Bereichs; **Zur Statistik** kehrt dorthin zurück. Die sichtbare Liste bleibt auf 100 Ergebnisse insgesamt begrenzt, der kompakte Statistikverlauf nicht.
 
-Nur abgeschlossene Partien zählen. Abgebrochene oder laufende Spiele zählen nicht. Innerhalb eines Bereichs verlängern geteilte Gesamtsiege die Serie. Ein unbekannter alter Ausgang unterbricht die belegbare Bereichsserie. Bestwert und Durchschnitt verwenden den eigenen gespeicherten Punktestand.
+Abgeschlossene Partien und ausdrücklich bestätigte Mehrspieler-Ausstiege zählen. Ein Ausstieg zählt sofort einmal als feste −10-Punkte-Niederlage, selbst wenn verbleibende Personen weniger Punkte haben. Solo-Abbruch, verworfene Kopplungen und bloß laufende Spiele zählen nicht. Verdeckte fremde Werte bleiben im frühen Ausstiegsdatensatz unbekannt. [Regeln und gemeinsame Handyhistorie](leaving.md).  Innerhalb eines Bereichs verlängern geteilte Gesamtsiege die Serie. Ein unbekannter alter Ausgang unterbricht die belegbare Bereichsserie. Bestwert und Durchschnitt verwenden den eigenen gespeicherten Punktestand.
 
 ## Eine bestimmte Person
 
@@ -58,4 +58,3 @@ Browser-QA für 1.8.1 verwendet Beispiel-Endstände und die echte Oberfläche: B
 Historische Integrationsprüfung 1.8.0: vollständige lokale Serverpartie mit zwei getrennten Clients nach 51 Würfen (Alex 38, Bea 28), passende eigene Rollen und gegenseitige Bilanz sowie echter Browser-Export ohne Raumzugänge. Bildnachweis 1.8.0 (private QA screenshot omitted). Physische Android-Abnahme bleibt offen.
 
 1.11.0: Beendete Partien aus der autorisierten Sammelübersicht werden mit tatsächlichem eigenen Spielerindex und Spiel-ID erfasst, auch wenn gerade ein anderer Raum gewählt ist. Es gibt keine laufenden Punktestände im Index. Deduplizierung über Spiel-ID, getrennte Spielarten und namensbasierte Gegnerbilanz bleiben erhalten. Raumwechsel/Bereinigung löschen keine lokalen Statistiken. Bereits überschriebene serverseitige Endstände werden dadurch nicht nachträglich rekonstruiert.
-

@@ -1,12 +1,17 @@
-import {COLORS,FIRST,LATER,score} from './engine.js';
+import {projectBonuses} from './bonus-fields.js';
+import {COLORS,FIRST,LATER,score,bonusFieldsEnabled,minesEnabled,projectMines} from './engine.js';
 export const HIDDEN_FEATURE='hidden-scores-v1';
 export const isScoreHidden=game=>!!game?.hiddenScores&&game.status!=='finished';
 export const isHidden=(game,pid,own)=>isScoreHidden(game)&&pid!==own;
 // Server and host keep full sheets. Guests only receive their own sheet until reveal.
 export function projectGame(game,own){
- if(!game||!game.hiddenScores||game.status==='finished')return game;
+ if(!game)return game;
+ if(!bonusFieldsEnabled(game)&&!minesEnabled(game)&&(!game.hiddenScores||game.status==='finished'))return game;
  const out=structuredClone(game);
- out.players=out.players.map((p,pid)=>isHidden(game,pid,own)?{id:p.id,name:p.name,hidden:true}:p);
+ if(bonusFieldsEnabled(game))out.bonuses=projectBonuses(game);
+ if(minesEnabled(game))out.mines=projectMines(game,own);
+ if(!game.hiddenScores||game.status==='finished')return out;
+ out.players=out.players.map((p,pid)=>isHidden(game,pid,own)?{id:p.id,name:p.name,hidden:true,...(p.left?{left:true,forfeit:p.forfeit,leftRound:p.leftRound}:{})}:p);
  out.log=out.log.map(entry=>entry.pid===own||(entry.pid===undefined&&entry.player===game.players[own]?.name&&game.players.filter(p=>p.name===entry.player).length===1)?entry:{round:entry.round,player:entry.player,hidden:true});
  out.announcements=(out.announcements||[]).map(event=>event.pid===own?event:((({points,...rest})=>rest)(event)));
  return out;

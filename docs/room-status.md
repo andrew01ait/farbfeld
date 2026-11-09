@@ -1,6 +1,8 @@
 # Raumstatus, Zuganzeige und Wartezeit
 
-<!-- farbfeld-version: 1.16.0 -->
+<!-- farbfeld-version: 1.17.0 -->
+
+Ausgestiegene werden als **Partie verlassen · −10 Punkte** angezeigt und nicht mehr als am Zug. Die laufende Gruppe behält feste Indizes; Online-Präsenz ist weiterhin getrennt vom freiwilligen Ausstieg. Internet-Gastgeberwechsel ist atomar, Offline-Gastgeber bleibt Relay. [Regeln](leaving.md).
 
 Ein gestarteter Internet-Rematch kann ab 1.15.0 einen einmaligen Hintergrund-Push an die anderen Teilnehmenden auslösen. Das ist kein zusätzlicher Präsenz-/Lobbyabruf; Polling und Pause im Hintergrund bleiben unverändert. Die neue Art verlangt den aktualisierten Worker und verwendet die bestehende Outbox samt konkreter Eventprüfung.
 

@@ -1,6 +1,10 @@
 # Development and deployment
 
-<!-- farbfeld-version: 1.16.0 -->
+<!-- farbfeld-version: 1.17.0 -->
+
+## Release 1.17.0
+
+40 atomic offline assets, no new migration, dependency, environment variable or Push kind. Bonusfields, Random, multiplayer mines and leave/host/last-player rules require each participant's actual matching 1.17 capability. Update installed PWAs normally and wait for offline readiness. 390 regressions, both API integrations, TypeScript and rendered twelve-size QA are documented in [Responsive QA](docs/responsive-qa.md). Configure your own hosting instance; GitHub publication does not deploy the original app. Physical two-phone/Hotspot and subjective balance testing remain separate.
 
 ## Release 1.16.0
 

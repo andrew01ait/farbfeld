@@ -1,3 +1,4 @@
+import {minesEnabled} from './engine.js';
 import {boardFor,LABELS,canAct,availableDice,resolveChoice,validateCells,findMove} from './engine.js';
 // Presentation state keeps the person taking a turn separate from the person viewing a sheet.
 export function turnOrder(game) {
@@ -5,19 +6,20 @@ export function turnOrder(game) {
 }
 export function nextLocalPlayer(game) {
   if (game.phase==='roll'||game.status==='finished') return game.active;
-  return turnOrder(game).find(i=>!game.submitted.includes(i))??game.active;
+  return turnOrder(game).find(i=>!game.players[i].left&&!game.submitted.includes(i))??game.active;
 }
 export function choosingPlayers(game) {
   if(game.status!=='playing')return [];
   if(game.phase==='roll')return [game.active];
   if(!game.submitted.includes(game.active))return [game.active];
-  return turnOrder(game).filter(i=>!game.submitted.includes(i));
+  return turnOrder(game).filter(i=>!game.players[i].left&&!game.submitted.includes(i));
 }
 export function mayInspect(game,requested,current) {
   if(game.hiddenScores&&game.status!=='finished'&&requested!==current)return false;
-  return game.mode!=='local'||game.status==='finished'||requested===current;
+  return game.mode!=='local'||minesEnabled(game)||game.status==='finished'||requested===current;
 }
 export function playerRole(game,index) {
+  if(game.players[index]?.left)return 'Ausgestiegen';
   if(game.status==='finished')return 'Ergebnis';
   if(game.submitted.includes(index))return 'Fertig ✓';
   if(game.mode==='local'&&index!==nextLocalPlayer(game))return 'Wartet';

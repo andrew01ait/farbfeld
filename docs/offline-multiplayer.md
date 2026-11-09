@@ -1,10 +1,18 @@
 # Offline auf zwei bis sechs Handys
 
-<!-- farbfeld-version: 1.16.0 -->
+<!-- farbfeld-version: 1.17.0 -->
+
+## Neu 1.17.0: Bonusfelder, Random und gemeinsame Minen
+
+Drei geheime **Bonusfelder** vergeben je +2 an alle ersten Finder desselben Wurfs; Bekanntgabe erst nach der gemeinsamen Wertung, Punkte bleiben trotz Minen erhalten. **Random** erzeugt bei jedem neuen Start ein gemeinsames, gespeichert fortsetzbares Brett. Die optionale **Mine** trifft ein gewähltes Zielfeld bei allen aktiven Gegnern, einmal pro Person für insgesamt fünf Punkte. Die Explosion dauert drei Sekunden; Schadensmarkierungen bleiben bis Ende des nächsten Wurfs. Leere Ziele verursachen beim jeweiligen Gegner keinerlei Schaden.
+
+**Partie verlassen** gibt sofort einen einmaligen Verlaufseintrag mit −10 Punkten und Niederlage. Die anderen spielen weiter; die letzte aktive Person gewinnt sofort. Im Internet wandert die Gastgeberrolle weiter. Offline bleibt das ursprüngliche Gastgeber-Handy als Zuschauer und Verbindung geöffnet; Verbindungsverlust pausiert sicher, ohne neue Autorität zu erfinden. Alle beteiligten Apps für neue Regeln auf 1.17.0 aktualisieren. [Bonusfelder](bonus-fields.md) · [Minen](mines.md) · [Random](random-board.md) · [Aussteigen](leaving.md).
+
+
 
 ## Neu 1.16.0: Offline-Testprotokoll und optionale Computer-Minen
 
-Ein freiwilliges lokales A/B-Testprotokoll hilft bei Offline-Kopplung und Spielabgleich; es ist aus Einstellungen und Kopplungsdialogen exportierbar. [Testanleitung und Datenschema](offline-diagnostics.md). Die neue Startoption **Minenangriff testen** gilt vorerst nur gegen den Computer: gegnerischer Farbabschluss schaltet einen einmaligen Angriff für fünf Punkte frei. Ein leeres Zielfeld ist ein vollständiger Fehlschlag ohne Nachbarschaden. [Regeln, verdeckte Zielwahl und Wertung](mines.md).
+Ein freiwilliges lokales A/B-Testprotokoll hilft bei Offline-Kopplung und Spielabgleich; es ist aus Einstellungen und Kopplungsdialogen exportierbar. [Testanleitung und Datenschema](offline-diagnostics.md). Die neue Startoption **Minenangriff testen** wurde in 1.16.0 zunächst gegen den Computer erprobt; ab 1.17.0 gilt sie für alle Mehrspielerarten: gegnerischer Farbabschluss schaltet einen einmaligen Angriff für fünf Punkte frei. Ein leeres Zielfeld ist ein vollständiger Fehlschlag ohne Nachbarschaden. [Regeln, verdeckte Zielwahl und Wertung](mines.md).
 
 
 Farbfeld bleibt eine öffentliche PWA. Nach dem offiziellen [Schmidt-Regelheft](https://www.schmidtspiele.de/files/Produkte/4/49327%20-%20Noch%20mal!/49327_Noch_Mal_DE.pdf) sind maximal sechs Personen vorgesehen; auf mehreren Handys werden Gruppen von zwei bis sechs unterstützt. Vorher auf jedem Handy die aktuelle App laden, **Offline bereit** abwarten und gegebenenfalls **Einstellungen → Auf Updates prüfen → Aktualisieren** wählen. Aktuelle Clientversion: [version.json](../public/version.json).
@@ -43,7 +51,7 @@ Der Gastgeber erzeugt Würfe einmal und verwaltet den verbindlichen Spielstand. 
 
 Fehlt ein Handy, pausiert die gesamte Gruppe. Auf dem ursprünglichen Gastgeber das fehlende Mitglied gezielt **Erneut koppeln**; andere Kanäle bleiben bestehen. Nach einem vollständigen Neustart die gespeicherte Direktpartie auf dem ursprünglichen Gastgeber fortsetzen und die bisherigen Gäste erneut koppeln. Neuere gespeicherte Stände werden nicht mit älteren Gast-/Hostkopien überschrieben.
 
-Bestätigte Direktstände bleiben auf jedem Handy unter `farbfeld.direct.v1`, Schema 1. Solo-, Computer- und Ein-Handy-Daten bleiben separat erhalten. Der lokale Backup-Export enthält keine Direkt- oder Raumzugänge. Ein lokaler Abbruch entfernt diesen Direktzugang; ein gemeinsamer laufender Abbruch kann bei bestehender Verbindung synchronisiert werden. Wartende Kopplungen lassen sich ebenfalls abbrechen.
+Bestätigte Direktstände bleiben auf jedem Handy unter `farbfeld.direct.v1`, Schema 1. Solo-, Computer- und Ein-Handy-Daten bleiben separat erhalten. Der lokale Backup-Export enthält keine Direkt- oder Raumzugänge. Die Ausstiegsaktion gibt −10 Punkte, während die übrigen weiterspielen. Ausgestiegene Gäste dürfen schließen; der ursprüngliche Gastgeber bleibt als Zuschauer/Relay geöffnet. Wartende Kopplungen können ohne Ergebnis verworfen werden. Für eine neue kleinere Gruppe nach dem Ende neu koppeln. [Details](leaving.md).
 
 ## Punkte, Varianten und Reaktionen
 

@@ -1,6 +1,14 @@
 # Internet-Spielräume
 
-<!-- farbfeld-version: 1.16.0 -->
+<!-- farbfeld-version: 1.17.0 -->
+
+## Neu 1.17.0: Bonusfelder, Random und gemeinsame Minen
+
+Drei geheime **Bonusfelder** vergeben je +2 an alle ersten Finder desselben Wurfs; Bekanntgabe erst nach der gemeinsamen Wertung, Punkte bleiben trotz Minen erhalten. **Random** erzeugt bei jedem neuen Start ein gemeinsames, gespeichert fortsetzbares Brett. Die optionale **Mine** trifft ein gewähltes Zielfeld bei allen aktiven Gegnern, einmal pro Person für insgesamt fünf Punkte. Die Explosion dauert drei Sekunden; Schadensmarkierungen bleiben bis Ende des nächsten Wurfs. Leere Ziele verursachen beim jeweiligen Gegner keinerlei Schaden.
+
+**Partie verlassen** gibt sofort einen einmaligen Verlaufseintrag mit −10 Punkten und Niederlage. Die anderen spielen weiter; die letzte aktive Person gewinnt sofort. Im Internet wandert die Gastgeberrolle weiter. Offline bleibt das ursprüngliche Gastgeber-Handy als Zuschauer und Verbindung geöffnet; Verbindungsverlust pausiert sicher, ohne neue Autorität zu erfinden. Alle beteiligten Apps für neue Regeln auf 1.17.0 aktualisieren. [Bonusfelder](bonus-fields.md) · [Minen](mines.md) · [Random](random-board.md) · [Aussteigen](leaving.md).
+
+
 
 Bei einer Revanche ist **Noch einmal spielen** nur der Weg zurück in die Lobby. Erst der nächste bestätigte Start informiert die anderen Teilnehmenden einmal per Push, auch wenn sie noch nicht dran sind. Benachrichtigungen müssen aktiviert und beide Apps auf 1.15.0 aktualisiert sein. Eigene Züge haben Vorrang, sichtbare Apps bleiben still und das Minutenlimit gilt. Derselbe Raumcode und persönliche Zugänge bleiben erhalten.
 
@@ -32,7 +40,7 @@ Der Gastgeber öffnet **Raumnamen ändern** in der Lobby oder tippt während des
 
 Vor dem Start können bis zu sechs Personen mit demselben Code beitreten. Nur der Gastgeber sieht **Entfernen** neben anderen Personen. Eine Rückfrage in der App erklärt, dass der bisherige Zugang ungültig wird. Das Entfernen ist keine dauerhafte Sperre: Mit Code darf die Person erneut beitreten und erhält einen neuen Zugang. Der Gastgeber bleibt im Raum.
 
-Während einer Partie ist die Gruppe fest. Nach Spielende wählt der Gastgeber **Noch einmal spielen**; danach stehen in derselben Lobby Brettauswahl und Besetzungsänderung wieder bereit. Falls eine Partie abgebrochen werden soll, führt der vorhandene gemeinsame Abbruch ebenfalls zurück zur Lobby.
+Während einer Partie kommen keine neuen Personen hinzu. Freiwilliges Aussteigen zählt −10 und lässt die übrigen weiterspielen. Der aktuelle Gastgeber öffnet nach Spielende mit **Noch einmal spielen** die Lobby. Ausgestiegene werden dabei entfernt; ihre alten Zugänge autorisieren nicht mehr. [Details](leaving.md).
 
 ## Spielbrett für die nächste Partie
 

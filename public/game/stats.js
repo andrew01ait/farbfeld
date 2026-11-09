@@ -1,16 +1,19 @@
+import {FORFEIT_SCORE} from './engine.js';
 const MODES=['solo','local','computer','room','direct'];
 export const statsCategory=mode=>mode==='solo'?'solo':mode==='computer'?'computer':['local','room','direct'].includes(mode)?'people':null;
 const sameName=name=>name.normalize('NFKC').trim().replace(/\s+/g,' ').toLocaleLowerCase('de');
 function record(value){
  if(!value||typeof value.id!=='string'||!value.id||value.id.length>200||!MODES.includes(value.mode)||!Number.isFinite(Date.parse(value.date))||!Number.isFinite(value.score)||Math.abs(value.score)>1000||!Array.isArray(value.players)||value.players.length<1||value.players.length>6)return null;
- if(!value.players.every(p=>typeof p?.name==='string'&&p.name.length<=24&&Number.isFinite(p.total)&&Math.abs(p.total)<=1000&&Number.isInteger(p.jokers)&&p.jokers>=0&&p.jokers<=8))return null;
- const players=value.players.map(p=>({name:p.name,total:p.total,jokers:p.jokers}));
+ const partial=value.forfeit===true;
+ if(!value.players.every(p=>typeof p?.name==='string'&&p.name.length<=24&&(partial&&p.hidden===true||Number.isFinite(p.total)&&Math.abs(p.total)<=1000&&Number.isInteger(p.jokers)&&p.jokers>=0&&p.jokers<=8)))return null;
+ const players=value.players.map(p=>partial&&p.hidden?{name:p.name,hidden:true,...(p.left?{left:true}:{})}:{name:p.name,total:p.left?FORFEIT_SCORE:p.total,jokers:p.jokers,...(p.left?{left:true}:{})});
  let ownPid=Number.isInteger(value.ownPid)&&value.ownPid>=0&&value.ownPid<players.length?value.ownPid:null;
  if(ownPid===null){
   if(['solo','local','computer'].includes(value.mode))ownPid=0;
   else {const matching=players.map((p,i)=>p.total===value.score?i:-1).filter(i=>i>=0);if(matching.length===1)ownPid=matching[0];}
  }
- return {id:value.id,date:new Date(value.date).toISOString(),mode:value.mode,boardId:['classic','river','mosaic'].includes(value.boardId)?value.boardId:'classic',score:value.score,ownPid,players};
+ if(partial&&(ownPid===null||players[ownPid].hidden||!players[ownPid].left))return null;
+ return {id:value.id,date:new Date(value.date).toISOString(),mode:value.mode,boardId:['classic','river','mosaic','random'].includes(value.boardId)?value.boardId:'classic',score:players[ownPid]?.left?FORFEIT_SCORE:value.score,ownPid,players,...(partial?{forfeit:true}:{})};
 }
 export function validStats(value){return !!value&&value.schema===1&&Array.isArray(value.games)&&value.games.every(game=>record(game)!==null);}
 export function mergeStats(value,entries=[]){
@@ -18,7 +21,7 @@ export function mergeStats(value,entries=[]){
  for(const item of [...(validStats(value)?value.games:[]),...entries]){const cleaned=record(item);if(cleaned&&!games.has(cleaned.id))games.set(cleaned.id,cleaned);}
  return {schema:1,games:[...games.values()]};
 }
-const compare=(a,b)=>a.total-b.total||a.jokers-b.jokers;
+const compare=(a,b)=>Number(!!b.left)-Number(!!a.left)||(a.left&&b.left?0:a.total-b.total||a.jokers-b.jokers);
 function orderedGames(value,category){
  if(!['people','computer','solo'].includes(category))throw new RangeError('Unbekannter Statistikbereich.');
  const games=validStats(value)?value.games.map(record).filter(game=>statsCategory(game.mode)===category):[];
@@ -33,7 +36,7 @@ export function summarizeStats(value,category='people'){
   if(game.mode==='solo')continue;
   const own=game.players[game.ownPid];
   if(!own){result.unknown++;result.currentStreak=0;continue;}
-  const best=game.players.reduce((a,b)=>compare(a,b)>=0?a:b),won=compare(own,best)===0;
+  const best=game.players.reduce((a,b)=>compare(a,b)>=0?a:b),won=!own.left&&compare(own,best)===0;
   if(won){result.wins++;result.currentStreak++;result.longestStreak=Math.max(result.longestStreak,result.currentStreak);if(game.players.filter(p=>compare(p,best)===0).length>1)result.sharedWins++;}
   else {result.losses++;result.currentStreak=0;}
   game.players.forEach((other,pid)=>{
@@ -60,7 +63,7 @@ export function summarizeOpponent(value,name,category='people'){
    result.played++;total+=own.total;result.best=result.best===null?own.total:Math.max(result.best,own.total);
    if(outcome==='win'){result.wins++;result.currentStreak++;result.longestStreak=Math.max(result.longestStreak,result.currentStreak);}
    else{result[outcome==='draw'?'draws':'losses']++;result.currentStreak=0;}
-   result.recent.unshift({date:game.date,boardId:game.boardId,mode:game.mode,score:own.total,opponentScore:other.total,jokers:own.jokers,opponentJokers:other.jokers,outcome});
+   result.recent.unshift({date:game.date,boardId:game.boardId,mode:game.mode,score:own.total,opponentScore:other.hidden?null:other.total,jokers:own.jokers,opponentJokers:other.jokers,outcome});
    result.recent.length=Math.min(5,result.recent.length);
   });
  }

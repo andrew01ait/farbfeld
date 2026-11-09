@@ -14,6 +14,7 @@ export function boardLayout(width,availableHeight,landscape,metrics={}) {
   const cellHeight=landscape?Math.max(minimumHeight,Math.min(cellWidth,usableRows/7)):cellWidth;
   return {width:boardWidth,cellWidth,cellHeight,height:7*cellHeight+labelHeight+scoreHeight+8*rowGap};
 }
+export const innerBoardWidth=(width,left=0,right=0)=>Math.max(1,Math.floor(width-left-right));
 export class BoardView {
   constructor(onChange=()=>{}) {
     this.scale=1;this.baseWidth=638;this.baseRowHeight=null;this.orientation=null;this.onChange=onChange;
@@ -71,7 +72,8 @@ export class BoardView {
     const colorSpace=colorsVisible?colorBar.getBoundingClientRect().height+padding(colorBar,'marginTop')+padding(colorBar,'marginBottom'):0;
     const bottomSpace=padding(this.scroll,'paddingBottom')+padding(card,'paddingBottom')+padding(card,'borderBottomWidth')+padding(shell,'paddingBottom')+safeBottom+colorSpace+2;
     const available=Math.max(1,visibleBottom-top-bottomSpace);
-    const layout=boardLayout(this.scroll.clientWidth,available,this.landscape,{
+    const scrollStyle=getComputedStyle(this.scroll),innerWidth=innerBoardWidth(this.scroll.clientWidth,parseFloat(scrollStyle.paddingLeft)||0,parseFloat(scrollStyle.paddingRight)||0);
+    const layout=boardLayout(innerWidth,available,this.landscape,{
       labelHeight:this.board.querySelector('.col-label')?.getBoundingClientRect().height??15,
       scoreHeight:this.board.querySelector('.col-score')?.getBoundingClientRect().height??24,
       rowGap:parseFloat(styles.rowGap)||0,columnGap:parseFloat(styles.columnGap)||0,
@@ -116,7 +118,8 @@ export class BoardView {
     if(!this.scroll)return;
     this.scale=1;
     this.measure(false);
-    this.zoom(this.landscape?1:this.scroll.clientWidth/this.baseWidth);
+    const styles=getComputedStyle(this.scroll),width=innerBoardWidth(this.scroll.clientWidth,parseFloat(styles.paddingLeft)||0,parseFloat(styles.paddingRight)||0);
+    this.zoom(this.landscape?1:width/this.baseWidth);
     this.scroll.scrollLeft=0;
   }
   focus(){this.zoom(1);}

@@ -7,7 +7,7 @@ export const REMATCH_PUSH_CAPABILITY='rematch-push-v1';
 
 // Only a host-confirmed Internet rematch, never merely returning to the lobby.
 export function rematchNoticeForGame(game,pid){
- if(game?.mode!=='room'||!game.gameId||game.status!=='playing'||game.round!==1||!Number.isInteger(pid)||!game.players?.[pid]||game.submitted?.includes(pid)||typeof game.rematchOf!=='string'||!game.rematchOf||game.rematchOf===game.gameId||!game.players.some(player=>player.id===game.rematchBy)||game.players[pid].id===game.rematchBy)return null;
+ if(game?.mode!=='room'||!game.gameId||game.status!=='playing'||game.round!==1||!Number.isInteger(pid)||!game.players?.[pid]||game.players[pid].left||game.submitted?.includes(pid)||typeof game.rematchOf!=='string'||!game.rematchOf||game.rematchOf===game.gameId||!game.players.some(player=>player.id===game.rematchBy)||game.players[pid].id===game.rematchBy)return null;
  return {event:game.gameId+':rematch',kind:'rematch',title:'Farbfeld · Revanche gestartet',body:'Eure neue Partie ist gestartet. Spielraum öffnen.',gameId:game.gameId,round:1};
 }
 
@@ -21,7 +21,7 @@ export function noticeForGameEvent(game,pid,event){
 // A roll and the active player's following choice are one opportunity.
 // Never include scores, sheets, names, credentials or emojis in lock-screen text.
 export function noticeForGame(game,pid){
- if(!game?.gameId||!Number.isInteger(pid)||!game.players?.[pid]||!['room','direct'].includes(game.mode))return null;
+ if(!game?.gameId||!Number.isInteger(pid)||!game.players?.[pid]||game.players[pid].left||!['room','direct'].includes(game.mode))return null;
  if(game.status==='finished')return {event:game.gameId+':finished',kind:'finished',title:'Farbfeld · Partie beendet',body:'Eure Partie ist beendet. Ergebnis ansehen.',gameId:game.gameId,round:game.round};
  if(game.status!=='playing')return null;
  const ready=game.phase==='roll'?game.active===pid:game.phase==='choose'&&!game.submitted.includes(pid)&&(game.active===pid||game.submitted.includes(game.active));

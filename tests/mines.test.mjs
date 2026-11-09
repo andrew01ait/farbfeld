@@ -5,7 +5,7 @@ import {BOARDS} from '../public/game/boards.js';
 import {createComputerGame,stepComputer} from '../public/game/computer.js';
 import {createGame,neighbors,findMove} from '../public/game/engine.js';
 import {scoreBreakdown} from '../public/game/game-info.js';
-import {mineSetupHtml,mineControlsHtml,mineTargetHtml} from '../public/game/mine-ui.js';
+import {mineSetupHtml,mineControlsHtml,mineTargetHtml,mineDamage,mineDamageHtml,playMineBlast,MINE_ANIMATION_MS} from '../public/game/mine-ui.js';
 
 function choosing({hidden=false,board='classic',actor=0}={}){
  const g=createComputerGame(hidden,board,'easy',true);g.phase='choose';g.active=actor;g.dice={colors:['g','b','o'],numbers:[1,2,3]};return g;
@@ -18,13 +18,13 @@ function valuableTarget(board='classic'){
  finishRound(g);g.active=0;g.phase='choose';g.dice={colors:['g','b','o'],numbers:[1,2,3]};
  return {g,target};
 }
-test('Mines are selectable only before a new two-player computer game; other modes and legacy saves stay standard',()=>{
+test('Mines are selectable only before multiplayer games; legacy saves stay standard',()=>{
  for(const board of BOARDS.map(board=>board.id)){
   assert.equal(minesEnabled(createComputerGame(false,board)),false);
   assert(minesEnabled(createComputerGame(false,board,'hard',true)));
  }
- assert.throws(()=>enableMines(createGame(['A','B'],'local')),/Computer/);
- assert.throws(()=>enableMines(createGame(['A','B'],'room')),/Computer/);
+ assert(minesEnabled(enableMines(createGame(['A','B'],'local'))));
+ assert(minesEnabled(enableMines(createGame(['A','B'],'room'))));assert.throws(()=>enableMines(createGame(['Solo'],'solo')),/zwei bis sechs/);
  assert.throws(()=>enableMines(rollGame(createComputerGame())),/neuen Partie/);
  const old=createComputerGame();assert(validMineState(old));assert.equal(score(old.players[0],old).mineCost,undefined);
  assert.match(mineSetupHtml(),/id="mine-enabled"/);assert(!mineSetupHtml().includes(' checked'));assert(mineSetupHtml(true).includes(' checked'));
@@ -124,7 +124,7 @@ test('Hidden targeting and its HTML are identical for different private opponent
  assert.deepEqual(mineTargetView(a,0),mineTargetView(b,0));assert.equal(mineTargetHtml(a,52),mineTargetHtml(b,52));
  assert(!mineTargetHtml(a,52).includes('mine-marked'));assert(!mineTargetHtml(a,52).includes('angekreuzt'));assert(!mineTargetHtml(a,52).includes('×'));
  a.hiddenScores=false;assert(mineTargetHtml(a,52).includes('mine-marked'));
- assert.match(mineTargetHtml(b),/Zielfeld leer, passiert nichts/);
+ assert.match(mineTargetHtml(b),/Leeres Ziel:<\/b> kein Schaden, auch nicht an Nachbarn/);
 });
 test('A hidden computer chooses blindly without reading human marks, bonus totals or jokers',()=>{
  const g=armed({hidden:true,actor:1});
@@ -142,9 +142,9 @@ test('The computer spends its one mine as a separate saveable step, then makes i
  const moved=stepComputer(attacked,()=>0);assert(moved.submitted.includes(1));assert.equal(moved.mines.used[1],true);assert.equal(moved.mines.lastBlast.turn,attacked.mines.lastBlast.turn);
 });
 test('Malformed mine metadata is rejected and a locked game never renders a usable attack button',()=>{
- const g=choosing();assert(validMineState(g));assert.match(mineControlsHtml(g),/disabled/);
+ const g=choosing();assert(validMineState(g));assert(!mineControlsHtml(g).includes('data-action="mine-aim"'));
  const bad=structuredClone(g);bad.mines.used[0]=true;assert(!validMineState(bad));
- const network=structuredClone(g);network.mode='room';assert(!validMineState(network));assert.equal(mineControlsHtml(network),'');
+ const network=structuredClone(g);network.mode='solo';assert(!validMineState(network));assert.equal(mineControlsHtml(network),'');
  g.mines.unlocked[0]=true;assert(!mineControlsHtml(g).includes(' disabled'));
 });
 
@@ -163,5 +163,32 @@ test('Complete opted-in games on every board keep legal moves, bounded attacks, 
   }
   assert.equal(g.status,'finished',board);assert(spent.every(n=>n<=1));
   g.players.forEach(p=>{const s=score(p,g);assert.equal(s.total,s.columns+s.colors+s.jokers-s.penalty-s.mineCost);});
+ }
+});
+
+test('Damage markers last through the next full round, survive reload and never reveal a hidden opponent',()=>{
+ const g=armed();g.players[1].marks[52]=true;blastNeighbors(52).forEach(i=>g.players[1].marks[i]=true);const next=applyMineAttack(g,0,52,()=>0),round=next.round;
+ const visible=mineDamage(next,1,0);assert.deepEqual(visible.cells,next.mines.lastBlast.cells);assert.equal(visible.untilRound,round+1);assert.equal(mineDamage(next,0,0),null);
+ const saved=JSON.parse(JSON.stringify(next));saved.round++;assert(validMineState(saved));assert(mineDamage(saved,1,0));saved.round++;assert.equal(mineDamage(saved,1,0),null);
+ next.hiddenScores=true;assert.equal(mineDamage(next,1,0),null);assert(mineDamage(next,1,1));assert.match(mineDamageHtml(visible),/Ende des nächsten Wurfs/);
+ const old=structuredClone(next);delete old.mines.lastBlast.round;delete old.mines.blasts;assert(validMineState(old));assert.equal(mineDamage(old,1,1),null);
+});
+test('Both attacks retain their own one-round evidence even after the second explosion',()=>{
+ let g=armed();g.players.forEach(p=>p.marks[52]=true);g=applyMineAttack(g,0,52,()=>0);g=applyMove(g,0,{pass:true});g=applyMineAttack(g,1,52,()=>0);
+ assert(validMineState(g));assert.equal(g.mines.blasts.length,2);assert.deepEqual(mineDamage(g,0,0).cells,[52]);assert.deepEqual(mineDamage(g,1,0).cells,[52]);
+ const bad=structuredClone(g);bad.mines.blasts[0].by=1;assert(!validMineState(bad));
+ const miss=applyMineAttack(armed(),0,52,()=>0);assert.equal(mineDamage(miss,1,0),null);
+});
+test('A mine is visibly ready after unlock, remains emphasized after reload, then loses the ready state when spent',()=>{
+ const g=choosing();assert(!mineControlsHtml(g).includes('mine-ready-badge'));g.mines.unlocked[0]=true;
+ assert.match(mineControlsHtml(g,{highlight:true}),/mine-new/);assert.match(mineControlsHtml(g),/bereit – jetzt freigeschaltet/);assert.match(mineControlsHtml(JSON.parse(JSON.stringify(g))),/jetzt freigeschaltet/);
+ const used=applyMineAttack(g,0,52,()=>0);assert(!mineControlsHtml(used).includes('mine-ready-badge'));
+});
+test('The three-second effect scopes cell animation to the rendered victim and respects reduced motion',()=>{
+ for(const reduced of [false,true]){
+  let delay=null,removed=0,animated=0,selector='';const effect={setAttribute(){},remove(){removed++;}};
+  const document={querySelector(){return null;},createElement(){return effect;},body:{append(){}},querySelectorAll(value){selector=value;return [{animate(){animated++;}}];}};
+  let callback;playMineBlast({by:1,targetPid:0},{document,matchMedia:()=>({matches:reduced}),setTimeout(fn,ms){delay=ms;callback=fn;}});
+  assert.equal(delay,3000);assert.equal(delay,MINE_ANIMATION_MS);assert.equal(removed,0);callback();assert.equal(removed,1);assert.equal(animated,reduced?0:1);if(!reduced)assert.match(selector,/data-player-board="0"/);
  }
 });
