@@ -1,0 +1,5 @@
+# Optional local Web Push configuration. Copy to .dev.vars and fill in your own values.
+# Keep these unset to run without Internet push. Never commit .dev.vars.
+# FARBFELD_VAPID_PUBLIC_KEY=your-own-public-key
+# FARBFELD_VAPID_PRIVATE_KEY=your-own-private-key
+# FARBFELD_VAPID_SUBJECT=https://example.com/contact

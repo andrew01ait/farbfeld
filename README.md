@@ -71,3 +71,7 @@ Full online functionality needs a Worker-compatible backend and a D1 database bo
 ## Licensing
 
 A project-wide license has not yet been selected. Public repository visibility alone is not an open-source license grant. Existing third-party notices are retained, including the QR libraries under [public/game/vendor](public/game/vendor/README.md), the stylesheet in `vendor/`, and the build support's own license notice.
+
+## Source publication and contribution
+
+Public source: [andrew01ait/farbfeld](https://github.com/andrew01ait/farbfeld). Read [CONTRIBUTING.md](CONTRIBUTING.md), [the source/documentation workflow](docs/source-workflow.md) and [the publication record](docs/publication.md). Shared technical guides are maintained alongside code; internal operational records and public setup examples have distinct roles. GitHub pushes do not automatically deploy the hosted application.

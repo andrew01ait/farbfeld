@@ -1,0 +1,1 @@
+ALTER TABLE `notification_devices` ADD `delivery` text;

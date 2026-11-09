@@ -1,0 +1,1 @@
+ALTER TABLE `notification_devices` ADD `rematch_ready` integer DEFAULT 0 NOT NULL;

@@ -1,0 +1,21 @@
+[
+  {
+    "name": "qrcode-generator",
+    "version": "2.0.4",
+    "tarball": "https://registry.npmjs.org/qrcode-generator/-/qrcode-generator-2.0.4.tgz",
+    "integrity": "sha512-mZSiP6RnbHl4xL2Ap5HfkjLnmxfKcPWpWe/c+5XxCuetEenqmNFf1FH/ftXPCtFG5/TDobjsjz6sSNL0Sr8Z9g==",
+    "sha256": "ea91d7118a5395289170da848b7c6758b996163bfbccf312591ab65a4911b7c0",
+    "localFile": "qrcode.js",
+    "modification": "Unmodified upstream dist/qrcode.mjs, renamed to qrcode.js; prepared original was byte-identical."
+  },
+  {
+    "name": "jsqr",
+    "version": "1.4.0",
+    "tarball": "https://registry.npmjs.org/jsqr/-/jsqr-1.4.0.tgz",
+    "integrity": "sha512-dxLob7q65Xg2DvstYkRpkYtmKm2sPJ9oFhrhmudT1dZvNFFTlroai3AWSpLey/w5vMcLBXRgOJsbXpdN9HzU/A==",
+    "upstreamSha256": "bc40c8a15196236b2314db0856f72ca0b49980cd5413b8c852a7349f5fee0859",
+    "localFile": "jsqr.js",
+    "sha256": "c4287c32aafd0720f3f5afc571d4acb733c9c3447d1b86e9bdf76953131146c1",
+    "modification": "Prepended local module/exports bindings and appended an ES default export; upstream UMD bytes unchanged."
+  }
+]

@@ -1,0 +1,76 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1793019130291,
+      "tag": "0000_superb_sinister_six",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1793053396995,
+      "tag": "0001_serious_morbius",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1793478787624,
+      "tag": "0002_fantastic_hardball",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1793620937627,
+      "tag": "0003_young_mattie_franklin",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1793773490465,
+      "tag": "0004_curious_young_avengers",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1793831503083,
+      "tag": "0005_tiresome_malcolm_colcord",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1793866974652,
+      "tag": "0006_nappy_cyclops",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1793879129154,
+      "tag": "0007_talented_sir_ram",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "6",
+      "when": 1794166721420,
+      "tag": "0008_nebulous_dexter_bennett",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "6",
+      "when": 1794177964567,
+      "tag": "0009_unique_stryfe",
+      "breakpoints": true
+    }
+  ]
+}

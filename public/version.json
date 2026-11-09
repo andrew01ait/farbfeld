@@ -1,0 +1,16 @@
+{
+  "name": "Farbfeld",
+  "version": "1.15.0",
+  "releaseDate": "2026-11-08",
+  "offlineAssetCount": 36,
+  "directProtocol": 2,
+  "savedGameSchema": 1,
+  "physicalAndroidPushVerified": true,
+  "androidPushVerification": {
+    "scope": "internet-self-test-and-automatic-turn",
+    "confirmedBy": "user-and-device-receipt",
+    "date": "2026-11-08",
+    "automaticBackgroundTurnVerified": true,
+    "automaticRematchVerified": false
+  }
+}
