@@ -1,3 +1,4 @@
+import {rtcFacts} from './direct-diagnostics.js';
 import {DIRECT_PROTOCOL,directId,validSnapshot} from './direct-game.js';
 export const LAN_RTC_CONFIG=Object.freeze({iceServers:[],iceTransportPolicy:'all',bundlePolicy:'max-bundle'});
 export function validateHandshake(value,kind){
@@ -17,28 +18,32 @@ export function waitForIce(pc,timeout=20000,signal=null){
   });
 }
 export class DirectConnection{
-  constructor({onState=()=>{},onMessage=()=>{},onReady=()=>{},Peer=globalThis.RTCPeerConnection}={}){
+  constructor({onState=()=>{},onMessage=()=>{},onReady=()=>{},onDiagnostic=()=>{},Peer=globalThis.RTCPeerConnection}={}){
     if(!Peer)throw Error('Dieser Browser unterstützt keine Direktverbindung. Bitte aktuelles Chrome auf Android verwenden.');
-    this.onState=onState;this.onMessage=onMessage;this.onReady=onReady;this.Peer=Peer;this.pc=null;this.channel=null;this.opened=false;this.timer=null;this.closed=false;
+    this.onDiagnostic=onDiagnostic;this.lastDiagnostic='';this.onState=onState;this.onMessage=onMessage;this.onReady=onReady;this.Peer=Peer;this.pc=null;this.channel=null;this.opened=false;this.timer=null;this.closed=false;
   }
+  trace(extra={}){try{const facts={...rtcFacts(this),...extra},key=JSON.stringify(facts);if(key!==this.lastDiagnostic){this.lastDiagnostic=key;this.onDiagnostic('rtc',facts);}}catch{}}
   setup(){
     this.close(false);this.closed=false;this.opened=false;this.operation=new AbortController();
     const pc=this.pc=new this.Peer({...LAN_RTC_CONFIG,iceServers:[]});
     const changed=()=>this.update();
+    pc.addEventListener('icegatheringstatechange',()=>this.trace());
+    pc.addEventListener('icecandidateerror',event=>this.trace({errorCode:event.errorCode}));
     pc.addEventListener('connectionstatechange',changed);pc.addEventListener('iceconnectionstatechange',changed);
     pc.addEventListener('datachannel',e=>this.bind(e.channel));
-    this.onState('preparing');return pc;
+    this.onState('preparing');this.trace();return pc;
   }
   bind(channel){
     if(channel.label!=='farbfeld'){channel.close();return;}
     this.channel=channel;
     channel.addEventListener('open',()=>this.update());
     channel.addEventListener('close',()=>this.update());
-    channel.addEventListener('error',()=>this.update());
+    channel.addEventListener('error',()=>{this.trace({error:'network'});this.update();});
     channel.addEventListener('message',event=>{if(!this.closed)this.onMessage(event.data);});
   }
   update(){
     if(this.closed)return;
+    this.trace();
     const state=this.pc?.connectionState,ice=this.pc?.iceConnectionState;
     const good=this.channel?.readyState==='open'&&state==='connected'&&['connected','completed'].includes(ice);
     if(good){
@@ -53,30 +58,30 @@ export class DirectConnection{
   }
   connectTimeout(){
     if(this.timer)return;
-    this.timer=setTimeout(()=>{this.timer=null;if(!this.opened)this.onState('failed');},30000);
+    this.timer=setTimeout(()=>{this.timer=null;if(!this.opened){this.trace({error:'connection-timeout'});this.onState('failed');}},30000);
   }
   async offer(record,appVersion,pid=1){
     const pc=this.setup();this.connectionId=directId();this.sessionId=record.snapshot.sessionId;
     this.bind(pc.createDataChannel('farbfeld',{ordered:true}));
     await pc.setLocalDescription(await pc.createOffer());
-    const description=await waitForIce(pc,20000,this.operation.signal);
+    const description=await waitForIce(pc,20000,this.operation.signal);this.trace({stage:'offer-ready'});
     return {protocol:DIRECT_PROTOCOL,kind:'offer',appVersion,sessionId:this.sessionId,connectionId:this.connectionId,pid,secret:pid===1?record.secret:record.guestSecrets[pid],members:record.snapshot.members,hostName:record.snapshot.members[0].name,description};
   }
   async answer(offer,appVersion){
     validateHandshake(offer,'offer');const pc=this.setup();this.connectionId=offer.connectionId;this.sessionId=offer.sessionId;
     await pc.setRemoteDescription(offer.description);await pc.setLocalDescription(await pc.createAnswer());
-    const description=await waitForIce(pc,20000,this.operation.signal);if(this.closed)throw Error('Die Kopplung wurde abgebrochen.');this.onState('connecting');this.connectTimeout();
+    const description=await waitForIce(pc,20000,this.operation.signal);if(this.closed)throw Error('Die Kopplung wurde abgebrochen.');this.trace({stage:'answer-ready'});this.onState('connecting');this.connectTimeout();
     return {protocol:DIRECT_PROTOCOL,kind:'answer',appVersion,sessionId:this.sessionId,connectionId:this.connectionId,description};
   }
   async accept(answer){
     validateHandshake(answer,'answer');
     if(answer.sessionId!==this.sessionId||answer.connectionId!==this.connectionId)throw Error('Diese Antwort gehört zu einem älteren Angebot. Bitte den aktuellen Antwort-QR scannen.');
     if(!this.pc||this.pc.signalingState!=='have-local-offer')throw Error('Bitte zuerst ein neues Angebot auf diesem Gastgeber-Handy erzeugen.');
-    await this.pc.setRemoteDescription(answer.description);if(this.closed)throw Error('Die Kopplung wurde abgebrochen.');this.onState('connecting');this.connectTimeout();
+    await this.pc.setRemoteDescription(answer.description);if(this.closed)throw Error('Die Kopplung wurde abgebrochen.');this.trace({stage:'answer-accepted'});this.onState('connecting');this.connectTimeout();
   }
   send(data){
     if(!this.opened||this.channel?.readyState!=='open'||this.channel.bufferedAmount>1000000)throw Error('Die Direktverbindung ist unterbrochen.');
     this.channel.send(data);return true;
   }
-  close(notify=true){this.closed=true;this.opened=false;this.operation?.abort();clearTimeout(this.timer);this.timer=null;this.channel?.close();this.pc?.close();this.channel=null;this.pc=null;if(notify)this.onState('closed');}
+  close(notify=true){this.closed=true;this.opened=false;this.operation?.abort();clearTimeout(this.timer);this.timer=null;this.channel?.close();this.pc?.close();this.trace();this.channel=null;this.pc=null;if(notify)this.onState('closed');}
 }

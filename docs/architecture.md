@@ -1,6 +1,11 @@
 # Architektur
 
-<!-- farbfeld-version: 1.15.0 -->
+<!-- farbfeld-version: 1.16.0 -->
+
+## Neu 1.16.0: Offline-Testprotokoll und optionale Computer-Minen
+
+Ein freiwilliges lokales A/B-Testprotokoll hilft bei Offline-Kopplung und Spielabgleich; es ist aus Einstellungen und Kopplungsdialogen exportierbar. [Testanleitung und Datenschema](offline-diagnostics.md). Die neue Startoption **Minenangriff testen** gilt vorerst nur gegen den Computer: gegnerischer Farbabschluss schaltet einen einmaligen Angriff für fünf Punkte frei. Ein leeres Zielfeld ist ein vollständiger Fehlschlag ohne Nachbarschaden. Nach einem Treffer gehen Erstboni sofort an den verbleibenden vollständigen Halter; ohne Halter werden sie erneut frei. Wiedervervollständigen bei bestehendem Halter erhält den Späterbonus. [Regeln, verdeckte Zielwahl und Wertung](mines.md).
+
 
 ## Revanche-Ereignis 1.15.0
 
@@ -81,7 +86,7 @@ QR-Daten enthalten vollständige Angebote/Antworten mit lokalen ICE-Kandidaten. 
 | `farbfeld.direct.v1` | Direktstand und persönliche Kopplungsdaten | dieses Gerät, nicht im Export |
 | `farbfeld.reactions.seen.v1` | begrenzte Anzeigecursor für Raumreaktionen | dieses Gerät, außerhalb der Spielbackups |
 | `farbfeld.prefs.v1`, `farbfeld.history.v1` | Design/Optionen und Ergebnisse | dieses Gerät, lokaler Export |
-| Offline-Cache `farbfeld-v<Version>` | 36 statische Dateien | atomarer Service-Worker-Cache |
+| Offline-Cache `farbfeld-v<Version>` | 38 statische Dateien | atomarer Service-Worker-Cache |
 | IndexedDB `farbfeld.notifications.v1` | Opt-in, Gerätegeheimnis, Deduplizierung | Notification-Worker, nicht im Export |
 | D1 `room_presence` | gedrosselte Rückmeldungen je Raum/Mitglied, getrennt von Zugversionen | authentifizierter Raumzugang |
 | D1 `rooms` | Raumzustand, Version, letzte Nutzung und Bereinigungstermin | autorisierte Spieler-API |

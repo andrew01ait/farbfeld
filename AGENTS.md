@@ -1,6 +1,6 @@
 # Farbfeld contributor instructions
 
-<!-- farbfeld-version: 1.15.0 -->
+<!-- farbfeld-version: 1.16.0 -->
 
 This is the public source snapshot for Farbfeld. Keep changes scoped to the requested feature. Do not infer authorization to change or redeploy an existing hosted installation from a change to this repository.
 
@@ -40,3 +40,8 @@ This is the public source snapshot for Farbfeld. Keep changes scoped to the requ
 - Maintain [CONTRIBUTING.md](CONTRIBUTING.md), [the source workflow](docs/source-workflow.md) and [the publication record](docs/publication.md), together with the existing feature guides. They are included in the release/version/link guard.
 - Keep shared technical behavior aligned between the hosted source and GitHub through reviewed changes. Preserve their separate history, environment manifests and public/private documentation boundaries. Do not assume automatic synchronization or deployment.
 - A documentation-only/source-publication change keeps the application version and does not by itself release a changed application. Record the actual verification, public commit and separately deployed state without claiming they are identical.
+
+## Offline diagnostics and computer mine variant
+
+- Keep the diagnostic recorder explicitly opt-in, local, bounded to 300 events/30 minutes and expired at next access after 24 hours. Export A/B/test/network enums and strictly allowlisted state facts only; no SDP, candidate addresses, credentials, raw messages/errors, names, scores or sheets. Diagnostic failures must not affect gameplay. No new background/network polling. Maintain docs/offline-diagnostics.md and its privacy/reload/timeout regressions.
+- Mines remain opt-in at the start of a new two-player computer match. No human multiplayer rollout. A completed colour unlocks the other player's single mine; extra action before normal move, five points even on a miss. An empty centre removes no neighbouring marks. Hits choose three to five occupied eight-way neighbours, clipped to availability. Preserve spent jokers, game/save compatibility and finished games. Transfer the first column/colour bonus to the sole remaining completed holder; if nobody holds it, make the full bonus available again. Re-completion while another holder remains earns the later bonus. Never award pending marks before shared round scoring. Hidden aiming and AI targeting must not read or reveal private opponent marks; animations do not reveal hidden hit counts/positions. Maintain docs/mines.md and regression coverage.

@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
-export const DOCUMENTS=['README.md','deployment.md','AGENTS.md','CHANGELOG.md','docs/README.md','docs/architecture.md','docs/flows.md','docs/notifications.md','docs/versions.md','docs/offline-multiplayer.md','docs/internet-rooms.md','docs/statistics.md','docs/room-status.md','docs/responsive-qa.md','docs/reactions.md','docs/computer.md','CONTRIBUTING.md','docs/source-workflow.md','docs/publication.md'];
+export const DOCUMENTS=['README.md','deployment.md','AGENTS.md','CHANGELOG.md','docs/README.md','docs/architecture.md','docs/flows.md','docs/notifications.md','docs/versions.md','docs/offline-multiplayer.md','docs/internet-rooms.md','docs/statistics.md','docs/room-status.md','docs/responsive-qa.md','docs/reactions.md','docs/computer.md','CONTRIBUTING.md','docs/source-workflow.md','docs/publication.md','docs/offline-diagnostics.md','docs/mines.md'];
 const root=fileURLToPath(new URL('../',import.meta.url));
 export function checkRelease(){
  const errors=[],read=file=>fs.readFileSync(path.join(root,file),'utf8');

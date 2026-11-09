@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import {DirectDiagnostics} from '../public/game/direct-diagnostics.js';
 import {DirectSession} from '../public/game/direct.js';
 import {DIRECT_PROTOCOL,validRecord} from '../public/game/direct-game.js';
 import {decodeQrText} from '../public/game/qr.js';
@@ -14,7 +15,7 @@ class TestConnection{
  close(notify=true){const peer=this.peer;this.opened=false;if(notify)this.onState('closed');if(peer?.opened){peer.opened=false;peer.onState('disconnected');}}
 }
 const wait=async predicate=>{for(let i=0;i<1500;i++){if(predicate())return;await new Promise(resolve=>setTimeout(resolve,1));}throw Error('test timeout');};
-function fixture(records={}){
+function fixture(records={},diagnostics={}){
  let internet=false,calls=0;const saved={},errors=[],signals=new Map(),clients=[];
  const fetcher=async(path,options)=>{
   calls++;if(!internet)throw Error('Kein Internet');const b=JSON.parse(options.body);let value={};
@@ -25,7 +26,7 @@ function fixture(records={}){
   if(b.action==='close')signals.delete(b.code);
   return Response.json(value);
  };
- const create=(role,record)=>{const session=new DirectSession({saved:record,version:'1.2.0',Connection:TestConnection,fetcher,save:r=>{saved[role]=structuredClone(r);},onError:e=>errors.push(e)});clients.push(session);return session;};
+ const create=(role,record)=>{const session=new DirectSession({diagnostics:diagnostics[role],saved:record,version:'1.2.0',Connection:TestConnection,fetcher,save:r=>{saved[role]=structuredClone(r);},onError:e=>errors.push(e)});clients.push(session);return session;};
  const host=create('host',records.host),guest=create('guest',records.guest);
  return {host,guest,saved,errors,create,get calls(){return calls;},setInternet(value){internet=value;},dispose(){clients.forEach(c=>c.dispose());}};
 }
@@ -326,4 +327,24 @@ test('Gespeicherte verdeckte Direktstände setzen nach Neustart die eigene Rolle
   assert.equal(clients[1].snapshot.game.players[1].marks.length,105);assert.equal(clients[1].snapshot.game.players[2].marks,undefined);
   assert.equal(clients[2].snapshot.game.players[2].marks.length,105);assert.equal(clients[2].snapshot.game.players[0].marks,undefined);
  }finally{f.dispose();}
+});
+
+
+test('Opt-in logs on both phones capture pairing, committed revisions and recovery with no HTTP or private payloads',async()=>{
+ const make=(device)=>{const values=new Map(),storage={getItem:k=>values.get(k)??null,setItem:(k,v)=>values.set(k,v),removeItem:k=>values.delete(k)};const log=new DirectDiagnostics({version:'1.16.0',storage});log.start({device,test:3,network:'hotspot-a'});return log;};
+ const a=make('A'),b=make('B'),f=fixture({}, {host:a,guest:b});try{
+  await qrPair(f);await step(f,0,'start');await step(f,0,'roll');await step(f,0,'move',{move:{pass:true}});await step(f,1,'move',{move:{pass:true}});
+  const revision=f.host.snapshot.version;
+  f.host.lastMessage=Date.now()-20000;f.host.tick();await wait(()=>f.host.ready&&f.guest.ready);
+  const reports=await Promise.all([a.export(f.host),b.export(f.guest)]);
+  assert.equal(reports[0].report.session.revision,revision);assert.equal(reports[1].report.session.revision,revision);assert.equal(f.calls,0);
+  for(const file of reports){assert(file.report.capture.events.some(e=>e.stage==='pair-complete'));assert(file.report.capture.events.some(e=>e.type==='action'));const text=JSON.stringify(file.report);for(const privateValue of [f.host.snapshot.sessionId,f.host.saved.secret,f.host.snapshot.game.gameId,'Robin','Bea'])assert(!text.includes(privateValue));assert(!text.includes('marks'));}
+  assert(reports[0].report.capture.events.some(e=>e.stage==='heartbeat-stalled'));
+  assert(reports[0].report.capture.events.some(e=>e.stage==='heartbeat-recovered'));
+  a.stop();const n=a.state().events.length;f.host.disconnect();assert.equal(a.state().events.length,n);
+ }finally{f.dispose();}
+});
+test('Throwing diagnostic observers cannot interrupt a paired game or its game storage',async()=>{
+ const broken={record(){throw Error('unavailable');},error(){throw Error('unavailable');}};
+ const f=fixture({}, {host:broken,guest:broken});try{await qrPair(f);await step(f,0,'start');await step(f,0,'roll');assert.equal(f.calls,0);assert.equal(f.host.ready,true);assert.equal(f.guest.ready,true);}finally{f.dispose();}
 });

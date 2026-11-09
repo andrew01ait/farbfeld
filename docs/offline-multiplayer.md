@@ -1,6 +1,11 @@
 # Offline auf zwei bis sechs Handys
 
-<!-- farbfeld-version: 1.15.0 -->
+<!-- farbfeld-version: 1.16.0 -->
+
+## Neu 1.16.0: Offline-Testprotokoll und optionale Computer-Minen
+
+Ein freiwilliges lokales A/B-Testprotokoll hilft bei Offline-Kopplung und Spielabgleich; es ist aus Einstellungen und Kopplungsdialogen exportierbar. [Testanleitung und Datenschema](offline-diagnostics.md). Die neue Startoption **Minenangriff testen** gilt vorerst nur gegen den Computer: gegnerischer Farbabschluss schaltet einen einmaligen Angriff für fünf Punkte frei. Ein leeres Zielfeld ist ein vollständiger Fehlschlag ohne Nachbarschaden. [Regeln, verdeckte Zielwahl und Wertung](mines.md).
+
 
 Farbfeld bleibt eine öffentliche PWA. Nach dem offiziellen [Schmidt-Regelheft](https://www.schmidtspiele.de/files/Produkte/4/49327%20-%20Noch%20mal!/49327_Noch_Mal_DE.pdf) sind maximal sechs Personen vorgesehen; auf mehreren Handys werden Gruppen von zwei bis sechs unterstützt. Vorher auf jedem Handy die aktuelle App laden, **Offline bereit** abwarten und gegebenenfalls **Einstellungen → Auf Updates prüfen → Aktualisieren** wählen. Aktuelle Clientversion: [version.json](../public/version.json).
 

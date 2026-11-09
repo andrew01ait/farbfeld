@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import {DirectDiagnostics} from '../public/game/direct-diagnostics.js';
 import {DirectUi} from '../public/game/direct-ui.js';
 
 function fixture(){
@@ -62,4 +63,30 @@ test('Ein abgebrochener Gerätecheck öffnet nach verspätetem Ergebnis kein neu
   const running=f.ui.checkSetup(),panels=f.panels.length;f.ui.cancelUi();finish({version:'test',rows:[]});await running;
   assert.equal(f.panels.length,panels);assert.equal(f.ui.checkResult,null);
  }finally{f.dispose();}
+});
+
+
+test('Both phone labels can start, stop, export and clear a report without altering pairing',async()=>{
+ for(const device of ['A','B']){
+  const f=fixture(),values=new Map(),downloads=[];
+  f.session.diagnostics=new DirectDiagnostics({version:'1.16.0',storage:{getItem:k=>values.get(k)??null,setItem:(k,v)=>values.set(k,v),removeItem:k=>values.delete(k)}});
+  f.ui.downloadDiagnostic=(filename,text)=>downloads.push({filename,report:JSON.parse(text)});
+  const inputs={'#diagnostic-device':{value:device},'#diagnostic-test':{value:'4'},'#diagnostic-network':{value:'hotspot-a'}};
+  globalThis.document.querySelector=selector=>inputs[selector]??null;
+  try{
+   f.ui.view='pair';f.session.pairing={kind:'offer',qr:['test'],data:{secret:'private-pairing-data'}};
+   const pairing=f.session.pairing;
+   f.ui.showDiagnostics();assert.match(f.panels.at(-1).html,/Aufzeichnung starten/);assert(!f.panels.at(-1).html.includes('private-pairing-data'));assert(!f.panels.at(-1).html.includes('Direktpartie abbrechen'));
+   await f.ui.handle('direct-diagnostics-start');assert.equal(f.session.diagnostics.state().device,device);assert.equal(f.session.diagnostics.state().test,4);
+   assert.match(f.panels.at(-1).html,/Aufzeichnung stoppen/);
+   await f.ui.handle('direct-diagnostics-export');assert.equal(downloads.length,1);assert.match(downloads[0].filename,new RegExp('_Farbfeld_OfflineDiagnose_'+device+'_Test4\\.json$'));assert.equal(downloads[0].report.capture.network,'hotspot-a');assert.equal(f.session.pairing,pairing);
+   await f.ui.handle('direct-diagnostics-stop');assert.equal(f.session.diagnostics.state().enabled,false);
+   await f.ui.handle('direct-diagnostics-clear');assert.equal(f.session.diagnostics.state(),null);assert.equal(f.session.pairing,pairing);assert.equal(f.discard,0);
+   await f.ui.handle('direct-diagnostics-back');assert.equal(f.ui.view,'pair');assert.equal(f.session.pairing,pairing);
+  }finally{f.dispose();}
+ }
+});
+test('Diagnostic controls reject an unnamed phone and stay available on pairing errors',async()=>{
+ const f=fixture();f.session.diagnostics=new DirectDiagnostics({version:'1.16.0'});
+ try{f.ui.failure('Connection failed');assert.match(f.panels.at(-1).html,/Offline-Testprotokoll/);f.ui.showDiagnostics();await f.ui.handle('direct-diagnostics-start');assert.equal(f.session.diagnostics.state(),null);assert.match(f.errors.at(-1),/Handy A oder B/);}finally{f.dispose();}
 });

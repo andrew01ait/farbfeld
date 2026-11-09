@@ -1,8 +1,13 @@
 # Farbfeld documentation
 
-<!-- farbfeld-version: 1.15.0 -->
+<!-- farbfeld-version: 1.16.0 -->
 
-Client 1.15.0. The application interface and most feature guides are in German; repository setup instructions are in English.
+## Neu 1.16.0: Offline-Testprotokoll und optionale Computer-Minen
+
+Ein freiwilliges lokales A/B-Testprotokoll hilft bei Offline-Kopplung und Spielabgleich; es ist aus Einstellungen und Kopplungsdialogen exportierbar. [Testanleitung und Datenschema](offline-diagnostics.md). Die neue Startoption **Minenangriff testen** gilt vorerst nur gegen den Computer: gegnerischer Farbabschluss schaltet einen einmaligen Angriff für fünf Punkte frei. Ein leeres Zielfeld ist ein vollständiger Fehlschlag ohne Nachbarschaden. [Regeln, verdeckte Zielwahl und Wertung](mines.md).
+
+
+Client 1.16.0. The application interface and most feature guides are in German; repository setup instructions are in English.
 
 | Topic | Guide |
 |---|---|

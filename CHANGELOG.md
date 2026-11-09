@@ -1,6 +1,15 @@
 # Änderungsprotokoll
 
-<!-- farbfeld-version: 1.15.0 -->
+<!-- farbfeld-version: 1.16.0 -->
+
+## 1.16.0 – 2026-11-09
+
+- Freiwilliges lokales Offline-Testprotokoll für A/B-Handys: QR-/RTC-/Abgleichverlauf, streng bereinigter JSON-/Kopierexport, 300 Einträge/30 Minuten, Neuladen/Stoppen/Löschen und 24-Stunden-Aufbewahrung ohne Upload oder neue Netzwerkabfragen.
+- Minenangriff als wählbare neue Computerpartie-Variante: Farbabschluss schaltet die gegnerische Mine frei; einmal je Person, Zusatzaktion, fünf Punkte Einsatz. Belegtes Ziel plus drei bis fünf zufällige belegte Nachbarn; leeres Ziel bewirkt keinerlei Nachbarschaden. Direkte Bonus-/Sternkorrektur, sofortige Übertragung freigewordener Erstboni, blinde verdeckte Zielwahl und einmaliger Computerangriff.
+- Verdeckte Zielansicht ohne gegnerische Kreuze/Trefferzahl, Koordinatenauswahl und kurze Explosion mit reduzierter Bewegung. Bestehende Standardspiele und menschliche Mehrspielermodi bleiben kompatibel; kein Minen-Rollout für Menschen. 38 atomare Offline-Dateien, keine Datenbankmigration.
+- Dokumentation in interner und öffentlicher Quelle ergänzt. 339 Tests, beide API-Integrationen und TypeScript bestanden; tatsächlicher Diagnoseexport, Neuladen/Stopp, Treffer-/Fehlschlagswertung und zwölf gerenderte Handy-/Tablet-/Desktop-Größen geprüft. Physische Zwei-Handy-/Hotspot-Prüfung und Balance folgen im Computerprototyp.
+
+
 
 ## 1.15.0 – 2026-11-08
 

@@ -1,6 +1,13 @@
 # Development and deployment
 
-<!-- farbfeld-version: 1.15.0 -->
+<!-- farbfeld-version: 1.16.0 -->
+
+## Release 1.16.0
+
+Offline-Testprotokoll und optionale Minenvariante für neue Computerpartien. Keine SQL-Migration oder neue Laufzeitkonfiguration. Beide neuen Clientmodule werden atomar mitgecacht (38 Offline-Dateien). Installierte PWAs über **Auf Updates prüfen → Aktualisieren** übernehmen, anschließend **Offline bereit** abwarten. Alte Spiele ohne Minenfeld bleiben Standardpartien; Minenstände benötigen mindestens 1.16.0. Diagnoseexporte sind getrennt vom Spielstand-Backup. Funktions-/Datengrenzen: [Offline-Diagnose](docs/offline-diagnostics.md), [Minen](docs/mines.md).
+
+339 automatisierte Tests, Raum- und Kopplungs-API-Integration, TypeScript und Dokumentationsguard erfolgreich. Lokale Browserprüfung: tatsächlicher JSON-Download, Erhalt der Aufzeichnung nach Neuladen, Stopp; Minentreffer mit Bonus-/Sternkorrektur und Übertragung frei werdender Erstboni und vollständiger Fehlschlag mit unverändertem Gegnerstand. Beide neuen Dialoge bei zwölf Handy-/Tablet-/Desktop-Größen ohne horizontalen Seitenüberlauf; Koordinaten-/Diagnosefelder mindestens 44 CSS-Pixel hoch. Keine neue Migration, kein Produktivspiel und kein Test-Push. Physische Zwei-Handy-/Hotspot-Abnahme und Minenbalance bleiben eigene Testschritte.
+
 
 This public repository contains a source snapshot, not production database contents or production hosting credentials. It is not wired to deploy the existing hosted Farbfeld installation.
 

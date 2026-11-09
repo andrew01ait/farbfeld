@@ -1,6 +1,13 @@
 # Public source snapshot
 
-<!-- farbfeld-version: 1.15.0 -->
+<!-- farbfeld-version: 1.16.0 -->
+
+## Update 1.16.0 — 9 November 2026
+
+The hosted and public sources include the opt-in local A/B offline recorder and the optional computer-only mine variant. The public copy keeps generic hosting configuration and synthetic example identities. New guides: [Offline diagnostics](offline-diagnostics.md) and [Mines](mines.md). No new dependencies or database migrations; no production game actions or test Pushes.
+
+Verification for this update: 339 automated tests, both API integrations, TypeScript, documentation checks and the portable production build passed. Browser checks cover a real diagnostic JSON download, recorder persistence/reload/stop, the new-match switch and replacement confirmation, hit/miss scoring, immediate column/colour first-bonus transfer and concealed targeting. The two new dialogs were rendered at all twelve documented phone/tablet/desktop sizes without page overflow. Physical two-phone networking and mine balance remain separate acceptance steps. Public commits and the hosted deployment are separate operations, as described in the [source workflow](source-workflow.md).
+
 
 The initial GitHub source snapshot is based on Farbfeld 1.15.0. It includes application code, public artwork/icons, all additive schema migrations, dependency lockfile, tests and technical guides. It starts a separate public history.
 
@@ -10,7 +17,7 @@ The generic `.openai/hosting.json` binding declaration remains because the inclu
 
 A project-wide license has not been chosen. Third-party license and provenance notices are preserved.
 
-## Verification — 9 November 2026
+## Initial 1.15.0 verification — 9 November 2026
 
 Checked the public snapshot with Node.js 24.22.1:
 

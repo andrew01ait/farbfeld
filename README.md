@@ -1,10 +1,16 @@
 # Farbfeld
 
-<!-- farbfeld-version: 1.15.0 -->
+<!-- farbfeld-version: 1.16.0 -->
+
+## New in 1.16.0
+
+- Optional local A/B diagnostics for offline pairing and synchronization, including JSON download/copy and bounded recovery after reload. See [the two-phone test guide](docs/offline-diagnostics.md).
+- Opt-in **Minenangriff testen** when starting a new computer match. One attack per player, five-point cost, blind hidden-board targeting and complete misses on empty targets. See [mine rules and scoring](docs/mines.md). Human multiplayer remains outside this prototype.
+
 
 An installable, offline-ready dice game PWA with solo play, computer opponents, local and online multiplayer, and push notifications.
 
-[Play Farbfeld](https://farbfeld-andrew.endruuu.chatgpt.site/play) · [Version 1.15.0](public/version.json) · [Documentation](docs/README.md)
+[Play Farbfeld](https://farbfeld-andrew.endruuu.chatgpt.site/play) · [Version 1.16.0](public/version.json) · [Documentation](docs/README.md)
 
 The game interface is in German. Farbfeld needs no user account. It is an independent implementation of the basic rules of *Noch mal!* by Inka and Markus Brand (Schmidt Spiele), using its own interface and assets; this repository is not an official publisher release.
 
@@ -62,7 +68,7 @@ The tests use synthetic rooms, in-memory/local databases, generated cryptographi
 | `tests/` | Rules, API, storage, PWA, Web Push and compatibility regressions |
 | `docs/` | Architecture and feature guides |
 
-The PWA atomically prepares 36 offline assets. <!-- PWA enthält 36 atomar vorbereitete Offline-Dateien. -->
+The PWA atomically prepares 36 offline assets. <!-- PWA enthält 38 atomar vorbereitete Offline-Dateien. -->
 
 ## Deployment
 

@@ -1,4 +1,4 @@
-import {createGame,canAct,rollGame,applyMove,findMove,randomInt,availableDice,neighbors,COLORS,FIRST,LATER,score} from './engine.js';
+import {createGame,canAct,rollGame,applyMove,findMove,randomInt,availableDice,neighbors,COLORS,FIRST,LATER,score,enableMines,canUseMine,chooseComputerMineTarget,applyMineAttack} from './engine.js';
 import {boardFor} from './boards.js';
 
 // The human always owns sheet 0. The computer uses the same dice and rule engine.
@@ -14,9 +14,10 @@ export const validComputerDifficulty=value=>COMPUTER_LEVELS.some(level=>level.id
 export const computerDifficulty=game=>validComputerDifficulty(game?.computerDifficulty)?game.computerDifficulty:'easy';
 export const computerLevel=game=>COMPUTER_LEVELS.find(level=>level.id===computerDifficulty(game));
 
-export function createComputerGame(hiddenScores=false,boardId='classic',difficulty='medium'){
+export function createComputerGame(hiddenScores=false,boardId='classic',difficulty='medium',withMines=false){
  if(!validComputerDifficulty(difficulty))throw Error('Wähle Leicht, Mittel oder Schwer.');
- return {...createGame(['Du','Computer'],'computer',[],{hiddenScores,boardId}),computerDifficulty:difficulty};
+ const game={...createGame(['Du','Computer'],'computer',[],{hiddenScores,boardId}),computerDifficulty:difficulty};
+ return withMines===true?enableMines(game):game;
 }
 
 export function changeComputerDifficulty(game,difficulty){
@@ -151,9 +152,10 @@ export function chooseComputerMove(game,pid=COMPUTER){
 }
 
 // One immutable, saveable step at a time. Every selected move is committed by
-// the shared rule engine; only an actual roll consumes the supplied RNG.
+// the shared rule engine; only actual rolls and opted-in mine attacks consume the supplied RNG.
 export function stepComputer(game,rng=randomInt){
  if(!needsComputerTurn(game))return game;
  if(game.phase==='roll')return rollGame(game,rng);
+ if(canUseMine(game,COMPUTER))return applyMineAttack(game,COMPUTER,chooseComputerMineTarget(game,rng),rng);
  return applyMove(game,COMPUTER,chooseComputerMove(game)??{pass:true});
 }

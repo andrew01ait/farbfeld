@@ -1,9 +1,10 @@
 import {DirectGame,hostRecord,guestRecord,validRecord,DIRECT_PROTOCOL,directId} from './direct-game.js';
 import {DirectConnection,validateHandshake} from './direct-connection.js';
+import {directSessionFacts} from './direct-diagnostics.js';
 import {encodeQr} from './qr.js';
 export class DirectSession{
-  constructor({saved=null,save=()=>{},version,onChange=()=>{},onError=()=>{},onReaction=()=>{},fetcher=(...args)=>fetch(...args),Connection=DirectConnection}={}){
-    this.save=save;this.version=version;this.onChange=onChange;this.onError=onError;this.onReaction=onReaction;this.fetcher=fetcher;this.Connection=Connection;
+  constructor({saved=null,save=()=>{},version,onChange=()=>{},onError=()=>{},onReaction=()=>{},fetcher=(...args)=>fetch(...args),Connection=DirectConnection,diagnostics=null}={}){
+    this.diagnostics=diagnostics;this.lastDiagnosticState='';this.save=save;this.version=version;this.onChange=onChange;this.onError=error=>{try{this.diagnostics?.error(error);}catch{}onError(error);};this.onReaction=onReaction;this.fetcher=fetcher;this.Connection=Connection;
     this.manager=null;this.rtc=null;this.status='idle';this.pairing=null;this.pairingError='';this.signal=null;this.signalTimer=null;this.signalBusy=false;this.signalRequests=new Set();this.generation=0;this.peers=new Map();this.pairPid=1;this.pairingComplete=false;this.pairingInProgress=false;
     if(validRecord(saved))this.useRecord(saved);
     this.heartbeat=setInterval(()=>this.tick(),4000);
@@ -13,15 +14,17 @@ export class DirectSession{
   get ready(){return !!this.manager?.ready;}
   get pid(){return this.manager?.pid??0;}
   get pending(){return this.manager?.pending||null;}
-  emit(){this.onChange(this);}
+  note(type,facts={}){try{this.diagnostics?.record(type,{...directSessionFacts(this),...facts});}catch{}}
+  recordState(force=false){if(!this.diagnostics)return;const facts=directSessionFacts(this),key=JSON.stringify(facts);if(force||key!==this.lastDiagnosticState){this.lastDiagnosticState=key;this.note('session',facts);}}
+  emit(){this.recordState();this.onChange(this);}
   useRecord(record){
     this.manager=new DirectGame(record,{save:this.save,onChange:()=>{
       if(this.manager?.storageFailed)for(const peer of this.peers.values())if(peer.connection.opened)peer.connection.close();
       const paired=this.pid===0?this.manager?.connected(this.pairPid):this.manager?.transportReady&&this.online.includes(this.pid);
-      if(this.pairingInProgress&&paired){this.pairingInProgress=false;this.pairingComplete=true;this.pairing=null;this.stopSignal(true);}
+      if(this.pairingInProgress&&paired){this.note('pairing',{stage:'pair-complete'});this.pairingInProgress=false;this.pairingComplete=true;this.pairing=null;this.stopSignal(true);}
       this.refreshStatus();this.emit();
     },onError:this.onError,onReaction:this.onReaction});
-    this.save(this.manager.record);
+    this.note('pairing',{stage:'restored'});this.save(this.manager.record);
   }
   get online(){return this.manager?.online||[];}
   get lastMessage(){return this.peers.get(this.pairPid)?.lastMessage??0;}
@@ -38,6 +41,7 @@ export class DirectSession{
     const generation=this.generation,entry={status:'preparing',lastMessage:Date.now(),connection:null};
     const current=()=>generation===this.generation&&this.peers.get(pid)===entry;
     const connection=new this.Connection({
+      onDiagnostic:(type,facts)=>{if(current())this.note(type,{...facts,peer:pid});},
       onState:state=>{
         if(!current())return;
         entry.status=state;
@@ -51,6 +55,7 @@ export class DirectSession{
         let message;try{message=JSON.parse(raw);}catch{return;}
         if(message.protocol!==DIRECT_PROTOCOL||message.sessionId!==this.snapshot?.sessionId||typeof message.actionId!=='string'||!Number.isSafeInteger(message.version))return;
         entry.lastMessage=Date.now();
+        if(!['ping','pong'].includes(message.type)){this.note('message',{peer:pid,direction:'receive',messageType:message.type,revision:message.version,action:message.payload?.action});if(message.type==='state'&&message.payload?.error)try{this.diagnostics?.error(message.payload.error);}catch{}}
         if(message.type==='ping'){try{connection.send(JSON.stringify(this.manager.envelope('pong')));}catch{}this.recover(pid);return;}
         if(message.type==='pong'){this.recover(pid);return;}
         if(message.type==='resync'){if(this.pid!==0)this.manager.attach(data=>connection.send(data));return;}
@@ -62,7 +67,7 @@ export class DirectSession{
   recover(pid=this.pairPid){
     const peer=this.peers.get(pid);
     if(peer?.status==='stalled'&&peer.connection.opened){
-      peer.status='connected';this.status='connected';this.manager.attach(data=>peer.connection.send(data),pid);
+      this.note('pairing',{stage:'heartbeat-recovered',peer:pid});peer.status='connected';this.status='connected';this.manager.attach(data=>peer.connection.send(data),pid);
       if(this.pid===0)peer.connection.send(JSON.stringify(this.manager.envelope('resync')));
       this.emit();
     }
@@ -70,7 +75,7 @@ export class DirectSession{
   tick(){
     for(const [pid,peer] of this.peers){
       if(!peer.connection.opened)continue;
-      if(Date.now()-peer.lastMessage>16000&&peer.status==='connected'){peer.status='stalled';this.manager.pause(this.pid===0?pid:undefined);this.refreshStatus();this.emit();}
+      if(Date.now()-peer.lastMessage>16000&&peer.status==='connected'){this.note('pairing',{stage:'heartbeat-stalled',peer:pid});peer.status='stalled';this.manager.pause(this.pid===0?pid:undefined);this.refreshStatus();this.emit();}
       try{peer.connection.send(JSON.stringify(this.manager.envelope('ping')));}catch{}
     }
   }
@@ -86,14 +91,15 @@ export class DirectSession{
     const target=this.manager.reserveGuest(pid),entry=this.setup(target),generation=this.generation;
     const current=()=>generation===this.generation&&this.peers.get(target)===entry&&this.pairPid===target;
     try{
-      const data=await entry.connection.offer(this.manager.record,this.version,target);
+      this.note('pairing',{stage:'offer-start',peer:target,kind:'offer'});const data=await entry.connection.offer(this.manager.record,this.version,target);
       if(!current())return;
       let qr=[],qrError='';try{qr=await encodeQr(data);}catch(error){qrError=error.message;}if(!current())return;
-      entry.status='offering';this.status='offering';this.pairing={kind:'offer',pid:target,data,qr,qrError,code:null,error:''};this.emit();
+      this.note('pairing',{stage:'offer-ready',peer:target,kind:'offer',qrTotal:qr.length,appVersion:this.version});if(qrError)this.note('error',{error:'qr-render'});entry.status='offering';this.status='offering';this.pairing={kind:'offer',pid:target,data,qr,qrError,code:null,error:''};this.emit();
     }catch(error){if(!current())return;entry.status='failed';this.status='failed';this.pairingError=error.message;this.onError(error.message);this.emit();throw error;}
   }
   cancelPairing(){
     const pid=this.pairPid,entry=this.peers.get(pid);
+    if(this.pairing)this.note('pairing',{stage:'pair-cancelled',peer:pid});
     this.stopSignal(true);this.pairing=null;this.pairingComplete=false;this.pairingInProgress=false;
     if(this.pid===0&&entry&&!this.manager.connected(pid)){
       this.peers.delete(pid);entry.connection.close(false);this.manager.pause(pid);this.manager.cancelReservation(pid);
@@ -110,14 +116,14 @@ export class DirectSession{
     this.useRecord(guestRecord(offer,name,previous));const entry=this.setup(0),generation=this.generation;
     const current=()=>generation===this.generation&&this.peers.get(0)===entry;
     try{
-      const data=await entry.connection.answer(offer,this.version);
+      this.note('pairing',{stage:'answer-start',peer:0,kind:'offer',appVersion:offer.appVersion});const data=await entry.connection.answer(offer,this.version);
       if(!current())return;
       let qr=[],qrError='';try{qr=await encodeQr(data);}catch(error){qrError=error.message;}if(!current()||this.ready)return;
-      this.pairing={kind:'answer',pid:this.pid,data,qr,qrError,code:null,error:'',viaCode};this.emit();return data;
+      this.note('pairing',{stage:'answer-ready',peer:0,kind:'answer',qrTotal:qr.length});if(qrError)this.note('error',{error:'qr-render'});this.pairing={kind:'answer',pid:this.pid,data,qr,qrError,code:null,error:'',viaCode};this.emit();return data;
     }catch(error){if(!current())return;entry.status='failed';this.status='failed';this.pairingError=error.message;this.onError(error.message);this.emit();throw error;}
   }
-  async accept(answer){const generation=this.generation,rtc=this.rtc;if(!rtc)throw Error('Die Kopplung wurde abgebrochen.');try{await rtc.accept(answer);if(generation===this.generation&&rtc===this.rtc)this.emit();}catch(error){if(generation===this.generation&&rtc===this.rtc)throw error;}}
-  act(action,payload={}){if(!this.ready)throw Error('Die Partie pausiert bis alle Handys direkt verbunden sind.');return this.manager.act(action,payload);}
+  async accept(answer){const generation=this.generation,rtc=this.rtc;if(!rtc)throw Error('Die Kopplung wurde abgebrochen.');try{await rtc.accept(answer);this.note('pairing',{stage:'answer-accepted',peer:this.pairPid,appVersion:answer.appVersion});if(generation===this.generation&&rtc===this.rtc)this.emit();}catch(error){if(generation===this.generation&&rtc===this.rtc)throw error;}}
+  act(action,payload={}){this.note('action',{action,direction:'send'});try{if(!this.ready)throw Error('Die Partie pausiert bis alle Handys direkt verbunden sind.');return this.manager.act(action,payload);}catch(error){try{this.diagnostics?.error(error);}catch{}throw error;}}
   async signalApi(action,body={},hostToken=null){
     const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),10000);
     this.signalRequests.add(controller);
@@ -131,10 +137,10 @@ export class DirectSession{
   }
   async createCode(){
     if(this.pairing?.kind!=='offer')throw Error('Bitte zuerst ein Verbindungsangebot erstellen.');
-    const generation=this.generation,pairing=this.pairing;let data;
+    this.note('pairing',{stage:'code-start',method:'code'});const generation=this.generation,pairing=this.pairing;let data;
     try{data=await this.signalApi('create',{offer:pairing.data});}catch(error){if(generation!==this.generation||this.pairing!==pairing)return;pairing.error=error.message;this.emit();throw error;}
     if(generation!==this.generation||this.pairing!==pairing){this.signalApi('close',{code:data.code},data.hostToken).catch(()=>{});return;}
-    this.signal={code:data.code,hostToken:data.hostToken,expiresAt:data.expiresAt,pairing};
+    this.note('pairing',{stage:'code-ready',method:'code'});this.signal={code:data.code,hostToken:data.hostToken,expiresAt:data.expiresAt,pairing};
     this.pairing.code=data.code;this.pairing.expiresAt=data.expiresAt;this.pairing.error='';this.emit();
     this.signalTimer=setInterval(()=>this.pollSignal(),1600);
     this.pollSignal();
@@ -162,7 +168,7 @@ export class DirectSession{
   }
   stopSignal(close=false){const signal=this.signal;clearInterval(this.signalTimer);this.signalTimer=null;this.signal=null;this.signalBusy=false;if(close&&signal)this.signalApi('close',{code:signal.code},signal.hostToken).catch(()=>{});}
   restart(){this.generation++;for(const controller of this.signalRequests)controller.abort();this.stopSignal(true);for(const peer of this.peers.values())peer.connection.close(false);this.peers.clear();this.rtc=null;this.manager?.pause();this.pairing=null;this.pairingError='';this.pairingComplete=false;this.pairingInProgress=false;return this.generation;}
-  disconnect(){this.restart();this.manager?.pause();this.status='closed';this.pairing=null;this.emit();}
+  disconnect(){this.note('pairing',{stage:'disconnect'});this.restart();this.manager?.pause();this.status='closed';this.pairing=null;this.emit();}
   forget(){if(this.save(null)===false)throw Error('Die Direktpartie konnte nicht aus dem Gerätespeicher entfernt werden.');this.restart();this.rtc=null;this.manager=null;this.pairing=null;this.status='idle';this.emit();}
   dispose(){this.disconnect();clearInterval(this.heartbeat);}
 }

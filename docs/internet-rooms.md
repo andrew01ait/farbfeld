@@ -1,6 +1,6 @@
 # Internet-Spielräume
 
-<!-- farbfeld-version: 1.15.0 -->
+<!-- farbfeld-version: 1.16.0 -->
 
 Bei einer Revanche ist **Noch einmal spielen** nur der Weg zurück in die Lobby. Erst der nächste bestätigte Start informiert die anderen Teilnehmenden einmal per Push, auch wenn sie noch nicht dran sind. Benachrichtigungen müssen aktiviert und beide Apps auf 1.15.0 aktualisiert sein. Eigene Züge haben Vorrang, sichtbare Apps bleiben still und das Minutenlimit gilt. Derselbe Raumcode und persönliche Zugänge bleiben erhalten.
 

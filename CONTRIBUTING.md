@@ -1,6 +1,6 @@
 # Contributing to Farbfeld
 
-<!-- farbfeld-version: 1.15.0 -->
+<!-- farbfeld-version: 1.16.0 -->
 
 Read [AGENTS.md](AGENTS.md), the [documentation index](docs/README.md) and the [source workflow](docs/source-workflow.md) before changing the project. The game interface is German; repository setup and contributor instructions are English, while detailed feature guides may remain German.
 

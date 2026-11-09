@@ -1,6 +1,11 @@
 # Versionen und Kompatibilität
 
-<!-- farbfeld-version: 1.15.0 -->
+<!-- farbfeld-version: 1.16.0 -->
+
+## Neu 1.16.0: Offline-Testprotokoll und optionale Computer-Minen
+
+Ein freiwilliges lokales A/B-Testprotokoll hilft bei Offline-Kopplung und Spielabgleich; es ist aus Einstellungen und Kopplungsdialogen exportierbar. [Testanleitung und Datenschema](offline-diagnostics.md). Die neue Startoption **Minenangriff testen** gilt vorerst nur gegen den Computer: gegnerischer Farbabschluss schaltet einen einmaligen Angriff für fünf Punkte frei. Ein leeres Zielfeld ist ein vollständiger Fehlschlag ohne Nachbarschaden. [Regeln, verdeckte Zielwahl und Wertung](mines.md).
+
 
 ## Kompatibilität 1.15.0
 
@@ -24,7 +29,7 @@ Die aktuelle maschinenlesbare Code-Version steht in [public/version.json](../pub
 
 | Gegenstand | Vertrag |
 | --- | --- |
-| Client | aktuell 1.15.0; semantische Version, Benachrichtigungen ab 1.7.0 |
+| Client | aktuell 1.16.0; semantische Version, Benachrichtigungen ab 1.7.0 |
 | Direktprotokoll | 2, Gruppenunterstützung ab 1.4.0 |
 | Lokale Spiele / Backup | Schema bzw. Backupversion 1 |
 | Direkt-Speicher | `farbfeld.direct.v1`, Schema 1 |

@@ -1,6 +1,17 @@
 # Responsive QA
 
-<!-- farbfeld-version: 1.15.0 -->
+<!-- farbfeld-version: 1.16.0 -->
+
+## Prüfumfang 1.16.0
+
+Neue scrollbare Offline-Diagnose mit A/B-/Test-/Netzauswahl und Export, optionale Computer-Startregel, Minenleiste und blindes Zielraster mit zusätzlichen 44-Pixel-Koordinatenauswahlen.
+
+Gerenderte lokale Vorschau am 09.11.2026: beide neuen Dialoge in allen zwölf unten gelisteten Handy-/Tablet-/Desktop-Größen geprüft; Dokumentbreite entspricht jeweils Scrollbreite, kein horizontaler Seitenüberlauf. Diagnose zusätzlich bei 680×650 und 681×651 geprüft. Koordinatenauswahl 46 Pixel, Diagnosefelder 46–51 Pixel, Mine-zünden-Fläche 52–68 Pixel hoch. Das 15-spaltige Raster ist auf kleinen Handys bewusst fein; die größeren Spalten-/Zeilenauswahlen bieten präzise Bedienung. Dialoge bleiben vertikal scrollbar.
+
+Echter lokaler JSON-Download und Neuladen/Stoppen bestätigt. Neue Computerpartie mit Auswahl an und aus sowie Übernahme nach Ersatzbestätigung geprüft. Synthetischer offener Treffer: Farb-/Spaltenbonus fällt weg, offene Sterne und fünf Punkte Einsatz werden sofort angezeigt. Zusätzlicher Transferfall im Browser: eigene Spalte 2→3 und Farbe 3→5, Gesamt −9→−11 einschließlich fünf Punkten Einsatz; Computer verliert beide Boni. Leeres Ziel neben belegten Feldern: Gegnerübersicht vor/nach exakt gleich, eigene fünf Punkte abgezogen. Verdecktes Raster enthält alle 105 gedruckten Felder und null gegnerische Markierungen; Bestätigung zeigt weder Trefferzahl noch zerstörte Positionen. 339 automatisierte Tests einschließlich sechs kompletter Minenpartien auf allen drei Brettern, beide API-Integrationen und TypeScript bestanden.
+
+Die Vorschau verwendet lokale synthetische Spiele; keine Produktivräume oder Test-Pushs. Das ist keine physische Android-Touch-/WLAN-/Hotspot-, Hintergrund- oder Minenbalance-Abnahme. Die zwei echten Handys werden mit der [A/B-Testanleitung](offline-diagnostics.md) separat geprüft.
+
 
 ## Verbindliche Größen
 

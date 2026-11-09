@@ -1,6 +1,6 @@
 # Benachrichtigungen
 
-<!-- farbfeld-version: 1.15.0 -->
+<!-- farbfeld-version: 1.16.0 -->
 
 ## Ereignisse und Zustimmung
 
@@ -45,3 +45,7 @@ Unterscheiden:
 Pro empfangenem Push gibt es höchstens einen begrenzten Quittungs-POST, ohne neue Wiederholungsschleife. Ein fehlgeschlagener Quittungsaufruf verhindert die Anzeige nicht. Diagnoseprojektionen enthalten keine Subscriptions, Endpunkte, Namen, Punkte oder Geheimnisse. Der Verlauf ist pro Gerät begrenzt; Aufträge bleiben nur innerhalb ihrer Gültigkeit versendbar. Geräte-/Raumlöschung entfernt abhängige Einträge.
 
 Die Tests verwenden ausschließlich synthetische Räume, frische Schlüssel und lokale/ersetzte Push-Empfänger. Android-Anzeige, Akkuverwaltung und reale Hintergrundzustellung sind gesondert auf echten Geräten zu prüfen.
+
+## Offline-Testprotokoll und Minen
+
+Das lokale Testprotokoll lädt keine Daten hoch und versendet keine Hinweise. Die optionale Computer-Mine ist eine lokale Spielvariante ohne neue Push-Art oder automatische Nachricht. Offline-Direktverbindungen behalten ihre bisherigen Hintergrundgrenzen.
