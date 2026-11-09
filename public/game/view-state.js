@@ -30,17 +30,17 @@ export function playerRole(game,index) {
 export function turnDescription(game,ownIndex) {
   if(game.status!=='playing')return null;
   const indices=game.mode==='local'?[nextLocalPlayer(game)]:choosingPlayers(game);
-  const names=indices.map(i=>game.players[i].name).join(', ');
+  const names=indices.map(i=>game.players[i].name).join(', '),du=indices.length===1&&names.trim().toLocaleLowerCase('de')==='du';
   if(game.mode==='computer'){
     const computer=indices.includes(1);
     if(game.phase==='roll')return {title:computer?'Der Computer würfelt jetzt':'Du würfelst jetzt',detail:computer?'Der Wurf wird automatisch erzeugt.':'Ihr spielt beide mit demselben Wurf.',indices};
     if(computer)return {title:'Der Computer ist am Zug',detail:'Er wählt und setzt seine Kreuze automatisch.',indices};
     return {title:'Du bist am Zug',detail:game.round<=3?'Wähle aus allen Würfeln.':game.chosen?'Wähle aus den übrigen Würfeln.':'Alle Würfel stehen dir zur Verfügung.',indices};
   }
-  if(game.phase==='roll')return {title:`${names} würfelt jetzt`,detail:'Danach wird eine Farbe mit einer Zahl kombiniert.',indices};
-  if(!game.submitted.includes(game.active))return {title:`${names} wählt zuerst`,detail:'Die anderen warten auf diese Auswahl.',indices};
+  if(game.phase==='roll')return {title:`${names} ${du?'würfelst':'würfelt'} jetzt`,detail:'Danach wird eine Farbe mit einer Zahl kombiniert.',indices};
+  if(!game.submitted.includes(game.active))return {title:`${names} ${du?'wählst':'wählt'} zuerst`,detail:'Die anderen warten auf diese Auswahl.',indices};
   if(['room','direct'].includes(game.mode)&&game.submitted.includes(ownIndex))return {title:'Dein Zug ist gespeichert',detail:`Noch am Zug: ${names}.`,indices};
-  return {title:`${names} ${indices.length===1?'ist':'sind'} am Zug`,detail:game.round<=3?'Wähle aus allen Würfeln.':'Wähle aus den übrigen Würfeln.',indices};
+  return {title:`${names} ${indices.length===1?(du?'bist':'ist'):'sind'} am Zug`,detail:game.round<=3?'Wähle aus allen Würfeln.':'Wähle aus den übrigen Würfeln.',indices};
 }
 
 // Rule snapshots are immutable; repeated renders share availability checks.

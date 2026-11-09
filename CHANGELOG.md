@@ -1,6 +1,12 @@
 # Änderungsprotokoll
 
-<!-- farbfeld-version: 1.17.1 -->
+<!-- farbfeld-version: 1.17.2 -->
+
+## 1.17.2 – 2026-11-09
+
+Korrekte deutsche Hinweise: Du hast einen Farbabschluss; Du würfelst/wählst/bist in der lokalen Zugzeile. Bonuskarte reduziert auf Symbol, letzte Prämie und Zähler, nativer aufklappbarer Wurf-/Gewinnerverlauf; verdeckte Punkte auch dort und in zugänglichen Labels verborgen. Gemeinsame neutrale Flächen, Konturen und Symbolgrößen für Minen, Bonus, Farbabschluss, Punkte und Ergebnis über alle sechs Designs; Grün für Bereitschaft/Prämien und Rot für Schaden. Verdeckter Modus klar beschrieben: nur eigenes Blatt sichtbar, alle Punkte erst am Ende.
+
+Random, Minen und Bonusfelder für neue Ein-Handy-, Direkt- und Internetpartien gemeinsam geprüft; Gastgeberwahl, vollständige Direktkopplung und tatsächliche Clientfähigkeiten bleiben erhalten. Kopplungsstatus erzeugt keinen falschen Updatehinweis mehr. Keine Spielregel-, Datenbank-, Transport- oder Push-Änderung. 395 automatisierte Regressionen und zusätzliche API-/Typ-/Build-Prüfungen; zwölf gerenderte Größen, alle Mine-Zustände, offene/verdeckte Bonusanzeigen, sechs Designs und kombinierte Mehrspieler-Startoberflächen. Physische Geräteprüfung bleibt separat.
 
 ## 1.17.1 – 2026-11-09
 

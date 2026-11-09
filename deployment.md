@@ -1,6 +1,10 @@
 # Development and deployment
 
-<!-- farbfeld-version: 1.17.1 -->
+<!-- farbfeld-version: 1.17.2 -->
+
+## Release 1.17.2
+
+Gemeinsame neutrale Statusflächen, kurze aufklappbare Bonusanzeige, korrekte Du-Grammatik und eindeutige Beschreibung des verdeckten Modus. Regeln für neue Multiplayerpartien bereits vorhanden und erneut gemeinsam geprüft: Random + Minen + Bonusfelder mit zwei/sechs Personen, offenen/verdeckten Punkten und Wiederverbindung. Direktregeln werden erst nach der Kopplung wählbar; Kopplungsstatus erzeugt keinen falschen Updatehinweis mehr. Schema, Fähigkeiten, 40 Offline-Dateien und Laufzeitkonfiguration unverändert. **395 Regressionen** bestanden; [Layoutprüfung](docs/responsive-qa.md). Normalen PWA-Updateweg verwenden.
 
 ## Release 1.17.1
 

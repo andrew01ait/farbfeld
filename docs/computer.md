@@ -1,6 +1,10 @@
 # Computer-Stärken
 
-<!-- farbfeld-version: 1.17.1 -->
+<!-- farbfeld-version: 1.17.2 -->
+
+## Hinweise und verdeckte Ansicht
+
+Farbanzeigen verwenden korrekt **Du hast**, Bonusanzeigen kurze Namen/Prämien mit aufklappbarem Wurfverlauf. Die neutrale Statusgestaltung gilt auch für Ergebnis und Auswahlhinweis. Die Startoption beschreibt den verdeckten Modus ausdrücklich: nur eigenes Blatt sichtbar, Gegnerblätter und alle Punkte erst am Ende. Computerplanung und Schwierigkeitslogik bleiben unverändert.
 
 ## Neu 1.17.0: Bonusfelder, Random und gemeinsame Minen
 

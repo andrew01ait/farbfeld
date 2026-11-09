@@ -1,6 +1,10 @@
 # Farbfeld documentation
 
-<!-- farbfeld-version: 1.17.1 -->
+<!-- farbfeld-version: 1.17.2 -->
+
+## Neu 1.17.2: Gemeinsame Statusgestaltung und Mehrspieler-Start
+
+Kurze Bonuskarte mit aufklappbarem Verlauf, korrektes **Du hast**, neutrale Flächen mit sparsamen Zustandsakzenten und präzise Verdeckungsbeschreibung. [UI-Gestaltung](ui-design.md) erklärt Oberflächen, Symbole, Zugänglichkeit und verdeckte Werte. Neue Ein-Handy-, Direkt- und Internetpartien unterstützen die Kombination von Minen, Bonusfeldern und Random; nur der Gastgeber wählt Netzwerkregeln und alle Clients bestätigen ihre Fähigkeiten. 395 Regressionen einschließlich kombinierter Zwei-/Sechserpartien, Wiederverbindung und Datenschutz.
 
 ## Neu 1.17.1: Lesbare Brettwahl und Minenleiste
 
@@ -23,7 +27,7 @@ Drei geheime **Bonusfelder** vergeben je +2 an alle ersten Finder desselben Wurf
 Ein freiwilliges lokales A/B-Testprotokoll hilft bei Offline-Kopplung und Spielabgleich; es ist aus Einstellungen und Kopplungsdialogen exportierbar. [Testanleitung und Datenschema](offline-diagnostics.md). Die neue Startoption **Minenangriff testen** wurde in 1.16.0 zunächst gegen den Computer erprobt; ab 1.17.0 gilt sie für alle Mehrspielerarten: gegnerischer Farbabschluss schaltet einen einmaligen Angriff für fünf Punkte frei. Ein leeres Zielfeld ist ein vollständiger Fehlschlag ohne Nachbarschaden. [Regeln, verdeckte Zielwahl und Wertung](mines.md).
 
 
-Client 1.17.1. The application interface and most feature guides are in German; repository setup instructions are in English.
+Client 1.17.2. The application interface and most feature guides are in German; repository setup instructions are in English.
 
 | Topic | Guide |
 |---|---|

@@ -1,6 +1,10 @@
 # Versionen und Kompatibilität
 
-<!-- farbfeld-version: 1.17.1 -->
+<!-- farbfeld-version: 1.17.2 -->
+
+## Kompatibilität 1.17.2
+
+Darstellung, kurze deutsche Hinweise und klare Regelwahl vor dem Mehrspielerstart. Keine neue Fähigkeit, Migration, Abhängigkeit oder Speicherform; weiterhin Schema 1, Direktprotokoll 2 und 40 Offline-Dateien. Minen, Bonusfelder und Random bleiben an tatsächlich bestätigte Fähigkeiten ab 1.17.0 gebunden. Bei Raumspielen auf beiden/allen Handys aktualisieren und den Raum erneut öffnen. Nur das eigene Blatt bleibt im verdeckten Spiel während der Partie sichtbar; auch eigene Punkte erst am Ende.
 
 ## Kompatibilität 1.17.1
 

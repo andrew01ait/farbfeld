@@ -1,6 +1,12 @@
 # Farbfeld contributor instructions
 
-<!-- farbfeld-version: 1.17.1 -->
+<!-- farbfeld-version: 1.17.2 -->
+
+## Shared status design
+
+- Follow docs/ui-design.md: neutral theme-aware status surfaces and borders, 32-pixel icons, 14-pixel small-card radius. Reserve green accents for readiness/rewards and red for damage/errors. Do not restore large unrelated green/beige bonus/mine/result boxes.
+- Colour cards and toasts use colorCompletionText after colorAnnouncements has redacted hidden values; use Du hast and named-player hat. Bonus summaries stay compact, with all winner names and rounds available in the native details history. Preserve hiding of own/opponent points in visible text and accessible labels.
+- New local/direct/room games expose Random, mines and bonus options. Only the host configures network games; direct requires complete pairing and real capabilities. Do not describe an unpaired device as an outdated client.
 
 This is the public source snapshot for Farbfeld. Keep changes scoped to the requested feature. Do not infer authorization to change or redeploy an existing hosted installation from a change to this repository.
 

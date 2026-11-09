@@ -1,6 +1,10 @@
 # Internet-Spielräume
 
-<!-- farbfeld-version: 1.17.1 -->
+<!-- farbfeld-version: 1.17.2 -->
+
+## Neue Partien mit Zusatzregeln
+
+Nach Erstellen/Beitreten wählt der Gastgeber in der Lobby **Random**, **Minenangriff** und **Bonusfelder** vor **Partie starten**; die drei Optionen sind kombinierbar für 2–6 Personen und offene/verdeckte Punkte. Im Erstellungsdialog steht jetzt ausdrücklich, dass die Wahl anschließend im Raum erfolgt. Bei einer alten App aktualisieren und diesen Raum auf jedem Handy erneut öffnen; vorhandene Fähigkeitsregistrierung bleibt authentifiziert pro Mitglied. Laufende Partien behalten ihre Regeln. Der verdeckte Modus erlaubt währenddessen nur das eigene Blatt, keine fremden Blätter oder Punktestände.
 
 ## Neu 1.17.0: Bonusfelder, Random und gemeinsame Minen
 

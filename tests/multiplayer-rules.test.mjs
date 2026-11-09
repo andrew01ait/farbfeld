@@ -100,3 +100,19 @@ test('Tied surviving completion rounds share the full bonus after earlier holder
 test('Malformed departed states cannot resume as an empty or single-player running group',()=>{
  assert.equal(validLeavingState({players:5}),false);let g=leaveGame(createGame(['A','B','C'],'local'),0);assert(validLeavingState(g));g.players[1].left=true;g.players[1].forfeit=-10;g.players[1].leftRound=1;assert.equal(validLeavingState(g),false);g.status='finished';g.finishReason='last-player';assert(validLeavingState(g));g.players[2].left=true;g.players[2].forfeit=-10;g.players[2].leftRound=1;assert.equal(validLeavingState(g),false);
 });
+
+test('All optional rules combine in new two/six-phone direct games and survive reconnection with hidden projections',()=>{
+ for(const n of [2,6])for(const hiddenScores of [false,true]){
+  const p=group(n);p.host.act('options',{boardId:'random',mines:true,bonusFields:true,hiddenScores});p.flush();
+  for(const guest of p.guests.values()){const before=structuredClone(p.host.snapshot);guest.act('options',{mines:false});p.flush();assert.deepEqual(p.host.snapshot,before);assert.equal(guest.pending,null);}assert(p.errors.some(error=>error.includes('Gastgeber')));p.errors.length=0;
+  p.host.act('start');p.flush();const raw=p.host.snapshot.game;
+  assert.equal(raw.boardId,'random');assert.equal(raw.hiddenScores,hiddenScores);assert.equal(raw.mines.unlocked.length,n);assert.equal(raw.bonuses.fields.length,3);
+  const resumed=group(n,p.saved);assert.deepEqual(resumed.host.snapshot.game,raw);
+  for(const guest of resumed.guests.values()){
+   const view=guest.snapshot.game;assert.deepEqual(view.boardLayout,raw.boardLayout);assert.equal(view.bonuses.fields,undefined);assert.equal(view.bonuses.remaining,3);
+   assert.equal(view.mines.unlocked.length,n);assert.equal(view.players[guest.pid].marks.length,105);
+   if(hiddenScores)assert(view.players.every((player,pid)=>pid===guest.pid||player.hidden&&player.marks===undefined));
+  }
+  assert.throws(()=>resumed.host.act('options',{mines:false}),/während/);
+ }
+});

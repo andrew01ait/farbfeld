@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createGame,BOARD,finishRound,score,rollGame,applyMove,findMove} from '../public/game/engine.js';
-import {projectGame,isHidden,isScoreHidden,scoreBreakdown,columnStatus,colorAnnouncements} from '../public/game/game-info.js';
+import {projectGame,isHidden,isScoreHidden,scoreBreakdown,columnStatus,colorAnnouncements,colorCompletionText} from '../public/game/game-info.js';
 import {mayInspect} from '../public/game/view-state.js';
 function game(hiddenScores=false){const g=createGame(['A','B','C'],'room',[],{hiddenScores});g.gameId='test';return g;}
 test('Punkteaufschlüsselung entspricht der Regelwertung, einschließlich Nullpunkten in Spalte H',()=>{
@@ -57,4 +57,15 @@ test('Verdeckte Dreier-Partie kann ausschließlich mit den projizierten eigenen 
  let g=game(true),seed=79,moves=0;const rng=max=>{seed=(seed*1664525+1013904223)>>>0;return seed%max;};
  while(g.status==='playing'&&moves<1200){g=rollGame(g,rng);const active=g.active;for(const pid of [active,...g.players.map((_,i)=>i).filter(i=>i!==active)]){const v=projectGame(g,pid);assert.equal(v.players[pid].marks.length,105);assert(v.players.every((p,i)=>i===pid||p.hidden));const move=findMove(v,pid)||{pass:true};g=applyMove(g,pid,move);moves++;}}
  assert.equal(g.status,'finished');assert(moves>30&&moves<1200);assert(projectGame(g,0).players.every(p=>p.marks.length===105));
+});
+
+test('Farbabschluss spricht Du korrekt an und behält Namen und verdeckte Punkte bei',()=>{
+ for(const [name,verb] of [['Du','hast'],['du','hast'],['Computer','hat'],['Robin','hat']]){
+  const event={id:'1:0:g',pid:0,name,color:'g',round:1,points:5};
+  assert.equal(colorCompletionText(event),name+' '+verb+' Grün abgeschlossen · +5');
+  assert.equal(colorCompletionText(event,{withPoints:false}),name+' '+verb+' Grün abgeschlossen');
+  const g=game(true);g.announcements=[event];
+  assert.equal(colorCompletionText(colorAnnouncements(g,0)[0]),name+' '+verb+' Grün abgeschlossen');
+  g.status='finished';assert.equal(colorCompletionText(colorAnnouncements(g,0)[0]),name+' '+verb+' Grün abgeschlossen · +5');
+ }
 });

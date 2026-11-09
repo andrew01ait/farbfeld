@@ -1,6 +1,10 @@
 # Versteckte Bonusfelder
 
-<!-- farbfeld-version: 1.17.1 -->
+<!-- farbfeld-version: 1.17.2 -->
+
+## Kompakte Anzeige
+
+Ab 1.17.2 zeigt die Karte Geschenk-Symbol, **Bonusfelder**, letzte gewertete Prämie (z. B. **Du · +2** oder **Du & Computer · je +2**) und **1/3**. Die ganze Kopfzeile öffnet den kurzen Verlauf **W10 · Du · +2**. Bei mehr als zwei gleichzeitigen Gewinnern steht kompakt die Anzahl, im Verlauf stehen alle Namen. Lange Namen kürzen nur in der geschlossenen Zeile; die Prämie bleibt sichtbar. Im verdeckten Spiel werden keine Prämienwerte gezeigt, auch nicht in zugänglichen Beschriftungen. 0/3 heißt **Noch unentdeckt**. [Gemeinsame Gestaltung](ui-design.md).
 
 **Bonusfelder** ist eine freiwillige Startregel für Solo, Computer, mehrere Personen an einem Handy, Offline-Direktpartien und Internet-Räume. Die Vorgabe für eine neue Einrichtung ist aus. Bei einer Revanche kann die vorige Wahl übernommen und vor dem Start geändert werden. Die Regel steht während einer laufenden Partie fest. Alle vier Brettwahlen und zwei bis sechs Mehrspielerplätze werden unterstützt. In jeder Mehrspielerpartie lassen sich Bonusfelder und Minen unabhängig kombinieren. Siehe [Minen](mines.md) und [Random](random-board.md).
 

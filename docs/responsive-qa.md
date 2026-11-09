@@ -1,6 +1,16 @@
 # Responsive QA
 
-<!-- farbfeld-version: 1.17.1 -->
+<!-- farbfeld-version: 1.17.2 -->
+
+## Release 1.17.2
+
+Alle zwölf verbindlichen Größen gerendert geprüft: neutraler gemeinsamer Hintergrund von Wurf, Punktkarten, Minen und Bonus; transparente Zugzeile; kein horizontaler Seiten- oder Statuskartenüberlauf. Mine gesperrt/bereit/verbraucht sowie Sechsergruppe mit langen Namen jeweils in zwölf Größen; Symbol 32 Pixel, Hilfe/Zünden 44 Pixel, Leiste 58–60 Pixel. Bonuskarte geschlossen 62 Pixel inklusive Rand, Kopfzeile 60 Pixel; 0/1/3 Entdeckungen und nativer aufklappbarer Verlauf geprüft. Die reduzierte Bewegung bleibt in den vorhandenen Effekten erhalten.
+
+Sechser-Gleichstand bei 320 Pixeln: vollständige Namen umbrechend im Verlauf, keine Karte breiter als der Viewport. Verdeckte Partie: keine Farb-/Bonus-Prämien, auch nicht in Labels; Gegnerknöpfe gesperrt, eigener Punktestand verborgen, eigene Schadensanzeige mit vier markierten Zellen vorhanden. Spielende gibt die Werte wieder frei; Ergebnis in allen zwölf Größen ohne Überlauf und mit neutraler Grundfläche. Alle sechs Designs bei 393×851 auf gemeinsame Flächen geprüft; klassische Brettfarben bleiben unverändert.
+
+Tatsächliche lokale UI-Aktionen: sechs Personen, Random + Minen + Bonusfelder + verdeckte Punkte ausgewählt und gestartet; Übergabe zeigt nur das eigene Blatt. Dieselben Schalter in Direkt- und Internet-Lobby benutzt und gestartet, Random-/Minen-/Bonus-/Verdeckungsstatus im Spiel bestätigt. Direkttransport dabei lokale Protokollsimulation, Internetoberfläche mit ausschließlich lokaler Vorschauantwort; die echten API-/Autoritäts- und Speicherregeln prüfen separate In-Memory-D1-/Direktregressionen für zwei/sechs Personen und Wiederaufnahme. Ältere Direktfähigkeiten sperren Random/Minen/Bonus korrekt. Keine Produktivräume oder Test-Pushs verwendet.
+
+Gerenderte Belege mit synthetischen lokalen Testständen verbleiben in der gehosteten Quelle; keine physischen Handys. Physische Zwei-Handy-/Hotspot- und Balanceabnahme bleiben separat.
 
 ## Release 1.17.1
 

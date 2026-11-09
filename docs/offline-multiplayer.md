@@ -1,6 +1,10 @@
 # Offline auf zwei bis sechs Handys
 
-<!-- farbfeld-version: 1.17.1 -->
+<!-- farbfeld-version: 1.17.2 -->
+
+## Neue Partien mit Zusatzregeln
+
+Ein Handy: **Zusammen → Ein Handy weitergeben**, dann Personen, Brett und optionale Minen/Bonusfelder wählen. Mehrere Handys: erst koppeln, danach wählt der Gastgeber Brett (einschließlich Random), Minen und Bonusfelder in der Direkt-Lobby. Eine wartende Kopplung ist kein Nachweis einer veralteten App; die Anzeige trennt Koppeln von fehlenden Fähigkeiten. Die Optionen lassen sich für 2–6 Personen kombinieren, auch bei verdeckten Punkten. Gemeinsamer Plan und Regeln bleiben über Wiederverbindung erhalten. Physische Hotspot-/Android-Abnahme weiterhin separat.
 
 ## Neu 1.17.0: Bonusfelder, Random und gemeinsame Minen
 

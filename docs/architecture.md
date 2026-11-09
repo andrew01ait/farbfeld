@@ -1,6 +1,10 @@
 # Architektur
 
-<!-- farbfeld-version: 1.17.1 -->
+<!-- farbfeld-version: 1.17.2 -->
+
+## Gemeinsame UI-Bausteine
+
+`style.css` definiert gemeinsame `--status-*`-Tokens für Flächen, Konturen, kleine Symbolfelder und semantische Akzente. Minen, Bonusfelder, Farbabschluss, Punkte und Ergebnis bleiben dadurch über alle sechs Designs konsistent. Die Brettfarben und der dunkle aktuelle Spieler bleiben funktional unterscheidbar. `game-info.js` formatiert Farbabschluss-Grammatik nach der vorhandenen Verdeckungsprojektion; `bonus-ui.js` rendert kompakte Prämien und nativen Details-Verlauf aus ausschließlich gewerteten Bonusereignissen. Kein neuer Spielzustand, Transport, Timer oder Push-Ereignistyp. [UI-Vertrag](ui-design.md).
 
 ## Neu 1.17.0: Bonusfelder, Random und gemeinsame Minen
 

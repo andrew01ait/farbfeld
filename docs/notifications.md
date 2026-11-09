@@ -1,6 +1,10 @@
 # Benachrichtigungen
 
-<!-- farbfeld-version: 1.17.1 -->
+<!-- farbfeld-version: 1.17.2 -->
+
+## Visuelle Spielhinweise 1.17.2
+
+Kurze Bonus-/Farbabschlussmeldungen sind ausschließlich sichtbare Spiel-UI. Die neue gemeinsame Gestaltung und Du-Grammatik ändern keine Push-Erlaubnis, Versandart, Wiederholungen oder Quittungsauswertung. Verdeckte Bonus-/Abschlusspunkte bleiben auch im Toast verborgen; Farbe/Bonus erzeugen weiterhin keinen Push.
 
 Ab 1.17.0 erhalten ausgestiegene Personen keine neuen Zug-, End- oder Revanchehinweise für die verlassene Partie. Ein letzter aktiver Sieger kann den bestehenden Endhinweis erhalten. Bonusfelder, Mine und Gastgeberwechsel erzeugen keine neue Push-Art; globale Begrenzung und erneute Prüfung bestehender Ereignisse bleiben erhalten.
 

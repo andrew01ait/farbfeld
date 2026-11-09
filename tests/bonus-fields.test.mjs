@@ -77,7 +77,7 @@ test('A public view and the full game score the same awards; rendering does not 
 test('Hidden bonus notices identify discovery without exposing coordinates, private marks or totals',()=>{
  let g=choosing(2,'local',true);g.players[0].name='<img onerror=bad>';g=finishPasses(applyMove(g,0,green));
  const html=bonusStatusHtml(g);assert(html.includes('&lt;img'));assert(!html.includes('<img'));assert(!html.includes('+2'));assert(!html.includes('H1'));assert(!html.includes('data-i'));
- assert.match(bonusAnnouncement(g,bonusAwards(g)[0]),/Bonusfeld gefunden/);assert.match(bonusSetupHtml(),/id="bonus-fields"/);assert(!bonusSetupHtml().includes(' checked'));assert(bonusSetupHtml(true).includes(' checked'));
+ assert.equal(bonusAnnouncement(g,bonusAwards(g)[0]),'<img onerror=bad>');assert.match(bonusSetupHtml(),/id="bonus-fields"/);assert(!bonusSetupHtml().includes(' checked'));assert(bonusSetupHtml(true).includes(' checked'));
  assert.match(bonusOptionHtml(false,true,'room-bonus',false,['Old <client>']),/disabled/);assert.match(bonusOptionHtml(false,true,'room-bonus',false,['Old <client>']),/Old &lt;client&gt;/);
 });
 test('Bonus state validation rejects duplicate locations, forged winners and mixed private/public states',()=>{
@@ -102,4 +102,21 @@ test('Complete optional computer games on every board keep bounded permanent bon
   }
   assert.equal(g.status,'finished');assert(validBonusState(JSON.parse(JSON.stringify(g))));
  }
+});
+
+test('Compact bonus notices and expandable history retain tied winners, round and concealed rewards',()=>{
+ for(const n of [2,6])for(const hiddenScores of [false,true]){
+  let g=choosing(n,'local',hiddenScores);g.players[0].name='Du';g.players[1].name='Computer';
+  for(let pid=0;pid<n;pid++)g=applyMove(g,pid,green);
+  const award=bonusAwards(g)[0],names=g.players.map(p=>p.name).join(' & '),html=bonusStatusHtml(g);
+  assert.equal(bonusAnnouncement(g,award),names+(hiddenScores?'':' · je +2'));
+  assert(html.includes('<details>'));assert(html.includes('aria-label="Wurf 1"'));assert(html.includes('1/3'));
+  assert(html.includes(names.replaceAll('&','&amp;')));assert(!html.includes('Bonusfeld gefunden'));
+  if(n===6)assert(html.includes('Alle 6'));
+  assert.equal(html.includes('+2'),!hiddenScores);
+  g.status='finished';assert(bonusStatusHtml(g).includes('je +2'));
+ }
+ let g=finishPasses(applyMove(choosing(),0,green));g.players[0].name='Du';
+ assert.equal(bonusAnnouncement(g,bonusAwards(g)[0]),'Du · +2');
+ const empty=bonusStatusHtml(choosing());assert(empty.includes('Noch unentdeckt'));assert(!empty.includes('<details>'));assert(empty.includes('0/3'));
 });

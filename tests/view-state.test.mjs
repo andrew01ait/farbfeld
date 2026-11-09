@@ -80,3 +80,11 @@ test('Einpassen nutzt die Innenbreite ohne Scroll-Padding und schneidet die letz
  assert.equal(innerBoardWidth(324,2,2),320);assert.equal(innerBoardWidth(300,4.5,5.5),290);assert.equal(innerBoardWidth(20,30,30),1);
  for(const client of [251,284,324,343,650]){const width=innerBoardWidth(client,2,2),scale=width/638;assert(Math.floor(638*scale)+4<=client);assert.equal(boardLayout(width,400,true).width,width);}
 });
+
+test('Turn descriptions conjugate literal Du correctly without treating a named participant as Du',()=>{
+ for(const mode of ['local','room','direct'])for(const name of ['Du','Robin']){
+  let g=createGame([name,'Bea'],mode);assert.equal(turnDescription(g,0).title,name+(name==='Du'?' würfelst jetzt':' würfelt jetzt'));
+  g=rollGame(g,()=>0);assert.equal(turnDescription(g,0).title,name+(name==='Du'?' wählst zuerst':' wählt zuerst'));
+  g.active=1;g.submitted=[1];assert.equal(turnDescription(g,0).title,name+(name==='Du'?' bist am Zug':' ist am Zug'));
+ }
+});

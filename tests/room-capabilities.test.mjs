@@ -113,3 +113,23 @@ test('Raum-Minen treffen alle Gegner atomar; falsche Identität, Wiederholungen 
  const before=h.state().version;response=await h.post('mine',before,{target:52,gameId:room.game.gameId,round:1,pid:1});assert.equal(response.status,200);assert.equal(h.state().room.game.mines.used[0],true);assert.equal(h.state().room.game.mines.used[1],false);assert.equal(h.state().room.game.players[1].marks[52],false);
  assert.equal((await h.post('mine',before,{target:52,gameId:room.game.gameId,round:1})).status,409);assert.equal(h.state().version,before+1);
 });
+
+test('All optional rules start together in new two/six-player Internet games without revealing concealed sheets or bonus locations',async t=>{
+ for(const n of [2,6])for(const hiddenScores of [false,true]){
+  const h=await harness(t);await h.get();const room=h.state().room;
+  for(let i=2;i<n;i++)room.members.push({id:'guest'+i,token:'fixture-guest'+i,name:'Guest '+i,features:all});
+  h.sql.prepare('UPDATE rooms SET state = ? WHERE code = ?').run(JSON.stringify(room),code);
+  let response=await h.post('options',h.state().version,{boardId:'random',mines:true,bonusFields:true,hiddenScores});assert.equal(response.status,200);
+  assert.equal(response.data.supportsMines,true);assert.equal(response.data.supportsRandomBoard,true);assert.equal(response.data.supportsBonusFields,true);
+  response=await h.post('start',response.data.version);assert.equal(response.status,200);const raw=h.state().room.game;
+  assert.equal(raw.players.length,n);assert.equal(raw.boardId,'random');assert.equal(raw.hiddenScores,hiddenScores);assert.equal(raw.mines.unlocked.length,n);assert.equal(raw.bonuses.fields.length,3);
+  for(let pid=0;pid<n;pid++){
+   const view=(await h.get(pid===0?'fixture-host':pid===1?'fixture-guest':'fixture-guest'+pid)).data.game;
+   assert.deepEqual(view.boardLayout,raw.boardLayout);assert.equal(view.bonuses.fields,undefined);assert.equal(view.bonuses.remaining,3);
+   assert.equal(view.players[pid].marks.length,105);
+   if(hiddenScores)assert(view.players.every((player,index)=>index===pid||player.hidden&&player.marks===undefined));
+  }
+  assert.equal((await h.post('options',h.state().version,{mines:false})).status,409);
+  await Promise.allSettled(h.scheduled);
+ }
+});

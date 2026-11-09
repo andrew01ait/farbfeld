@@ -1,6 +1,12 @@
 # Abläufe
 
-<!-- farbfeld-version: 1.17.1 -->
+<!-- farbfeld-version: 1.17.2 -->
+
+## Start und Hinweise ab 1.17.2
+
+**Zusammen → Ein Handy weitergeben:** 2–6 Namen, Brett (einschließlich Random), verdeckte Punkte, Minen und Bonusfelder vor dem Start. **Offline – mehrere Handys:** zuerst alle koppeln; dann wählt der Gastgeber Brett und Zusatzregeln. **Internet – Spielraum:** Raum erstellen/beitreten; vor dem Start wählt der Gastgeber die Regeln in der Lobby. Fehlende tatsächliche Fähigkeiten sperren nur die entsprechenden Regeln; weder Kopplung noch Namenseingabe bestätigt Unterstützung anderer Apps.
+
+Ein Bonusabschluss wird nach dem gemeinsamen Wurf knapp bekanntgegeben (**Bonusfeld · Du · +2**); die kompakte Statuskarte zeigt den letzten Gewinner und einen Zähler, Antippen klappt den Wurf-/Gewinnerverlauf auf. Verdeckte Werte bleiben auch in den kurzen Meldungen und ihren zugänglichen Beschriftungen bis zum Ende verborgen. Farbabschlüsse verwenden denselben Textbaustein für Karte und Toast (Du **hast**, benannte Person **hat**).
 
 ## Neu 1.17.0: Bonusfelder, Random und gemeinsame Minen
 

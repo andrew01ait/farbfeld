@@ -1,6 +1,10 @@
 # Source and documentation workflow
 
-<!-- farbfeld-version: 1.17.1 -->
+<!-- farbfeld-version: 1.17.2 -->
+
+## Shared UI maintenance
+
+Keep `docs/ui-design.md`, the shared status tokens and the concise German copy aligned in both sources. Validate combined multiplayer start/recovery and hidden-value rendering before publishing a UI revision. Native Sites deployment and the public GitHub update remain separate verified operations.
 
 Farbfeld has a hosted source repository and a separate public [GitHub repository](https://github.com/andrew01ait/farbfeld). Keep their application behavior and shared technical guides aligned through reviewed changes. Their Git histories are separate; commit identifiers are not interchangeable.
 

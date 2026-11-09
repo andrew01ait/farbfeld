@@ -1,5 +1,5 @@
 import {projectBonuses} from './bonus-fields.js';
-import {COLORS,FIRST,LATER,score,bonusFieldsEnabled,minesEnabled,projectMines} from './engine.js';
+import {COLORS,FIRST,LATER,LABELS,score,bonusFieldsEnabled,minesEnabled,projectMines} from './engine.js';
 export const HIDDEN_FEATURE='hidden-scores-v1';
 export const isScoreHidden=game=>!!game?.hiddenScores&&game.status!=='finished';
 export const isHidden=(game,pid,own)=>isScoreHidden(game)&&pid!==own;
@@ -27,4 +27,10 @@ export function columnStatus(game,pid,col){
 }
 export function colorAnnouncements(game,own){
  return (Array.isArray(game?.announcements)?game.announcements:[]).filter(e=>e&&typeof e.id==='string'&&Number.isInteger(e.pid)&&e.pid>=0&&e.pid<game.players.length&&typeof e.name==='string'&&COLORS.includes(e.color)&&Number.isSafeInteger(e.round)&&e.round>=1&&(e.points===undefined||[3,5].includes(e.points))).map(event=>isScoreHidden(game)?(({points,...rest})=>rest)(event):event);
+}
+
+// Display-name grammar only; this never infers which person owns a device.
+export function colorCompletionText(event,{withPoints=true}={}){
+ const name=event.name,verb=name.trim().toLocaleLowerCase('de')==='du'?'hast':'hat';
+ return name+' '+verb+' '+LABELS[event.color]+' abgeschlossen'+(withPoints&&event.points!==undefined?' · +'+event.points:'');
 }

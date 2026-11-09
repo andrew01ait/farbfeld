@@ -1,6 +1,6 @@
 # Eine Partie freiwillig verlassen
 
-<!-- farbfeld-version: 1.17.1 -->
+<!-- farbfeld-version: 1.17.2 -->
 
 In einer laufenden Mehrspielerpartie öffnet × **Partie verlassen?**. Erst **Verlassen · −10 Punkte** bestätigt den Ausstieg. Die Person erhält sofort einen einmaligen negativen Verlaufseintrag mit **fest −10 Punkten** und einer Niederlage. Der Wert ersetzt ihren Spielpunktestand; es ist kein Abzug von der vorherigen Summe. Die übrigen spielen mit ihren bestehenden Blättern, Würfeln und Regeln weiter. Solo-Abbruch und verworfene Kopplungen erzeugen keinen solchen Eintrag.
 

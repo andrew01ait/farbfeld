@@ -6,13 +6,19 @@ export function bonusSetupHtml(enabled=false){return '<label class="bonus-setup"
 export function bonusOptionHtml(enabled,host,action,available=true,missing=[]){
  return '<section class="bonus-option hidden-option"><div><strong>Bonusfelder '+(enabled?'aktiviert':'ausgeschaltet')+'</strong><p>'+rules+'</p>'+(!available?'<p class="bonus-update-note">'+(missing.length?esc(missing.join(', '))+': ':'')+'Bitte Farbfeld 1.17.0 oder neuer öffnen und den Raum erneut aufrufen.</p>':'')+'</div>'+(host?'<button class="toggle '+(enabled?'on':'')+'" role="switch" aria-label="Bonusfelder" aria-checked="'+enabled+'" data-action="'+action+'"'+(available||enabled?'':' disabled')+'></button>':'')+'</section>';
 }
+function awardView(game,award,compact=false){
+ const names=compact&&award.winners.length>2?(award.winners.length===game.players.length?'Alle '+award.winners.length:award.winners.length+' Personen'):award.winners.map(pid=>game.players[pid]?.name||'Mitspieler').join(' & ');
+ const points=game.hiddenScores&&game.status!=='finished'?'':(award.winners.length>1?'je ':'')+'+'+BONUS_POINTS;
+ return {names,points};
+}
 export function bonusAnnouncement(game,award){
- const names=award.winners.map(pid=>game.players[pid]?.name||'Mitspieler').join(' & ');
- return names+(award.winners.length>1?' haben':' hat')+' ein Bonusfeld gefunden'+(game.hiddenScores&&game.status!=='finished'?'':award.winners.length>1?' · je +'+BONUS_POINTS+' Punkte':' · +'+BONUS_POINTS+' Punkte')+'.';
+ const {names,points}=awardView(game,award);return names+(points?' · '+points:'');
 }
 export function bonusStatusHtml(game){
  if(!bonusFieldsEnabled(game))return '';
- const awards=bonusAwards(game).sort((a,b)=>a.round-b.round||a.slot-b.slot);
- const latest=awards.at(-1),summary=latest&&(latest.winners.length>2?(latest.winners.length===game.players.length?'Alle '+latest.winners.length+' Personen':latest.winners.length+' Personen')+' haben ein Bonusfeld gefunden'+(game.hiddenScores&&game.status!=='finished'?'':' · je +2 Punkte')+'.':bonusAnnouncement(game,latest));
- return '<section class="bonus-panel" aria-label="Bonusfelder"><div class="bonus-panel-title">'+gift+'<strong>Bonusfelder</strong><span>'+awards.length+' von 3 entdeckt</span></div>'+(awards.length?'<p>'+esc(summary)+'</p><details><summary>Entdeckungen ansehen</summary><ul>'+awards.map(award=>'<li>'+esc(bonusAnnouncement(game,award))+' <small>Wurf '+award.round+'</small></li>').join('')+'</ul></details>':'<p>Drei Felder sind versteckt. Die Entdeckung wird nach allen Zügen des Wurfs bekanntgegeben.</p>')+'</section>';
+ const awards=bonusAwards(game).sort((a,b)=>a.round-b.round||a.slot-b.slot),latest=awards.at(-1),view=latest&&awardView(game,latest,true);
+ const count='<span class="bonus-count" aria-label="'+awards.length+' von 3 Bonusfeldern entdeckt">'+awards.length+'/3</span>';
+ const icon='<span class="status-icon" aria-hidden="true">'+gift+'</span>';
+ const heading=icon+'<span class="bonus-copy"><strong>Bonusfelder</strong><span class="bonus-latest">'+(view?'<span class="bonus-winners">'+esc(view.names)+'</span>'+(view.points?'<span class="bonus-divider" aria-hidden="true">·</span><b class="bonus-reward">'+esc(view.points)+'</b>':''):'<span class="bonus-winners">Noch unentdeckt</span>')+'</span></span>'+count;
+ return '<section class="bonus-panel" aria-label="Bonusfelder">'+(latest?'<details><summary class="bonus-summary has-history" aria-label="Bonusfelder: '+awards.length+' von 3 entdeckt. Verlauf anzeigen">'+heading+'<svg class="bonus-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary><ol class="bonus-history" aria-label="Bonusverlauf">'+awards.map(award=>{const item=awardView(game,award);return '<li><small aria-label="Wurf '+award.round+'">W'+award.round+'</small><span class="bonus-history-names">'+esc(item.names)+'</span>'+(item.points?'<b class="bonus-reward">'+esc(item.points)+'</b>':'')+'</li>';}).join('')+'</ol></details>':'<div class="bonus-summary">'+heading+'</div>')+'</section>';
 }

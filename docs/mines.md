@@ -1,6 +1,10 @@
 # Optionaler Minenangriff
 
-<!-- farbfeld-version: 1.17.1 -->
+<!-- farbfeld-version: 1.17.2 -->
+
+## Darstellung 1.17.2
+
+Die Minenleiste teilt neutrale Fläche, Kontur, 14-Pixel-Radius und 32-Pixel-Symbolfeld mit Bonus-/Farbhinweisen. Nur das Bereitschaftssymbol und die Bereit-Chips erhalten einen grünen Akzent; die gesamte Karte bleibt neutral. Hilfe und Zünden bleiben 44 Pixel hoch, die eigene Bereitschaftsanimation und die Drei-Sekunden-Explosion bestehen weiter. Rötliche Tönung bleibt tatsächlichem Schaden vorbehalten. [Gestaltung](ui-design.md).
 
 **Minenangriff** ist eine freiwillige Startregel für zwei bis sechs Personen: Computer, gemeinsam an einem Handy, Internet-Raum und Offline-Direktgruppe. Kein Solo. Vor dem neuen Start wählen; in Netzwerk-Lobbys entscheidet der Gastgeber. Classic, Flusslauf, Mosaik und Random sowie offene/verdeckte Punkte werden unterstützt. Alte Spiele ohne Minen bleiben Standardpartien. Die frühere Beschränkung auf zwei Computergegner wurde auf ausdrücklichen Nutzerwunsch ab 1.17.0 aufgehoben.
 

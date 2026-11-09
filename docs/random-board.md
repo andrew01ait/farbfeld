@@ -1,6 +1,10 @@
 # Random-Spielbrett
 
-<!-- farbfeld-version: 1.17.1 -->
+<!-- farbfeld-version: 1.17.2 -->
+
+## Mehrspieler-Auswahl
+
+**Random** steht auch bei neuen Ein-Handy-, Direkt- und Internetpartien neben den drei festen Brettern. Bei Netzwerkspielen wählt der Gastgeber vor dem Start; im Direktspiel nach vollständiger Kopplung. Minen und Bonusfelder lassen sich zugleich aktivieren. Zwei-/Sechserpartien mit offenen/verdeckten Punkten und identischem gespeicherten Plan sind automatisiert geprüft.
 
 **Random** ist die vierte Brettwahl neben Classic, Flusslauf und Mosaik, für alle Spielarten. Erst beim bestätigten neuen Start wird das tatsächliche Blatt erzeugt. Der Server bzw. Direkt-Gastgeber erzeugt genau einen Plan; alle Personen erhalten denselben. Neuladen, Fortsetzen und Wiederverbinden erhalten den Plan. Jede neue Partie/Revanche erzeugt einen frischen Zufallsplan; eine zufällige Wiederholung ist nicht mathematisch ausgeschlossen.
 

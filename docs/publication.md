@@ -1,6 +1,11 @@
 # Public source snapshot
 
-<!-- farbfeld-version: 1.17.1 -->
+<!-- farbfeld-version: 1.17.2 -->
+
+## Update 1.17.2 — 9 November 2026
+
+Concise German completion/bonus copy, consistent neutral game surfaces and explicit concealed-board wording. New shared UI guide covers tokens, semantics, accessibility and privacy. Existing Random/mines/bonus options are jointly verified in shared-phone, direct and Internet starts for two/six players, including recovery and concealed projections; host authority and real capability gating remain intact. 395 automated regressions, both API integrations, TypeScript, documentation checks and production builds verify the maintained sources. Twelve responsive sizes, all six themes, mine states, bonus history and finished results rendered in the hosted preview. Transport simulation and physical-device limits are explicit in the QA guide. Private screenshots/instance identifiers remain excluded. GitHub publication and hosted deployment are separate operations; no automatic GitHub deployment is configured.
+
 
 ## Update 1.17.1 — 9 November 2026
 
