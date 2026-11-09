@@ -1,6 +1,6 @@
 # Benachrichtigungen
 
-<!-- farbfeld-version: 1.17.0 -->
+<!-- farbfeld-version: 1.17.1 -->
 
 Ab 1.17.0 erhalten ausgestiegene Personen keine neuen Zug-, End- oder Revanchehinweise für die verlassene Partie. Ein letzter aktiver Sieger kann den bestehenden Endhinweis erhalten. Bonusfelder, Mine und Gastgeberwechsel erzeugen keine neue Push-Art; globale Begrenzung und erneute Prüfung bestehender Ereignisse bleiben erhalten.
 

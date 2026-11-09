@@ -1,5 +1,5 @@
 importScripts('/game/notification-worker.js');
-const VERSION='1.17.0';
+const VERSION='1.17.1';
 const CACHE=`farbfeld-v${VERSION}`;
 const FILES=['/play','/version.json','/game/style.css','/game/app.js','/game/themes.js','/game/stats.js','/game/room-status.js','/game/room-book.js','/game/engine.js','/game/boards.js','/game/reactions.js','/game/notification-policy.js','/game/notification-worker.js','/game/notifications.js','/game/game-info.js','/game/computer.js','/game/ducky.svg','/game/paw.svg','/game/view-state.js','/game/board-view.js','/game/pwa.js','/game/direct-game.js','/game/direct-connection.js','/game/direct.js','/game/direct-ui.js','/game/direct-check.js','/game/direct-diagnostics.js','/game/mine-ui.js','/game/bonus-fields.js','/game/bonus-ui.js','/game/qr.js','/game/vendor/qrcode.js','/game/vendor/jsqr.js','/game/vendor/qrcode-LICENSE.txt','/game/vendor/jsqr-LICENSE.txt','/manifest.webmanifest','/icon.svg','/icon-192.png','/icon-512.png','/icon-maskable.png'];
 const APP_PATHS=new Set(['/','/play','/play/','/play.html']);

@@ -1,6 +1,6 @@
 # Offline-Testprotokoll für zwei Handys
 
-<!-- farbfeld-version: 1.17.0 -->
+<!-- farbfeld-version: 1.17.1 -->
 
 Das lokale Testprotokoll hilft, Gerätevorbereitung, QR-Kopplung, tatsächlichen Verbindungsaufbau und Spielabgleich getrennt zu untersuchen. Es repariert eine Verbindung nicht selbst und ist kein Nachweis physischer Android-/Hotspot-Kompatibilität. Die bisherige **Offline-Verbindung prüfen → Prüfergebnis kopieren** bleibt als separater Einzelgerätetest erhalten.
 

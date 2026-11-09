@@ -1,6 +1,10 @@
 # Änderungsprotokoll
 
-<!-- farbfeld-version: 1.17.0 -->
+<!-- farbfeld-version: 1.17.1 -->
+
+## 1.17.1 – 2026-11-09
+
+Telefon-Brettauswahl korrigiert: Zwei-mal-zwei-Raster statt kollidierender alter Zeilen-/Viererspalten-Regeln. Alle 105 Vorschaufelder und Namen bleiben innerhalb ihrer Kacheln, Random gleich groß mit erkennbaren Würfelpunkten. Vier Spalten auf breiten Ansichten, 44-Pixel-Schließen in Startdialogen. Minenleiste mit eigenem, dauerhaft sichtbarem Minesweeper-Symbol, klaren Statuswörtern und hellen neutralen/grünen Zuständen; Gruppennamen bleiben innerhalb eines gesondert scrollbaren Bereichs. Keine Spielregel-, Speicher-, Netzwerk- oder Push-Änderung. Gerenderte Einzelkachelprüfung und Release-/Offline-Prüfung werden im Layoutnachweis dokumentiert.
 
 ## 1.17.0 – 2026-11-09
 

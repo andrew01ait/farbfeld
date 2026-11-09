@@ -1,6 +1,6 @@
 # Offline auf zwei bis sechs Handys
 
-<!-- farbfeld-version: 1.17.0 -->
+<!-- farbfeld-version: 1.17.1 -->
 
 ## Neu 1.17.0: Bonusfelder, Random und gemeinsame Minen
 

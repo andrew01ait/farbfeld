@@ -1,6 +1,10 @@
 # Versionen und Kompatibilität
 
-<!-- farbfeld-version: 1.17.0 -->
+<!-- farbfeld-version: 1.17.1 -->
+
+## Kompatibilität 1.17.1
+
+Layout-/Symbolkorrektur, unveränderte Spielregeln, Schema 1, Direktprotokoll 2, Fähigkeiten und 40 Offline-Dateien. Keine Migration oder neue Konfiguration. Installierte Apps regulär aktualisieren; begonnene Partien bleiben erhalten.
 
 ## Neu 1.17.0: Bonusfelder, Random und gemeinsame Minen
 

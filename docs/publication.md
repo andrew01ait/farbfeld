@@ -1,6 +1,10 @@
 # Public source snapshot
 
-<!-- farbfeld-version: 1.17.0 -->
+<!-- farbfeld-version: 1.17.1 -->
+
+## Update 1.17.1 — 9 November 2026
+
+Responsive board-selector and in-game mine-bar corrections, including the fixed Minesweeper icon, explicit status words and separate group scrolling. Per-card visual bounds replace page-overflow-only checks. 50 focused mine/group/PWA tests passed, with 20 rendered board-selector sizes and each mine state at all 12 required sizes. No new dependency, migration, asset or gameplay/transport policy; private screenshots and operational records stay in the hosted source.
 
 ## Update 1.17.0 — 9 November 2026
 

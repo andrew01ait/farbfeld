@@ -1,6 +1,6 @@
 # Architektur
 
-<!-- farbfeld-version: 1.17.0 -->
+<!-- farbfeld-version: 1.17.1 -->
 
 ## Neu 1.17.0: Bonusfelder, Random und gemeinsame Minen
 
@@ -190,3 +190,9 @@ Der Service Worker führt eine Statusprüfung und höchstens einen Quittungs-POS
 `engine.js` ist weiterhin alleinige Regelautorität. Bonuskoordinaten und reservierte Treffer bleiben vollständig beim Server/Offlinehost; alle Gäste sehen nur veröffentlichte Bonusgewinne. `boards.js` erzeugt und prüft ein geteiltes Random-Layout bei Start. `boardFor(game)` nutzt diesen gespeicherten Plan für UI, Hinweise, Computer und Wertung. Minen werden vor der normalen Auswahl als eigene atomare Aktion mit per-Gegner-Ergebnissen gespeichert; Abschlussrunden erlauben korrekte Erst-/Späterboni bei mehr als zwei Personen.
 
 `leaveGame` markiert statt zu löschen: stabile Plätze, keine nachträgliche Würfeländerung, beendete Beiträge blockieren keinen Rundenabschluss. Eine aktive Person beendet die Partie unmittelbar. Internet überträgt `hostId` im selben CAS-Commit; erst Revanche entfernt Ausgestiegene aus der Mitgliedsliste. Direkt bleibt Platz 0 dauerhafte Autorität und Relay, auch als Zuschauer; die Bereitschaft verlangt nur noch aktive Gäste plus Relay. Keine hostlose Fortsetzung bei Verbindungsabbruch. Lokale Ausstiegs- und Endresultate werden getrennt dedupliziert, unbekannte verdeckte Gegnersummen bleiben absent. Neue additive Fähigkeiten erlauben sichere Mischversionserkennung ohne Schema-/Protokollwechsel.
+
+## Brettwahl und feste Minenkennzeichnung 1.17.1
+
+Die gemeinsame `boardPicker`-Ausgabe bleibt unverändert. CSS entfernt die kollidierende alte 420-Pixel-Zeilenregel und definiert pro Kachel eine einzelne Vorschau-/Namensspalte mit begrenzten Grid-Tracks. Bis 540 Pixel zwei Kacheln je Zeile, darüber vier. Vorschauzellen bleiben im Seitenverhältnis 15:7 innerhalb der eigenen Kachel; Random nutzt dieselbe Größe und runde Würfelpunkte.
+
+`mine-ui.js` zeichnet ein lokales gefülltes Minesweeper-SVG. `mine-feature-icon` ist eine eigene feste Grid-Spalte vor `mine-state-list`; weder kleine Breiten noch seitliches Scrollen können das Symbol ausblenden. Statuswörter ergänzen Farbe und Symbole. Die bisherigen Klassen für Bereit-Puls, zulässige Aktion und reduzierte Bewegung bleiben erhalten. Keine Regel-/Transportänderung und kein neues Offline-Asset.

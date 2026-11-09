@@ -1,6 +1,14 @@
 # Farbfeld
 
-<!-- farbfeld-version: 1.17.0 -->
+<!-- farbfeld-version: 1.17.1 -->
+
+## Neu 1.17.1: Lesbare Brettwahl und Minenleiste
+
+Auf Handys stehen die vier Bretter in einem Zwei-mal-zwei-Raster mit vollständigen Vorschauen und sichtbaren Namen; breite Ansichten behalten vier Spalten. Die Minenleiste zeigt ein festes Minesweeper-Symbol und **Gesperrt**, **Bereit** oder **Verbraucht**. Helle neutrale/grüne Zustände, getrennt scrollbare Gruppennamen und große Hilfe-/Aktionsflächen halten sie kompakt. Update regulär über **Auf Updates prüfen → Aktualisieren**. Spielregeln und gespeicherte Partien bleiben unverändert.
+
+
+
+
 
 ## Neu 1.17.0: Bonusfelder, Random und gemeinsame Minen
 
@@ -18,7 +26,7 @@ Drei geheime **Bonusfelder** vergeben je +2 an alle ersten Finder desselben Wurf
 
 An installable, offline-ready dice game PWA with solo play, computer opponents, local and online multiplayer, and push notifications.
 
-[Play Farbfeld](https://farbfeld-andrew.endruuu.chatgpt.site/play) · [Version 1.17.0](public/version.json) · [Documentation](docs/README.md)
+[Play Farbfeld](https://farbfeld-andrew.endruuu.chatgpt.site/play) · [Version 1.17.1](public/version.json) · [Documentation](docs/README.md)
 
 The game interface is in German. Farbfeld needs no user account. It is an independent implementation of the basic rules of *Noch mal!* by Inka and Markus Brand (Schmidt Spiele), using its own interface and assets; this repository is not an official publisher release.
 

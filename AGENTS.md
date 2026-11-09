@@ -1,6 +1,6 @@
 # Farbfeld contributor instructions
 
-<!-- farbfeld-version: 1.17.0 -->
+<!-- farbfeld-version: 1.17.1 -->
 
 This is the public source snapshot for Farbfeld. Keep changes scoped to the requested feature. Do not infer authorization to change or redeploy an existing hosted installation from a change to this repository.
 
@@ -32,6 +32,7 @@ This is the public source snapshot for Farbfeld. Keep changes scoped to the requ
 - Keep all version markers and offline cache assets consistent. Use the release script for an application release; a source-only documentation/export correction is not a production deployment.
 - Update README, feature guides, changelog, architecture and flows when behavior changes.
 - Run `pnpm test`, both API integrations, `pnpm typecheck`, `pnpm check:docs` and the production build for gameplay/network changes.
+- Board selectors use two columns through 540 CSS pixels and four above that, with one-column content inside each card. Never restore the old fixed 112-pixel side-by-side preview. Validate all preview cells and the full label inside each card, not just page scroll width. The mine badge stays outside the horizontally scrollable participant list, visible even at 320 pixels; preserve native radio/checkbox access, explicit locked/ready/used text and 44-pixel actions.
 - For layout changes use [the responsive QA matrix](docs/responsive-qa.md). Distinguish rendered browser tests and physical-device tests from source review or simulations.
 - Preserve third-party license and provenance notices. Do not add a project-wide license without the owner's decision.
 

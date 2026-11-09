@@ -1,6 +1,6 @@
 # Optionaler Minenangriff
 
-<!-- farbfeld-version: 1.17.0 -->
+<!-- farbfeld-version: 1.17.1 -->
 
 **Minenangriff** ist eine freiwillige Startregel für zwei bis sechs Personen: Computer, gemeinsam an einem Handy, Internet-Raum und Offline-Direktgruppe. Kein Solo. Vor dem neuen Start wählen; in Netzwerk-Lobbys entscheidet der Gastgeber. Classic, Flusslauf, Mosaik und Random sowie offene/verdeckte Punkte werden unterstützt. Alte Spiele ohne Minen bleiben Standardpartien. Die frühere Beschränkung auf zwei Computergegner wurde auf ausdrücklichen Nutzerwunsch ab 1.17.0 aufgehoben.
 
@@ -22,7 +22,7 @@ Nicht mehr vollständige Spalten/Farben verlieren sofort ihre Punkte; entfernte 
 
 ## Kompakte Bedienung und sichtbarer Schaden
 
-Die kleine Leiste zeigt Schloss/Grünhaken/verbraucht neben den Namen; weitere Namen lassen sich seitlich ansehen. Das Fragezeichen erklärt die Symbole. Beim Freischalten erscheinen **Mine bereit**, ein kurzer Puls und die dauerhaft grüne Bereitschaft; **Zünden · −5** ist nur im erlaubten eigenen Moment bedienbar. Im Ziel-Dialog stehen eine kurze Anweisung und drei Regeln, weitere Details sind eingeklappt. Große Spalten-/Zeilenauswahlen ergänzen das feine Raster.
+Die kleine Leiste zeigt ab 1.17.1 dauerhaft ein gefülltes Minesweeper-Symbol, auch auf dem kleinsten Handy. Der eigene Status lautet **Gesperrt**, **Bereit** oder **Verbraucht**, ergänzt durch Schloss/Grünhaken/verbraucht und neutrale/grüne Farben. Weitere Namen lassen sich in einem getrennten Bereich seitlich ansehen; das Minensymbol bleibt dabei stehen. Das Fragezeichen erklärt die Symbole. Beim Freischalten erscheinen **Mine bereit**, ein kurzer Puls und die dauerhaft grüne Bereitschaft; **Zünden · −5** ist nur im erlaubten eigenen Moment bedienbar. Im Ziel-Dialog stehen eine kurze Anweisung und drei Regeln, weitere Details sind eingeklappt. Große Spalten-/Zeilenauswahlen ergänzen das feine Raster.
 
 Nach autoritativ bestätigtem Einsatz läuft die Explosion **drei Sekunden**. Sichtbarer Schaden wird ins Blickfeld gescrollt; betroffene Zellen leuchten langsamer auf. Anschließend bleiben rote gestrichelte Felder und verlorene Kreuze bis einschließlich Ende des nächsten vollen Wurfs markiert. Wieder gefüllte Stellen erscheinen grün gestrichelt. Mehrere Angriffe werden mit ihrer jeweiligen Frist vereinigt. In offenen Partien kann das betroffene Blatt nach eigenem Angriff geprüft und mit **Zu meinem Spielfeld** verlassen werden; die eigene unbestätigte Auswahl bleibt erhalten. Verdeckte gegnerische Schäden erscheinen weder im Effekt noch im Raster. Reduzierte Bewegung wird berücksichtigt.
 

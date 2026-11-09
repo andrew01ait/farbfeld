@@ -1,6 +1,6 @@
 # Versteckte Bonusfelder
 
-<!-- farbfeld-version: 1.17.0 -->
+<!-- farbfeld-version: 1.17.1 -->
 
 **Bonusfelder** ist eine freiwillige Startregel für Solo, Computer, mehrere Personen an einem Handy, Offline-Direktpartien und Internet-Räume. Die Vorgabe für eine neue Einrichtung ist aus. Bei einer Revanche kann die vorige Wahl übernommen und vor dem Start geändert werden. Die Regel steht während einer laufenden Partie fest. Alle vier Brettwahlen und zwei bis sechs Mehrspielerplätze werden unterstützt. In jeder Mehrspielerpartie lassen sich Bonusfelder und Minen unabhängig kombinieren. Siehe [Minen](mines.md) und [Random](random-board.md).
 

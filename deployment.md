@@ -1,6 +1,10 @@
 # Development and deployment
 
-<!-- farbfeld-version: 1.17.0 -->
+<!-- farbfeld-version: 1.17.1 -->
+
+## Release 1.17.1
+
+Responsive board cards keep every preview and full label inside its own card: two columns through 540 CSS pixels and four above. The compact mine bar has a fixed Minesweeper icon, explicit locked/ready/spent labels and a separately scrolling participant list. No rule, transport, database, secret, dependency or offline asset change; 40 atomic assets. 50 focused mine/group/PWA regressions passed; 20 board-selector sizes and 12 sizes for each mine state were rendered. Update installed PWAs normally, no reinstall. See [QA scope](docs/responsive-qa.md).
 
 ## Release 1.17.0
 

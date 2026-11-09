@@ -1,6 +1,6 @@
 # Raumstatus, Zuganzeige und Wartezeit
 
-<!-- farbfeld-version: 1.17.0 -->
+<!-- farbfeld-version: 1.17.1 -->
 
 Ausgestiegene werden als **Partie verlassen · −10 Punkte** angezeigt und nicht mehr als am Zug. Die laufende Gruppe behält feste Indizes; Online-Präsenz ist weiterhin getrennt vom freiwilligen Ausstieg. Internet-Gastgeberwechsel ist atomar, Offline-Gastgeber bleibt Relay. [Regeln](leaving.md).
 

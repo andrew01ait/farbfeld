@@ -1,6 +1,6 @@
 # Source and documentation workflow
 
-<!-- farbfeld-version: 1.17.0 -->
+<!-- farbfeld-version: 1.17.1 -->
 
 Farbfeld has a hosted source repository and a separate public [GitHub repository](https://github.com/andrew01ait/farbfeld). Keep their application behavior and shared technical guides aligned through reviewed changes. Their Git histories are separate; commit identifiers are not interchangeable.
 

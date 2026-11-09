@@ -1,6 +1,15 @@
 # Responsive QA
 
-<!-- farbfeld-version: 1.17.0 -->
+<!-- farbfeld-version: 1.17.1 -->
+
+## Release 1.17.1
+
+Nutzerscreenshot reproduziert: Bei 393 Pixeln war jede Brettkachel nur 63 Pixel breit, die alte mobile Zeilenregel erzwang jedoch eine 112-Pixel-Vorschau und schob auch den Namen aus der Kachel. Die Prüfung auf Dokumentüberlauf allein erkannte diesen internen Fehler nicht. Jetzt wird jeder Vorschau-/Namensrand sowie jede der 105 Vorschauzellen gegen die jeweilige Kachel geprüft, einschließlich beschriftetem Random und sichtbarem Auswahlzustand.
+
+Alle zwölf verbindlichen Größen plus 420/421 und 540/541 Pixel sowie die vier Kombinationen aus 680/681 Breite und 650/651 Höhe geprüft (20 Ansichten): Seite und Dialog ohne horizontalen Überlauf, alle Kachelinhalte enthalten; zwei Spalten bis 540 Pixel, vier darüber, 44-Pixel-Schließen. Auswahl aller vier Namen aktualisiert die richtige Beschreibung. Solo- und Sechser-Ein-Handy-Startdialog zusätzlich bei 393×851 geprüft; keine Partie gestartet oder vorhandene bestätigt verworfen.
+
+Minenleiste: Gesperrt, Bereit, Verbraucht und Sechsergruppe jeweils in allen zwölf Größen gerendert geprüft. Symbol immer 24×24 innerhalb eines festen 32-Pixel-Feldes, außerhalb der scrollbaren Namen; Höhe 58–60 Pixel, Hilfe 44 Pixel. Zünden bleibt am rechten Rand ohne Überschneidung erreichbar. Keine spielerische Änderung; 50 relevante bestehende Minen-/Gruppen-/PWA-Regressionen bestanden. Synthetische lokale Spielstände, keine Produktivraumaktionen oder zusätzlichen Test-Pushs. Physische Android-Touch-/Hotspot- und Balanceabnahme bleibt separat.
+
 
 ## Release 1.17.0
 

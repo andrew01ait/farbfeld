@@ -1,6 +1,6 @@
 # Abläufe
 
-<!-- farbfeld-version: 1.17.0 -->
+<!-- farbfeld-version: 1.17.1 -->
 
 ## Neu 1.17.0: Bonusfelder, Random und gemeinsame Minen
 
@@ -191,3 +191,7 @@ Einstellungen → Benachrichtigungen → Internet-Push testen. Aktualisierten Wo
 Startdialog/Lobby → Brett und unabhängige Minen-/Bonusoption wählen → Fähigkeiten prüfen → genau ein Random-Layout und drei geheime Bonusorte erzeugen → gemeinsamen Zustand speichern. Normale bestätigte Treffer reservieren Boni bis Rundenende. Farbabschluss → andere Minen freischalten → kurze Bereitschaftsmeldung → Ziel für alle Gegner → autoritativer Commit → drei Sekunden Effekt → Schadensindikatoren bis Ende des nächsten Wurfs, eigener Entwurf bleibt erhalten.
 
 × → sichtbare −10-Punkte-Bestätigung → autorisierter Ausstieg → einmalige Niederlage im Verlauf → aktive Gruppe setzt fort. Bei letzter aktiver Person sofort Endwertung und Sieg, auch bei niedrigerem Rohstand. Gemeinsam weitergegebenes Handy speichert zusätzlich den verbliebenen Sieger. Internet-Gastgeber wechselt atomar; ursprünglicher Offline-Gastgeber bleibt sichtbarer Zuschauer mit Keep-open-Hinweis. Relayverlust → Pause → Abgleich mit ursprünglichem Gastgeber; ausgeschiedene Gäste dürfen schließen. [Details](leaving.md).
+
+## Auswahl auf kleinen Bildschirmen 1.17.1
+
+Startdialog → eines von vier vollständig beschrifteten Brettkärtchen antippen → ausgewählte Beschreibung und Radiozustand aktualisieren. Optionen und Start bleiben im selben vertikal scrollbaren Dialog. Im laufenden Spiel steht das Minesweeper-Symbol dauerhaft links neben dem eigenen Minenstatus; weitere Personen lassen sich innerhalb ihrer eigenen Statuszeile seitlich ansehen. Bereit zeigt Grün und den bisherigen zulässigen Zünden-Knopf, Gesperrt/Verbraucht bleiben neutral. Das Fragezeichen erklärt die bestehende Regel.
