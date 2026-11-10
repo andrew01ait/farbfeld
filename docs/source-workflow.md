@@ -1,6 +1,10 @@
 # Source and documentation workflow
 
-<!-- farbfeld-version: 1.17.4 -->
+<!-- farbfeld-version: 1.18.0 -->
+
+## Entwurf für die laufende Änderung
+
+Die Änderungen an Direktnamen und Spielaktionen werden mit der bereits geprüften 1.17.4-Korrektur im bestehenden Draft-PR #1 zur Durchsicht zusammengeführt. Ein GitHub-Draft ist ein Codeänderungsvorschlag; die App-Veröffentlichung ist davon unabhängig. Den öffentlichen Standardbranch erst nach ausdrücklicher Freigabe übernehmen.
 
 ## Shared UI maintenance
 

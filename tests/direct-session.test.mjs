@@ -363,3 +363,13 @@ test('Existing match re-pairs the same phone after Android gathering stalls, wit
   assert.deepEqual(f.host.snapshot,before);assert.deepEqual(f.guest.snapshot,before);assert.equal(f.calls,0);assert.deepEqual(f.errors,[]);
  }finally{f.dispose();}
 });
+
+test('Named direct sessions synchronize metadata and keep the name when the same saved phones re-pair',async()=>{
+ let f=fixture();try{
+  await f.host.host('Host',false,'Unsere Direktpartie');await f.guest.join(f.host.pairing.data,'Gast');await f.host.accept(f.guest.pairing.data);await wait(()=>f.host.ready&&f.guest.ready);
+  assert.equal(f.guest.snapshot.roomName,'Unsere Direktpartie');await step(f,0,'start');const game=structuredClone(f.host.snapshot.game),revision=f.host.snapshot.version;
+  f.host.renameRoom('Abendrunde');await wait(()=>f.guest.snapshot.roomName==='Abendrunde');assert.equal(f.host.snapshot.version,revision);assert.deepEqual(f.host.snapshot.game,game);
+  f.guest.disconnect();f.host.renameRoom('Neue Abendrunde');const records=structuredClone(f.saved);f.dispose();f=fixture(records);await qrPair(f,true);
+  assert.equal(f.host.snapshot.roomName,'Neue Abendrunde');assert.equal(f.guest.snapshot.roomName,'Neue Abendrunde');assert.deepEqual(f.host.snapshot.game,game);assert.equal(f.calls,0);
+ }finally{f.dispose();}
+});

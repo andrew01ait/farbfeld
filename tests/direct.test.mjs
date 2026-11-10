@@ -1,7 +1,7 @@
 import {RANDOM_BOARD_FEATURE,boardFor,validGameBoard} from '../public/game/boards.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {DirectGame,hostRecord,guestRecord,validRecord,DIRECT_PROTOCOL} from '../public/game/direct-game.js';
+import {DirectGame,hostRecord,guestRecord,validRecord,validSnapshot,normalizeDirectRoomName,DIRECT_PROTOCOL} from '../public/game/direct-game.js';
 import {findMove,BOARD,COLORS,BONUS_FEATURE,bonusPoints,validBonusState} from '../public/game/engine.js';
 import {LAN_RTC_CONFIG,validateHandshake,waitForIce} from '../public/game/direct-connection.js';
 function pair({records=null}={}){
@@ -188,4 +188,41 @@ test('Random-Direktpartie teilt genau einen Plan und behält ihn bei der Wiederv
 test('Random kann mit alten Gegenstellen weder gewählt noch aus einer früheren Lobby gestartet werden',()=>{
  const p=pair();p.host.links.get(1).features=p.host.links.get(1).features.filter(f=>f!==RANDOM_BOARD_FEATURE);assert.throws(()=>p.host.act('options',{boardId:'random'}),/1\.17\.0/);
  p.host.record.snapshot.boardId='random';assert.throws(()=>p.host.act('start'),/1\.17\.0/);p.host.act('options',{boardId:'classic'});p.host.act('start');p.flush();assert.equal(p.host.snapshot.game.boardId,'classic');
+});
+
+
+test('Direct room names normalize whitespace, allow 48 characters and preserve unnamed legacy records',()=>{
+ const record=hostRecord('Host','  Runde  am\n Sofa 🦆  ');assert.equal(record.snapshot.roomName,'Runde am Sofa 🦆');assert(validRecord(record));
+ assert.equal(normalizeDirectRoomName('x'.repeat(48)).length,48);assert.throws(()=>normalizeDirectRoomName('x'.repeat(49)),/48/);assert.throws(()=>normalizeDirectRoomName({}),/Namen/);
+ delete record.snapshot.roomName;delete record.snapshot.roomNameRevision;assert(validRecord(record));
+ const host=new DirectGame(record);host.renameRoom('Legacy-Runde');assert.equal(host.snapshot.roomName,'Legacy-Runde');assert.equal(host.snapshot.version,0);
+});
+test('Only the direct host renames; name metadata does not change dice, game revisions or turn keys',async()=>{
+ const {ownTurnKey}=await import('../public/game/view-state.js');const p=pair();p.host.act('start');p.host.act('roll');p.flush();
+ const game=structuredClone(p.host.snapshot.game),revision=p.host.snapshot.version,key=ownTurnKey(game,0);
+ assert.throws(()=>p.guest.renameRoom('Nicht erlaubt'),/Nur der Gastgeber/);
+ p.host.renameRoom('  Gemeinsame Runde  ');p.flush();assert.equal(p.guest.snapshot.roomName,'Gemeinsame Runde');assert.equal(p.host.snapshot.roomNameRevision,1);
+ assert.equal(p.host.snapshot.version,revision);assert.deepEqual(p.host.snapshot.game,game);assert.equal(ownTurnKey(p.host.snapshot.game,0),key);
+ const bad=p.guest.envelope('rename',{roomName:'Fremder Name'});p.host.receive(JSON.stringify(bad));p.flush();assert.equal(p.host.snapshot.roomName,'Gemeinsame Runde');
+ p.guest.act('rename',{roomName:'Fremder Name'});p.flush();assert.equal(p.host.snapshot.roomName,'Gemeinsame Runde');assert.match(p.errors.pop(),/Unbekannte Spielaktion/);
+});
+test('A host name update preserves an unacknowledged guest move and does not repeat its round',()=>{
+ const p=pair();p.host.act('start');p.host.act('roll');p.host.act('move',{move:{pass:true}});p.flush();
+ p.dropHost(true);p.guest.act('move',{move:{pass:true}});p.flush();assert(p.guest.pending);const version=p.host.snapshot.version,game=structuredClone(p.host.snapshot.game);
+ p.host.renameRoom('Weitergespielte Runde');assert.equal(p.host.snapshot.version,version);assert.deepEqual(p.host.snapshot.game,game);
+ p.dropHost(false);p.link();assert.equal(p.guest.pending,null);assert.equal(p.guest.snapshot.roomName,'Weitergespielte Runde');assert.equal(p.host.snapshot.version,version);assert.deepEqual(p.guest.snapshot,p.host.snapshot);assert.deepEqual(p.host.snapshot.game,game);
+});
+test('A paused direct session can be named by its original host and retains its name after reconnect',()=>{
+ const p=pair();p.host.act('start');p.flush();const game=structuredClone(p.host.snapshot.game),version=p.host.snapshot.version;
+ p.host.pause();p.guest.pause();p.host.renameRoom('Pausenrunde');assert.equal(p.host.ready,false);assert(validRecord(p.saved.host));
+ const resumed=pair({records:p.saved});assert.equal(resumed.guest.snapshot.roomName,'Pausenrunde');assert.equal(resumed.host.snapshot.version,version);assert.deepEqual(resumed.host.snapshot.game,game);
+});
+test('Older metadata and malformed names cannot overwrite the current direct name',()=>{
+ const p=pair(),old=p.host.state();p.host.renameRoom('Aktueller Name');p.flush();p.guest.receive(JSON.stringify(old));assert.equal(p.guest.snapshot.roomName,'Aktueller Name');
+ for(const values of [{roomName:'x'.repeat(49)},{roomName:{}},{roomName:'  unnormalisiert  '},{roomNameRevision:-1},{roomNameRevision:1.5}])assert.equal(validSnapshot({...p.host.snapshot,...values}),false);
+ assert.equal(p.host.renameRoom('Aktueller   Name'),false);assert.equal(p.host.snapshot.roomNameRevision,1);
+ p.host.renameRoom('');p.flush();assert.equal(p.guest.snapshot.roomName,'');assert.equal(p.guest.snapshot.roomNameRevision,2);
+});
+test('A failed save does not confirm a direct room name or change the match',()=>{
+ const p=pair();p.host.act('start');p.flush();const snapshot=structuredClone(p.host.snapshot);p.host.save=()=>{throw Error('quota');};assert.throws(()=>p.host.renameRoom('Nicht gespeichert'),/nicht gespeichert/);assert.deepEqual(p.host.snapshot,snapshot);
 });

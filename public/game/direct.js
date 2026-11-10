@@ -79,8 +79,8 @@ export class DirectSession{
       try{peer.connection.send(JSON.stringify(this.manager.envelope('ping')));}catch{}
     }
   }
-  async host(name,resume=false){
-    if(!resume||!this.manager||this.manager.pid!==0){this.restart();this.useRecord(hostRecord(name));}
+  async host(name,resume=false,roomName=''){
+    if(!resume||!this.manager||this.manager.pid!==0){this.restart();this.useRecord(hostRecord(name,roomName));}
     // Reconnecting one member must keep every other established channel alive.
     const missing=this.snapshot.members.findIndex((m,i)=>i>0&&!this.manager.connected(i));
     return this.invite(missing<0?null:missing);
@@ -124,6 +124,7 @@ export class DirectSession{
   }
   async accept(answer){const generation=this.generation,rtc=this.rtc;if(!rtc)throw Error('Die Kopplung wurde abgebrochen.');try{await rtc.accept(answer);this.note('pairing',{stage:'answer-accepted',peer:this.pairPid,appVersion:answer.appVersion});if(generation===this.generation&&rtc===this.rtc)this.emit();}catch(error){if(generation===this.generation&&rtc===this.rtc)throw error;}}
   act(action,payload={}){this.note('action',{action,direction:'send'});try{if(!this.ready)throw Error('Die Partie pausiert bis alle Handys direkt verbunden sind.');return this.manager.act(action,payload);}catch(error){try{this.diagnostics?.error(error);}catch{}throw error;}}
+  renameRoom(value){if(!this.manager)throw Error('Bitte zuerst eine Direktpartie erstellen.');this.note('action',{action:'rename',direction:'send'});return this.manager.renameRoom(value);}
   async signalApi(action,body={},hostToken=null){
     const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),10000);
     this.signalRequests.add(controller);

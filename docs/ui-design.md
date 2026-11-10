@@ -1,6 +1,10 @@
 # Gemeinsame Gestaltung der Spielhinweise
 
-<!-- farbfeld-version: 1.17.4 -->
+<!-- farbfeld-version: 1.18.0 -->
+
+## Direktname und Aktionen
+
+Direkte Startkarten dienen ausschließlich dem Wiederöffnen. Kein Verlassen-Menü und kein Strafpunktehinweis auf der Startseite. Beenden im Spiel öffnet die gemeinsame Verlassen-Bestätigung. Optionale Direktnamen stehen vollständig in Startkarte, Lobby und Spielkopf; Gastgeber können über die vorhandene Stift-Sprache umbenennen, Gäste sehen reinen Titeltext. Eigenständiger Spielername und gemeinsamer Partiename erhalten getrennte beschriftete Felder.
 
 ## Direct matches and settings
 

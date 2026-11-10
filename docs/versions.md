@@ -1,6 +1,10 @@
 # Versionen und Kompatibilität
 
-<!-- farbfeld-version: 1.17.4 -->
+<!-- farbfeld-version: 1.18.0 -->
+
+## Kompatibilität 1.18.0
+
+Optionale roomName/roomNameRevision-Felder ergänzen vorhandene Schema-1-Direktstände und Protokoll-2-Angebote. Alte unbenannte Sitzungen bleiben gültig; zum Anzeigen/Ändern des Namens beide Apps regulär aktualisieren. 40 Offline-Dateien, keine neue Fähigkeit, Migration oder Runtime-Konfiguration. Wiederkopplung setzt die gespeicherte Sitzung mit Namen fort.
 
 ## Compatibility 1.17.4
 

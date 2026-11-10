@@ -1,6 +1,10 @@
 # Eine Partie freiwillig verlassen
 
-<!-- farbfeld-version: 1.17.4 -->
+<!-- farbfeld-version: 1.18.0 -->
+
+## Ort der Aktion
+
+Direktpartie, Internet-Gruppenraum und Ein-Handy-Mehrspieler: im laufenden Spiel **Beenden** wählen, danach **Verlassen · −10 Punkte** bestätigen. Die Startkarte einer Direktpartie öffnet nur die Sitzung und bietet keinen Ausstieg an. Rollen, einmaliger −10-Verlauf, letzter aktiver Sieger und Relaypflicht des ursprünglichen Direkt-Gastgebers bleiben unverändert.
 
 In einer laufenden Mehrspielerpartie öffnet × **Partie verlassen?**. Erst **Verlassen · −10 Punkte** bestätigt den Ausstieg. Die Person erhält sofort einen einmaligen negativen Verlaufseintrag mit **fest −10 Punkten** und einer Niederlage. Der Wert ersetzt ihren Spielpunktestand; es ist kein Abzug von der vorherigen Summe. Die übrigen spielen mit ihren bestehenden Blättern, Würfeln und Regeln weiter. Solo-Abbruch und verworfene Kopplungen erzeugen keinen solchen Eintrag.
 

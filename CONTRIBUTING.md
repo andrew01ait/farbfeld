@@ -1,6 +1,11 @@
 # Contributing to Farbfeld
 
-<!-- farbfeld-version: 1.17.4 -->
+<!-- farbfeld-version: 1.18.0 -->
+
+## Direktnamen 1.18.0
+
+For direct naming, preserve optional legacy snapshots, host-only authority, independent metadata revisions and in-flight move acknowledgements. Home cards only resume sessions; test the contextual Beenden confirmation without changing forfeiture rules.
+
 
 For UI changes, follow [the shared status design](docs/ui-design.md), preserve concealed sheets/values in visible and accessible text, and check the documented responsive matrix. New multiplayer variants must retain actual per-client capability checks.
 

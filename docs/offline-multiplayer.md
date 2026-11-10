@@ -1,6 +1,10 @@
 # Offline auf zwei bis sechs Handys
 
-<!-- farbfeld-version: 1.17.4 -->
+<!-- farbfeld-version: 1.18.0 -->
+
+## Name der Direktpartie und Beenden
+
+Vor Spiel erstellen kann der Gastgeber optional einen Namen mit bis zu 48 Zeichen vergeben, z. B. Sofa-Runde. In der Lobby Name der Direktpartie ändern oder im Spiel die Überschrift mit Stift wählen. Gäste sehen den bestätigten Namen; der Host kann eine pausierte Sitzung benennen und synchronisiert ihn beim Wiederverbinden. Leeren stellt die Standardüberschrift wieder her. Namen verändern keine Würfel, Runde oder eigene Auswahl. Die Direktkarte auf der Startseite zeigt Name/Status und Öffnen. Verlassen erfolgt im Spiel über Beenden mit ausdrücklicher −10-Punkte-Bestätigung. Pausierte Spiele benötigen für den gemeinsamen Ausstieg eine wiederhergestellte Verbindung.
 
 ## Android recovery 1.17.4
 

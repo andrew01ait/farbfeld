@@ -1,6 +1,10 @@
 # Benachrichtigungen
 
-<!-- farbfeld-version: 1.17.4 -->
+<!-- farbfeld-version: 1.18.0 -->
+
+## Abgrenzung 1.18.0
+
+Direktnamen sind lokale Sitzungsmetadaten. Umbenennen und die veränderte Startkarte lösen weder Push noch Erinnerungen oder zusätzliche Statusabfragen aus. Die bereits erlaubten Internet-Ereignisse bleiben unverändert.
 
 ## Scope 1.17.4
 

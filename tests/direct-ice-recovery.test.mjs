@@ -27,3 +27,20 @@ test('The connection timeout does not run while a person is still scanning the r
   connection.answerAccepted=true;connection.update();assert(connection.timer);
  }finally{connection.close(false);}
 });
+
+test('The actual QR adapter carries validated direct room names before authentication',async()=>{
+ const {hostRecord,guestRecord}=await import('../public/game/direct-game.js');
+ const {validateHandshake}=await import('../public/game/direct-connection.js');
+ class NamedPeer extends EventTarget{
+  constructor(){super();this.iceGatheringState='complete';}
+  createDataChannel(){const channel=new EventTarget();channel.label='farbfeld';channel.close=()=>{};return channel;}
+  async createOffer(){return {type:'offer',sdp:udp};}
+  async setLocalDescription(value){this.localDescription=value;this.signalingState='have-local-offer';}
+  close(){}
+ }
+ const connection=new DirectConnection({Peer:NamedPeer});try{
+  const offer=await connection.offer(hostRecord('Host','Unsere QR-Runde'),'1.18.0',1);validateHandshake(offer,'offer');
+  assert.equal(offer.roomName,'Unsere QR-Runde');assert.equal(guestRecord(offer,'Gast').snapshot.roomName,'Unsere QR-Runde');
+  assert.throws(()=>validateHandshake({...offer,roomName:'x'.repeat(49)},'offer'),/Name/);
+ }finally{connection.close(false);}
+});

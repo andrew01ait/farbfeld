@@ -1,6 +1,10 @@
 # Raumstatus, Zuganzeige und Wartezeit
 
-<!-- farbfeld-version: 1.17.4 -->
+<!-- farbfeld-version: 1.18.0 -->
+
+## Benannte Direktpartien
+
+Der gemeinsame Name ist kein Verbindungsnachweis. Verbindungspunkte und Neu-koppeln-Zustand kommen weiter vom tatsächlichen Direktkanal. Die Startkarte nennt den gespeicherten Namen, Spielerzahl/Wurf und Verbindungsstatus; sie öffnet nur den vorhandenen Stand.
 
 ## Direct status 1.17.4
 

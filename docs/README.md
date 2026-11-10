@@ -1,8 +1,12 @@
 # Farbfeld documentation
 
-<!-- farbfeld-version: 1.17.4 -->
+<!-- farbfeld-version: 1.18.0 -->
 
-## Client 1.17.4: direct recovery and UI
+## Neu in Client 1.18.0
+
+Benannte Direktpartien mit hostgesteuerter Erstellung/Umbenennung und eigenständiger Metadatenrevision. 411 Regressionen, beide API-Integrationen, TypeScript und 112 gerenderte Ansichten geprüft; physische Abnahme separat. Startkarte nur zum Öffnen; Beenden im Spiel erklärt das gemeinsame Verlassen. Details: [Offline-Mehrspieler](offline-multiplayer.md), [Abläufe](flows.md), [Gestaltung](ui-design.md), [Verlassen](leaving.md).
+
+## Client 1.18.0: direct recovery and UI
 
 Bounded Android candidate fallback, correct manual-QR timeout handling, compact direct match/session layouts and grouped settings. See [offline multiplayer](offline-multiplayer.md), [diagnostics](offline-diagnostics.md), [UI design](ui-design.md) and [responsive validation](responsive-qa.md).
 

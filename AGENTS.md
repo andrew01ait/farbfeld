@@ -1,6 +1,10 @@
 # Farbfeld contributor instructions
 
-<!-- farbfeld-version: 1.17.4 -->
+<!-- farbfeld-version: 1.18.0 -->
+
+## Direct names and contextual leaving
+
+Keep optional direct roomName (normalized, max 48 characters) and roomNameRevision separate from engine/game revisions. Only the original direct host may rename, even while paused; broadcast through the existing authenticated ordered channel and retain the latest metadata across stale states and reconnects. Never reset selection, retry/double a pending move, advance a round, mutate RNG or send Push for renaming. Include the optional name in QR setup; keep protocol 2 and legacy unnamed records valid. Direct home cards offer Open only. In-progress forfeiting stays behind the game Beenden confirmation; access/pairing management remains contextual inside the direct session.
 
 ## Direct recovery and layout
 

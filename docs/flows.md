@@ -1,6 +1,10 @@
 # Abläufe
 
-<!-- farbfeld-version: 1.17.4 -->
+<!-- farbfeld-version: 1.18.0 -->
+
+## Benennen und Aussteigen in Direktpartien
+
+Erstellen: eigener Spielername und optional Name der Direktpartie, danach die vorhandene Kopplung. Gastgeber: in der Lobby Name der Direktpartie ändern oder im Spiel die Überschrift mit Stift antippen. Namensänderung erhält eigene Auswahl und wartende Bestätigungen. Startseite öffnet ausschließlich den gespeicherten Direktstand. Erst Beenden im Spiel öffnet die Bestätigung mit −10 Punkten/Niederlage; die anderen spielen weiter. Dasselbe Prinzip gilt für normale Gruppenräume und Ein-Handy-Partien.
 
 ## Re-pair an existing direct match
 

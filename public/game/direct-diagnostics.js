@@ -15,7 +15,7 @@ const ENUMS={
   channel:['connecting','open','closing','closed'],
   status:['idle','preparing','offering','connecting','connected','failed','disconnected','stalled','closed'],
   messageType:['hello','state','action','resync','reaction','reaction-error'],
-  action:['start','options','abort','roll','move','rematch'],
+  action:['start','options','abort','roll','move','rematch','rename'],
   gameStatus:['none','playing','finished'],phase:['lobby','roll','choose','finished'],
   kind:['offer','answer'],method:['qr','paste','code'],direction:['send','receive'],
   candidateType:['host','srflx','prflx','relay'],transportProtocol:['udp','tcp'],

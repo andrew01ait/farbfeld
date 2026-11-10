@@ -1,6 +1,13 @@
 # Änderungsprotokoll
 
-<!-- farbfeld-version: 1.17.4 -->
+<!-- farbfeld-version: 1.18.0 -->
+
+## 1.18.0 – 2026-11-10
+
+- Direktpartien können einen optionalen Namen mit bis zu 48 Zeichen erhalten. Der Gastgeber setzt ihn beim Erstellen oder ändert ihn in Lobby/Spielkopf. Der Name wird lokal gespeichert, per QR und bestehender Direktverbindung weitergegeben und bleibt nach Wiederkopplung erhalten.
+- Namensänderungen sind eigenständige Metadaten: keine neue Spielrevision, keine Änderung an Würfeln, Runde, unbestätigter Auswahl oder ausstehender Zugbestätigung. Gäste dürfen nicht umbenennen; ältere Namensstände überschreiben keine neueren.
+- Startseite: Direktkarte zeigt nur Name, Status und Öffnen. Verlassen bleibt im Spiel über Beenden mit Bestätigung und −10-Punkte-Hinweis. Die gemeinsame Verlassen-Regel für Internet-Gruppenräume und Ein-Handy-Partien bleibt erhalten.
+- Spiel-/Backupschema 1, Direktprotokoll 2 und 40 Offline-Dateien bleiben erhalten. Keine Datenbankmigration, neue Netzwerkabfrage oder Push-Art. Physische Namens-/Wiederkopplungsprüfung separat.
 
 ## 1.17.4 – 2026-11-10
 

@@ -1,6 +1,10 @@
 # Farbfeld
 
-<!-- farbfeld-version: 1.17.4 -->
+<!-- farbfeld-version: 1.18.0 -->
+
+## Direktpartie benennen und verlassen
+
+Beim Erstellen der Direktpartie optional **Name der Direktpartie** ausfüllen. Der Gastgeber kann den Namen später in der Lobby oder durch Antippen der Spielüberschrift mit Stift ändern; alle verbundenen Handys sehen den Namen. Die Startkarte öffnet die gespeicherte Partie. **Beenden → Verlassen · −10 Punkte** gehört in den Spielbereich, wie bei Internet-Gruppenräumen und Ein-Handy-Partien. Name und bestätigte Züge bleiben beim Wiederverbinden erhalten.
 
 ## Neu in 1.17.4
 
@@ -42,7 +46,7 @@ Drei geheime **Bonusfelder** vergeben je +2 an alle ersten Finder desselben Wurf
 
 An installable, offline-ready dice game PWA with solo play, computer opponents, local and online multiplayer, and push notifications.
 
-[Play Farbfeld](https://farbfeld-andrew.endruuu.chatgpt.site/play) · [Version 1.17.4](public/version.json) · [Documentation](docs/README.md)
+[Play Farbfeld](https://farbfeld-andrew.endruuu.chatgpt.site/play) · [Version 1.18.0](public/version.json) · [Documentation](docs/README.md)
 
 The game interface is in German. Farbfeld needs no user account. It is an independent implementation of the basic rules of *Noch mal!* by Inka and Markus Brand (Schmidt Spiele), using its own interface and assets; this repository is not an official publisher release.
 

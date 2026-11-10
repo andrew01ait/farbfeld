@@ -90,3 +90,13 @@ test('Diagnostic controls reject an unnamed phone and stay available on pairing 
  const f=fixture();f.session.diagnostics=new DirectDiagnostics({version:'1.16.0'});
  try{f.ui.failure('Connection failed');assert.match(f.panels.at(-1).html,/Offline-Testprotokoll/);f.ui.showDiagnostics();await f.ui.handle('direct-diagnostics-start');assert.equal(f.session.diagnostics.state(),null);assert.match(f.errors.at(-1),/Handy A oder B/);}finally{f.dispose();}
 });
+
+
+test('Direct setup keeps the room name distinct from the personal name and passes both to the host',async()=>{
+ const f=fixture(),calls=[];try{
+  f.ui.entry();assert.match(f.panels.at(-1).html,/id="direct-room-name" maxlength="48"/);
+  globalThis.document.querySelector=selector=>selector==='#direct-name'?{value:'Spieler A'}:selector==='#direct-room-name'?{value:'Unsere Runde'}:null;
+  f.session.host=async(...args)=>calls.push(args);await f.ui.handle('direct-create');assert.deepEqual(calls,[['Spieler A',false,'Unsere Runde']]);
+  f.ui.networkHelp();f.ui.entry(true);assert.match(f.panels.at(-1).html,/value="Unsere Runde"/);
+ }finally{f.dispose();}
+});

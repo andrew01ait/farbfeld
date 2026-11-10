@@ -3,7 +3,7 @@ import {DIRECT_PROTOCOL,directId,validSnapshot} from './direct-game.js';
 export const LAN_RTC_CONFIG=Object.freeze({iceServers:[],iceTransportPolicy:'all',bundlePolicy:'max-bundle'});
 export function validateHandshake(value,kind){
   if(!value||value.protocol!==DIRECT_PROTOCOL||value.kind!==kind||typeof value.sessionId!=='string'||value.sessionId.length>80||typeof value.connectionId!=='string'||value.connectionId.length>80||value.description?.type!==kind||typeof value.description?.sdp!=='string'||value.description.sdp.length>60000)throw Error('Dieser QR-Code gehört nicht zu einer passenden Farbfeld-Kopplung. Bitte alle Apps aktualisieren.');
-  if(kind==='offer'&&(!Number.isInteger(value.pid)||value.pid<1||value.pid>5||!validSnapshot({sessionId:value.sessionId,version:0,members:value.members,game:null})||!value.members[value.pid]))throw Error('Der Spielerplatz in diesem Angebot fehlt. Bitte alle Apps aktualisieren.');
+  if(kind==='offer'&&(!Number.isInteger(value.pid)||value.pid<1||value.pid>5||!validSnapshot({sessionId:value.sessionId,version:0,roomName:value.roomName,roomNameRevision:value.roomNameRevision,members:value.members,game:null})||!value.members[value.pid]))throw Error('Der Spielerplatz oder Name in diesem Angebot ist ungültig. Bitte alle Apps aktualisieren.');
   if(kind==='offer'&&(typeof value.secret!=='string'||value.secret.length<32||value.secret.length>160))throw Error('Der Zugang zur Direktpartie fehlt.');
   return value;
 }
@@ -68,7 +68,7 @@ export class DirectConnection{
     this.bind(pc.createDataChannel('farbfeld',{ordered:true}));
     await pc.setLocalDescription(await pc.createOffer());
     const description=await waitForIce(pc,20000,this.operation.signal);if(pc.iceGatheringState!=='complete')this.trace({stage:'candidate-fallback'});this.trace({stage:'offer-ready'});
-    return {protocol:DIRECT_PROTOCOL,kind:'offer',appVersion,sessionId:this.sessionId,connectionId:this.connectionId,pid,secret:pid===1?record.secret:record.guestSecrets[pid],members:record.snapshot.members,hostName:record.snapshot.members[0].name,description};
+    return {protocol:DIRECT_PROTOCOL,kind:'offer',appVersion,sessionId:this.sessionId,connectionId:this.connectionId,pid,secret:pid===1?record.secret:record.guestSecrets[pid],members:record.snapshot.members,hostName:record.snapshot.members[0].name,roomName:record.snapshot.roomName,roomNameRevision:record.snapshot.roomNameRevision,description};
   }
   async answer(offer,appVersion){
     validateHandshake(offer,'offer');const pc=this.setup();this.connectionId=offer.connectionId;this.sessionId=offer.sessionId;

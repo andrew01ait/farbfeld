@@ -1,6 +1,10 @@
 # Emoji-Reaktionen
 
-<!-- farbfeld-version: 1.17.4 -->
+<!-- farbfeld-version: 1.18.0 -->
+
+## Kompatibilität mit Direktnamen
+
+Der gemeinsame Name ändert keine Teilnehmerkennung, Reaktionsadresse oder Direktverbindung. Reaktionen bleiben am bestehenden authentifizierten Kanal und der laufenden Partie gebunden.
 
 ## Direct recovery 1.17.4
 

@@ -1,6 +1,10 @@
 # Architektur
 
-<!-- farbfeld-version: 1.17.4 -->
+<!-- farbfeld-version: 1.18.0 -->
+
+## Direktnamen 1.18.0
+
+Optionale Snapshot-Felder roomName und roomNameRevision sind additive Sitzungsmetadaten. Namen werden auf 48 Zeichen begrenzt und Leerraum normalisiert. Der Host ändert sie unabhängig von snapshot.version und dem Enginezustand; vorhandene State-Nachrichten verteilen die Änderung. Gäste behalten neuere Namensrevisionen bei verspätetem älteren Text, ohne eine gültige Zugbestätigung zu verlieren. QR-Angebote tragen dieselben optionalen Felder. Keine neue Verbindung, HTTP-Abfrage, Migration oder Push-Art.
 
 ## Direct recovery 1.17.4
 

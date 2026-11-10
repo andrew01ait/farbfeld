@@ -1,6 +1,14 @@
 # Responsive QA
 
-<!-- farbfeld-version: 1.17.4 -->
+<!-- farbfeld-version: 1.18.0 -->
+
+## Prüfumfang 1.18.0
+
+411 automatisierte Regressionen, TypeScript sowie Raum-/Kopplungs-API-Integrationen bestanden. Neue Fälle prüfen optionale und alte namenlose Direktstände, Normalisierung/48-Zeichen-Grenze, Gastgeberrecht, gesonderte Namensrevision, unveränderte Würfel/Spielrevision/RNG/eigene Auswahl, ausstehende Zugbestätigungen, veraltete Metadaten, atomaren Speicherfehler und denselben Namen nach Wiederkopplung des gespeicherten Platzes. Kein neuer Signalisierungsaufruf durch Umbenennen.
+
+112 tatsächliche Browser-Renderings synthetischer lokaler Direktstände in den zwölf verbindlichen Größen sowie 680×650 und 681×651: je aktive Zweier-/Sechserpartie, pausierte Sechsergruppe, Gastansicht, Startkarte, Einrichtung, Namensdialog und Beenden-Bestätigung. Keine horizontale Seiten-/Dialog-/Titelüberbreite. Hosttitel mit Stift, Gasttitel ohne Bearbeitungsaktion, Startkarte ohne Verlassen-Menü. Lange Partienamen umbrechen vollständig; eigene Titel-/Steuerzeilen und kompakte Verbindungsdetails bleiben erhalten.
+
+Zusätzlich im Browser tatsächlich Sofa-Runde gespeichert: Wurf 4, Spielrevision 12 und markiertes Feld H1 blieben unverändert. Beenden öffnet den ausdrücklichen −10-/Niederlage-Dialog; bei sechs Personen erklärt der Gastgeberhinweis das benötigte Relay. Getrenntes Namensfeld mit 48 Zeichen und Rückkehr aus der WLAN-Hilfe mit erhaltenem Namen geprüft. Keine produktiven Räume oder Pushs benutzt. Physische Namens-/Wiederkopplungsprüfung auf Android steht separat aus.
 
 ## Validation 1.17.4
 
