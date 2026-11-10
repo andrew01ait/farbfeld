@@ -1,6 +1,11 @@
 # Architektur
 
-<!-- farbfeld-version: 1.18.0 -->
+<!-- farbfeld-version: 1.19.0 -->
+
+## Übersichtsmodell 1.19.0
+
+savedGameItems verbindet vorhandene Raumzugänge mit lokalem und direktem Spielstand ausschließlich zur Darstellung. savedGamesPreview sortiert bekannte eigene Spielgelegenheiten vor zuletzt geöffnete Räume und begrenzt auf drei. filterSavedGames filtert/sucht denselben Index lokal und liefert maximal zehn Einträge pro Seite. Der bestehende tokengeprüfte Sammelabruf ergänzt participants mit name und host; keine IDs, Tokens, Blätter oder verdeckten Werte. RoomBook übernimmt optional höchstens sechs Namen à 24 Zeichen und verwirft Teilnehmerlisten bei fehlendem/verweigertem Zugang. Kein neuer Timer, keine Migration.
+
 
 ## Direktnamen 1.18.0
 

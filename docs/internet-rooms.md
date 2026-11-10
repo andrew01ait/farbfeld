@@ -1,6 +1,11 @@
 # Internet-Spielräume
 
-<!-- farbfeld-version: 1.18.0 -->
+<!-- farbfeld-version: 1.19.0 -->
+
+## Viele Räume und Teilnehmer
+
+Die Startseite zeigt höchstens drei gespeicherte Partien, bekannte eigene Zuggelegenheiten zuerst. Alle Räume enthält alle Zugänge mit Online-/Offline-Filter, Suche nach Raumname/Code/Person und zehn Einträgen pro Seite. Karten zeigen Online · Internet-Raum und die Teilnehmer; der aktuelle Host ist fett mit ♛, auch nach Gastgeberwechsel. Teilnehmernamen kommen im bestehenden authentifizierten Index, ausschließlich nach Prüfung des jeweiligen Raumtokens. Keine neuen Polls, keine verlorenen Zugänge durch Filtern.
+
 
 ## Direktnamen 1.18.0
 

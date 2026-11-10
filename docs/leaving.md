@@ -1,6 +1,6 @@
 # Eine Partie freiwillig verlassen
 
-<!-- farbfeld-version: 1.18.0 -->
+<!-- farbfeld-version: 1.19.0 -->
 
 ## Ort der Aktion
 

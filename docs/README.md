@@ -1,8 +1,13 @@
 # Farbfeld documentation
 
-<!-- farbfeld-version: 1.18.0 -->
+<!-- farbfeld-version: 1.19.0 -->
 
-## Neu in Client 1.18.0
+## Übersicht 1.19.0
+
+Startvorschau mit drei Partien, Online-/Offline-Kennzeichnung, Teilnehmernamen und Gastgeber, vollständige lokale Suche/Filter/Seiten in Alle Räume. 418 Regressionen, API-Integrationen, TypeScript und 80 gerenderte Ansichten; physische Abnahme separat. Siehe [Raumstatus](room-status.md), [Abläufe](flows.md), [Gestaltung](ui-design.md) und [QA](responsive-qa.md).
+
+
+## Neu in Client 1.19.0
 
 Benannte Direktpartien mit hostgesteuerter Erstellung/Umbenennung und eigenständiger Metadatenrevision. 411 Regressionen, beide API-Integrationen, TypeScript und 112 gerenderte Ansichten geprüft; physische Abnahme separat. Startkarte nur zum Öffnen; Beenden im Spiel erklärt das gemeinsame Verlassen. Details: [Offline-Mehrspieler](offline-multiplayer.md), [Abläufe](flows.md), [Gestaltung](ui-design.md), [Verlassen](leaving.md).
 

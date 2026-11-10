@@ -673,3 +673,46 @@ dialog[data-panel=opponent-profile] .modal-head h2{overflow-wrap:anywhere}
 /* Anchor hidden connection labels inside their dot, including scrolled peers. */
 .connection-indicator{position:relative}
 .connection-indicator>.visually-hidden{inset:0}
+
+/* Saved game mode is independent of current connection status. */
+.saved-game-mode{display:block;width:fit-content;max-width:100%;margin:0 0 6px;padding:3px 8px;border:1px solid var(--line);border-radius:999px;background:var(--card);color:var(--ink);font-size:10px;font-weight:750;letter-spacing:.025em;line-height:1.35;overflow-wrap:anywhere}
+
+.room-participants{font-size:11px;line-height:1.45;color:var(--muted);overflow-wrap:anywhere;margin:4px 0}
+.room-participants .room-host{display:inline;font-size:inherit;line-height:inherit;font-weight:800;color:var(--ink)}
+.saved-rooms-summary{font-size:12px;color:var(--muted);margin:-3px 0 10px}
+.saved-rooms-other-turns{font-size:12px;font-weight:700;margin:10px 0;color:var(--ink)}
+.saved-room-list .local-resume,.saved-room-list .direct-resume{margin:0;min-width:0}
+.saved-room-list>.local-resume{padding:13px 14px;gap:10px;align-items:center}
+.local-resume .room-resume-info>strong{display:block;font-size:14px;line-height:1.4;overflow-wrap:anywhere}
+.local-resume .room-resume-info>small{font-size:11px;color:var(--muted)}
+.room-list-filters{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}
+.room-list-filters button{flex:1;min-width:75px;padding:8px 10px;min-height:44px;font-size:12px}
+.room-list-filters button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.room-list-count{font-size:12px;color:var(--muted);margin:8px 0}
+.room-manager-list{max-height:45dvh;overflow-y:auto;overscroll-behavior:contain;scrollbar-gutter:stable;margin:8px 0}
+.room-list-pages{display:flex;align-items:center;justify-content:space-between;gap:6px;margin:10px 0}
+.room-list-pages button{min-width:70px;min-height:44px;padding:8px 12px}
+.room-list-pages span{font-size:11px;text-align:center}
+@media(max-width:380px){.room-list-filters button{padding:7px 8px;font-size:11px}.room-manager-list{max-height:40dvh}}
+
+/* Keep room lookup and page actions outside the scrolling results on tall screens. */
+dialog[data-panel="rooms"] .modal{display:flex;flex-direction:column;height:min(820px,calc(88dvh - 2px));overflow:hidden}
+dialog[data-panel="rooms"] .modal-head{flex:none;margin-bottom:12px}
+.room-list-intro{font-size:12px;margin-bottom:8px}
+dialog[data-panel="rooms"] #room-list-search{min-height:44px;flex:none}
+dialog[data-panel="rooms"] #room-manager-results{display:flex;flex-direction:column;flex:1;min-height:80px}
+dialog[data-panel="rooms"] .room-manager-list{flex:1;min-height:0;max-height:none}
+.room-list-count,.room-list-pages,.room-list-filters{flex:none}
+.room-list-actions{display:flex;gap:8px;margin-top:8px;flex:none}
+.room-list-actions button{flex:1;min-width:0;min-height:44px;padding:7px 9px;font-size:11px}
+.room-list-help{font-size:11px;flex:none}
+.room-list-help summary{display:flex;align-items:center;min-height:32px;cursor:pointer}
+.room-list-help p{line-height:1.4;padding:4px 0}
+@media(max-height:650px){dialog[data-panel="rooms"] .modal{height:auto;overflow:visible}dialog[data-panel="rooms"] #room-manager-results{flex:none}dialog[data-panel="rooms"] .room-manager-list{flex:none;max-height:45dvh}}
+
+.room-open{position:relative}
+.room-open .visually-hidden{inset:0}
+.room-list-pages button{width:auto;flex:0 0 auto}
+.room-list-pages span{flex:1;white-space:nowrap}
+
+.room-list-pages .outline-btn{width:78px;min-width:0;max-width:90px;flex:0 0 auto;margin:0}

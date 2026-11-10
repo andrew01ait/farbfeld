@@ -1,6 +1,11 @@
 # Contributing to Farbfeld
 
-<!-- farbfeld-version: 1.18.0 -->
+<!-- farbfeld-version: 1.19.0 -->
+
+## Saved overview checks
+
+Validate the fixed three-card preview with more than fifty mixed entries, action priority, search/filter/page boundaries, stale caches and host changes. Index participants must be token-authorized name/host pairs only; search and pagination must not add HTTP requests or mutate game/access state.
+
 
 ## Direktnamen 1.18.0
 

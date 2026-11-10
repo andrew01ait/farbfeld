@@ -1,6 +1,14 @@
 # Responsive QA
 
-<!-- farbfeld-version: 1.18.0 -->
+<!-- farbfeld-version: 1.19.0 -->
+
+## Prüfumfang 1.19.0
+
+418 Regressionen, beide API-Integrationen und TypeScript bestanden. Neue Fälle prüfen die feste Drei-Karten-Grenze, Zugpriorität, vollständige Pagination über 50 Internet- und zwei Offline-Partien, Namens-/Code-/Personensuche, Filter-/Seitengrenzen sowie begrenzte optionale Teilnehmercaches und den aktuellen Gastgeber nach Rollenwechsel. Der Raumindex gibt Namen/Gastgeberflags nur nach tokenbezogener Autorisierung aus; Blätter, verdeckte Werte und Zugangsdaten bleiben ausgeschlossen. Reine Übersicht ändert weder Spielrevision noch Spielstand.
+
+Gerenderte synthetische lokale Ansichten in allen zwölf verbindlichen Viewports plus 380×650, 381×651, 759×800 und 760×800: jeweils drei gemischte Partien, 52 Partien, Alle Räume, leer und ausschließlich offline (80 Ansichten). Maximal drei Startkarten und zehn Übersichtseinträge, volle Modus-/Teilnehmernamen, kein horizontaler Seiten-/Dialog-/Karten-/Seitennavigationsüberlauf. Suchfeld, Filter, Liste und Seitennavigation bei hohen Viewports getrennt; niedrige Querformate bleiben vollständig scrollbar. Versteckte Öffnen-Texte sind am jeweiligen Knopf verankert und vergrößern den äußeren Dialog nicht.
+
+Tatsächliche UI-Aktionen zusätzlich: Seite 1 → 2, Suche eines Raums außerhalb der Startvorschau, Offline-Filter mit lokaler und direkter Partie, Personenfilter und erhaltener Suchfokus. Im 52-Partien-Fall drei eigene Zuggelegenheiten sichtbar und vier weitere gezählt. Gastgeberanzeige im Browser mit Schriftgewicht 800 und ♛ geprüft. Keine Produktivräume oder Pushs für Tests verwendet. Dies sind Browseransichten lokaler Prüfdaten; physische Handyabnahme bleibt separat. Neue Spielideen aus der begleitenden Recherche wurden nicht implementiert.
 
 ## Prüfumfang 1.18.0
 

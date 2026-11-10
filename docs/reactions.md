@@ -1,6 +1,11 @@
 # Emoji-Reaktionen
 
-<!-- farbfeld-version: 1.18.0 -->
+<!-- farbfeld-version: 1.19.0 -->
+
+## Gespeicherte Raumübersicht
+
+Teilnehmernamen und Gastgeberkennzeichen sind nur Übersichtsdaten. Suche/Filter/Seiten ändern keine Reaktionsadresse, Empfänger oder Anzeige-Cursor. Keine neue Abfrage oder Benachrichtigung.
+
 
 ## Kompatibilität mit Direktnamen
 

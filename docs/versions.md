@@ -1,6 +1,11 @@
 # Versionen und Kompatibilität
 
-<!-- farbfeld-version: 1.18.0 -->
+<!-- farbfeld-version: 1.19.0 -->
+
+## Kompatibilität 1.19.0
+
+Normaler PWA-Updateweg, weiterhin 40 atomar gecachte Dateien und Schema 1. Optionales participants-Feld im vorhandenen Index/Übersichtscache; alte Zugänge ohne Namensliste bleiben gültig. Ältere Clients ignorieren die Ergänzung. Keine Migration oder Runtime-Variable; Spielstand und Zuordnungen bleiben erhalten.
+
 
 ## Kompatibilität 1.18.0
 

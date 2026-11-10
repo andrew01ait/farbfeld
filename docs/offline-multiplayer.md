@@ -1,6 +1,11 @@
 # Offline auf zwei bis sechs Handys
 
-<!-- farbfeld-version: 1.18.0 -->
+<!-- farbfeld-version: 1.19.0 -->
+
+## Direktpartie in der Übersicht
+
+Direktpartien erscheinen als Offline · Direktpartie mit gespeichertem Namen und Teilnehmerliste. Der ursprüngliche Gastgeber ist fett mit ♛. Sie teilen sich die auf drei Karten begrenzte Startvorschau mit anderen Partien; bekannte eigene Züge werden vorgezogen, alle übrigen bleiben in Alle Räume über Offline-Filter und Namen-/Personensuche erreichbar. Pausierte Direktpartien bleiben Offline-Modus und werden nicht fälschlich als spielbereite eigene Zuggelegenheit sortiert.
+
 
 ## Name der Direktpartie und Beenden
 

@@ -37,3 +37,29 @@ test('Die Speichergrenze ersetzt niemals einen bereits gespeicherten Raum',()=>{
 test('Raumwechsel erhält getrennte Entwürfe, aber verwirft sie nach anderem Wurf oder anderer Partie',()=>{
  const drafts=new RoomDrafts(),a=rollGame(createGame(['A','B'],'room',['a','b']),()=>0),b=rollGame(createGame(['A','C'],'room',['a','c']),()=>0);a.gameId='game-a';b.gameId='game-b';const choice={ci:0,ni:0,color:null,count:null};drafts.save('room-a:a',a,0,choice,[7]);drafts.save('room-b:a',b,0,{...choice,ci:1},[8,9]);assert.deepEqual(drafts.restore('room-a:a',a,0).cells,[7]);assert.deepEqual(drafts.restore('room-b:a',b,0).cells,[8,9]);const copy=drafts.restore('room-a:a',a,0);copy.cells.push(99);assert.deepEqual(drafts.restore('room-a:a',a,0).cells,[7]);assert.equal(drafts.restore('room-a:a',{...a,round:2},0),null);assert.equal(drafts.restore('room-b:a',{...b,gameId:'new-game'},0),null);
 });
+
+test('Startvorschau bleibt bei drei Partien und priorisiert offene Züge über zuletzt geöffnete Räume',async()=>{
+ const {savedGamesPreview}=await import('../public/game/room-book.js');
+ const items=Array.from({length:52},(_,i)=>({key:'game:'+String(i).padStart(2,'0'),mode:i<50?'online':'offline',needsAction:[4,18,50,51].includes(i),lastOpenedAt:100-i,searchText:'Raum '+i})),before=structuredClone(items);
+ const preview=savedGamesPreview(items);assert.equal(preview.length,3);assert.deepEqual(preview.map(e=>e.key),['game:04','game:18','game:50']);assert.equal(preview.every(e=>e.needsAction),true);assert.deepEqual(items,before);
+});
+test('Alle Räume paginiert fünfzig Internet- und zwei Offline-Partien vollständig ohne Duplikate',async()=>{
+ const {filterSavedGames}=await import('../public/game/room-book.js');const items=Array.from({length:52},(_,i)=>({key:'room:'+i,mode:i<50?'online':'offline',lastOpenedAt:i,searchText:'Partie '+i})),seen=[];
+ for(let page=0;page<6;page++){const result=filterSavedGames(items,{page});assert(result.entries.length<=10);assert.equal(result.pages,6);seen.push(...result.entries.map(e=>e.key));}
+ assert.equal(new Set(seen).size,52);assert.equal(seen.length,52);assert.equal(filterSavedGames(items,{page:99}).page,5);assert.equal(filterSavedGames(items,{page:-1}).page,0);
+});
+test('Suche und Modusfilter finden Namen, Raumcodes und Personen auch auf späteren Seiten',async()=>{
+ const {filterSavedGames}=await import('../public/game/room-book.js');const items=Array.from({length:24},(_,i)=>({key:'room:'+i,mode:i===23?'offline':'online',searchText:i===23?'Sofa-Runde Robin Bea':i===19?'Würfelrunde ABCD2345 Robin Bea':'Raum '+i}));
+ assert.equal(filterSavedGames(items,{query:'  WÜRFELRUNDE  '}).entries[0].key,'room:19');assert.equal(filterSavedGames(items,{query:'abcd2345'}).total,1);assert.equal(filterSavedGames(items,{query:'BEA'}).total,2);assert.equal(filterSavedGames(items,{query:'Bea',filter:'offline',page:9}).page,0);assert.equal(filterSavedGames(items,{query:'Bea',filter:'offline'}).entries[0].key,'room:23');assert.equal(filterSavedGames(items,{query:'not found'}).total,0);
+});
+test('Leere oder verkleinerte Raumlisten klemmen die Seite sicher und löschen keine Zugänge',async()=>{
+ const {filterSavedGames,savedGamesPreview}=await import('../public/game/room-book.js');assert.deepEqual(savedGamesPreview([]),[]);const result=filterSavedGames([],{filter:'online',page:100});assert.deepEqual([result.total,result.page,result.pages,result.start,result.end,result.entries.length],[0,0,1,0,0,0]);
+ const values=[{key:'one',mode:'offline',searchText:'Ein Handy'}];assert.equal(filterSavedGames(values,{page:8}).entries[0],values[0]);assert.equal(values.length,1);
+});
+test('Teilnehmercache übernimmt nur begrenzte Namen und explizite Gastgebermarkierungen ohne Zugangsdaten',()=>{
+ const h=fixture(),a=session();h.book.save(a);h.book.update(a.code,a.token,{access:'ok',participants:[{name:' Robin ',host:true,token:'private'},{name:'Bea',host:'yes'},{name:'x'.repeat(25)},{name:''},null,{name:'Alex',host:false},{name:'seventh',host:true}]});
+ assert.deepEqual(h.book.get(a.code).summary.participants,[{name:'Robin',host:true},{name:'Bea',host:false},{name:'Alex',host:false}]);assert(!JSON.stringify(h.book.get(a.code).summary).includes('private'));h.book.update(a.code,a.token,{access:'denied'});assert.equal(h.book.get(a.code).summary.participants,undefined);
+});
+test('Alte Zugänge ohne Namensliste bleiben gültig und ein Gastgeberwechsel aktualisiert nur die Übersicht',()=>{
+ const h=fixture(),a=session();h.book.save(a);assert.equal(h.book.get(a.code).summary,null);h.book.update(a.code,a.token,{access:'ok',version:12,participants:[{name:'Robin',host:true},{name:'Bea',host:false}]});h.book.update(a.code,a.token,{access:'ok',version:12,participants:[{name:'Robin',host:false},{name:'Bea',host:true}]});assert.equal(h.book.get(a.code).summary.version,12);assert.deepEqual(h.book.get(a.code).summary.participants.map(p=>p.host),[false,true]);assert.equal(h.book.get(a.code).token,a.token);
+});

@@ -1,6 +1,11 @@
 # Gemeinsame Gestaltung der Spielhinweise
 
-<!-- farbfeld-version: 1.18.0 -->
+<!-- farbfeld-version: 1.19.0 -->
+
+## Ruhige Raumübersicht
+
+Eine gemeinsame Sektion zählt alle gespeicherten Partien. Maximal drei Startkarten; bekannte eigene Zuggelegenheiten zuerst und weitere als kompakter Hinweis. Alle Räume bietet eine vollständige Übersicht mit Suchfeld, drei 44-Pixel-Modusfiltern und zehn Einträgen pro Seite in einem begrenzt scrollenden Listenbereich. Modus steht in einer neutralen beschrifteten Kapsel über dem Namen, ohne Bereitschaftsfarbe. Unter Code/Spielerzahl stehen alle Teilnehmer; Host fett mit ♛ und zugänglicher Gastgeberbeschriftung. Lange Raum-/Teilnehmernamen umbrechen vollständig; Öffnen-Pfeil bleibt mindestens 44 Pixel.
+
 
 ## Direktname und Aktionen
 

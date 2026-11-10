@@ -1,6 +1,11 @@
 # Raumstatus, Zuganzeige und Wartezeit
 
-<!-- farbfeld-version: 1.18.0 -->
+<!-- farbfeld-version: 1.19.0 -->
+
+## Modus, Namen und begrenzte Startvorschau
+
+Modus und Verbindungsstatus sind getrennt: Online · Internet-Raum, Offline · Direktpartie und Offline · Dieses Handy bleiben unabhängig von Empfang oder Kanalzustand. Höchstens drei Startkarten, bekannte eigene Zuggelegenheiten zuerst; weitere offene Züge als Anzahl. Alle Räume zeigt alle Partien mit lokaler Suche/Modusfilter und zehn Einträgen pro Seite. Die Namensliste stammt aus dem autorisierten Index oder dem eigenen Offline-Stand; fett/♛ markiert den tatsächlichen Host. Alte Caches zeigen bis zur nächsten normalen Antwort keine erfundenen Namen.
+
 
 ## Benannte Direktpartien
 

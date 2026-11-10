@@ -1,6 +1,6 @@
 # Offline-Testprotokoll für zwei Handys
 
-<!-- farbfeld-version: 1.18.0 -->
+<!-- farbfeld-version: 1.19.0 -->
 
 ## Recovery diagnostics 1.17.4
 

@@ -1,6 +1,11 @@
 # Abläufe
 
-<!-- farbfeld-version: 1.18.0 -->
+<!-- farbfeld-version: 1.19.0 -->
+
+## Gespeicherte Partien finden
+
+Deine Räume zählt Online-, Direkt- und lokale Partien gemeinsam. Maximal drei Karten: bekannte offene Züge zuerst, dann zuletzt geöffnete Internet-Räume. Weitere offene Züge werden gezählt. Alle Räume öffnet die vollständige Übersicht; Alle/Online/Offline, Suche nach Raumname/Code/Person und Zurück/Weiter arbeiten lokal mit zehn Karten pro Seite. Filtern setzt auf Seite eins zurück; Statusantworten erhalten Suchtext, Filter und Eingabefokus. Öffnen benutzt jeweils den bestehenden Raumzugang, Direktplatz oder lokalen Spielstand. ♛/Fettschrift zeigt den aktuellen Gastgeber.
+
 
 ## Benennen und Aussteigen in Direktpartien
 

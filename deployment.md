@@ -1,6 +1,11 @@
 # Development and deployment
 
-<!-- farbfeld-version: 1.18.0 -->
+<!-- farbfeld-version: 1.19.0 -->
+
+## Release 1.19.0
+
+Begrenzte gemeinsame Startvorschau, vollständige lokale Übersicht und autorisierte Teilnehmer-/Gastgebernamen. Keine Migration, Laufzeit-/VAPID-Änderung oder zusätzliche Offline-Datei. Beide PWAs normal aktualisieren. Bestehende Raumzugänge und Direktpartien bleiben gespeichert; Teilnehmer alter Übersichtscaches ergänzen sich beim vorhandenen Sammelabruf.
+
 
 ## Version 1.18.0
 

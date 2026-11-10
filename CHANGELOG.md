@@ -1,6 +1,14 @@
 # Änderungsprotokoll
 
-<!-- farbfeld-version: 1.18.0 -->
+<!-- farbfeld-version: 1.19.0 -->
+
+## 1.19.0 – 2026-11-11
+
+- Startseite auf höchstens drei gespeicherte Partien begrenzt, bekannte offene Züge zuerst. Gesamtzahl schließt Internet-, Direkt- und lokale Partien ein; weitere offene Züge bleiben als Anzahl sichtbar.
+- Alle Räume bündelt sämtliche gespeicherten Partien mit lokaler Suche nach Namen, Raumcode oder Person, Online-/Offline-Filter und zehn Einträgen pro Seite. Keine zusätzlichen Netzwerkabfragen für Suche/Filter/Blättern.
+- Jede Karte kennzeichnet Online · Internet-Raum, Offline · Direktpartie oder Offline · Dieses Handy. Teilnehmernamen stehen in den Rauminfos, der aktuelle Gastgeber fett mit ♛; Direkt-Gastgeber bleibt der ursprüngliche Host.
+- Teilnehmerliste ergänzt den vorhandenen authentifizierten Sammelabruf und den lokalen Übersichtscache. Keine Tokens, Blätter oder verdeckten Punkte in der Ergänzung; fehlender/verweigerter Zugang liefert keine Namen. Alte namenlose Übersichtsdaten bleiben lesbar.
+- Kein Schemawechsel, keine Migration, Push-Art oder zusätzliche Offline-Datei. Browser-/Regressionsprüfung und physische Grenzen im QA-Protokoll.
 
 ## 1.18.0 – 2026-11-10
 

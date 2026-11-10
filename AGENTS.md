@@ -1,6 +1,11 @@
 # Farbfeld contributor instructions
 
-<!-- farbfeld-version: 1.18.0 -->
+<!-- farbfeld-version: 1.19.0 -->
+
+## Saved games overview 1.19.0
+
+Keep one combined home section for saved Internet, direct and local games, at most three cards, known actionable turns first then last-opened order. All Rooms holds the complete list with local search/filter and ten entries per page. Never delete access, add requests or reset drafts when browsing. Each card names the mode independently of reachability and lists participants. Bold/crown marks the actual current Internet host or original direct host, never guessed from display names. Include only name/host booleans in the existing authenticated index; bound cached names to six/24 characters, clear on denied/missing access and accept legacy absent lists.
+
 
 ## Direct names and contextual leaving
 

@@ -1,6 +1,11 @@
 # Benachrichtigungen
 
-<!-- farbfeld-version: 1.18.0 -->
+<!-- farbfeld-version: 1.19.0 -->
+
+## Abgrenzung Übersicht 1.19.0
+
+Neue Modus-/Teilnehmeranzeigen und Suche/Filter/Seitennavigation erzeugen keinen Push und keine zusätzlichen Statusabfragen. Bekannte eigene Zuggelegenheiten bestimmen nur die Kartenreihenfolge. Die vorhandenen Benachrichtigungsarten und Deduplizierung bleiben unverändert.
+
 
 ## Abgrenzung 1.18.0
 
