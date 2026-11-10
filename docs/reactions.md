@@ -1,6 +1,6 @@
 # Emoji-Reaktionen
 
-<!-- farbfeld-version: 1.17.2 -->
+<!-- farbfeld-version: 1.17.3 -->
 
 Revanche-Hinweise ab 1.15.0 betreffen ausschließlich den tatsächlichen Neustart einer Internet-Partie. Reaktionen, Emoji-Flüge und deren Empfängerwahl lösen weiterhin keine Pushs aus; Fähigkeiten und Übertragung der fünf Reaktionen bleiben unverändert.
 

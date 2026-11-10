@@ -1,6 +1,12 @@
 # Farbfeld
 
-<!-- farbfeld-version: 1.17.2 -->
+<!-- farbfeld-version: 1.17.3 -->
+
+## Neu 1.17.3: Farbabschlüsse dauerhaft sichtbar
+
+Farbabschlüsse bleiben mit Spielername und Farbe während der gesamten Partie sichtbar, auch nach weiteren Würfen, Blattwechsel und Wiederaufnahme. Die Anzeige liest alle gespeicherten bestätigten Abschlüsse ohne Rundengrenze. Minen entfernen verlorene Abschlüsse und aktualisieren übertragene Farbprämien bereits in der gemeinsamen Engine; die Karten übernehmen diesen aktuellen Stand. Im verdeckten Spiel bleiben Prämienwerte und fremde Blätter verborgen. Kein zusätzlicher Timer, Push, Datenabruf oder neues Speicherformat.
+
+Installierte Apps über **Einstellungen → Auf Updates prüfen → Aktualisieren** übernehmen. Bestehende Partien bleiben erhalten.
 
 ## Neu 1.17.2: Kompakte Hinweise, klare Mehrspieler-Optionen
 
@@ -32,7 +38,7 @@ Drei geheime **Bonusfelder** vergeben je +2 an alle ersten Finder desselben Wurf
 
 An installable, offline-ready dice game PWA with solo play, computer opponents, local and online multiplayer, and push notifications.
 
-[Play Farbfeld](https://farbfeld-andrew.endruuu.chatgpt.site/play) · [Version 1.17.2](public/version.json) · [Documentation](docs/README.md)
+[Play Farbfeld](https://farbfeld-andrew.endruuu.chatgpt.site/play) · [Version 1.17.3](public/version.json) · [Documentation](docs/README.md)
 
 The game interface is in German. Farbfeld needs no user account. It is an independent implementation of the basic rules of *Noch mal!* by Inka and Markus Brand (Schmidt Spiele), using its own interface and assets; this repository is not an official publisher release.
 

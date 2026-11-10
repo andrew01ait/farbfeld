@@ -1,6 +1,6 @@
 # Optionaler Minenangriff
 
-<!-- farbfeld-version: 1.17.2 -->
+<!-- farbfeld-version: 1.17.3 -->
 
 ## Darstellung 1.17.2
 

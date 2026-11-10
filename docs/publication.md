@@ -1,6 +1,10 @@
 # Public source snapshot
 
-<!-- farbfeld-version: 1.17.2 -->
+<!-- farbfeld-version: 1.17.3 -->
+
+## Update 1.17.3 — 10 November 2026
+
+Persistent in-game participant/colour completion cards replace the one-round display cutoff. Existing saved announcements restore automatically; mine pruning/reassigned rewards and hidden values retain their existing rules. Two renderer regressions verify all five modes, JSON recovery, mine loss/first-bonus transfer and recompletion. The maintained hosted source passed 397 regressions, API integrations, TypeScript and twelve rendered CSS viewport sizes. Public source keeps its generic configuration and excludes instance identifiers, runtime data and private QA images. Hosted deployment and GitHub publication remain separate operations.
 
 ## Update 1.17.2 — 9 November 2026
 

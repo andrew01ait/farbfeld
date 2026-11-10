@@ -1,6 +1,12 @@
 # Farbfeld documentation
 
-<!-- farbfeld-version: 1.17.2 -->
+<!-- farbfeld-version: 1.17.3 -->
+
+## Neu 1.17.3: Dauerhafte Farbabschlusskarten
+
+Farbabschlüsse bleiben mit Spielername und Farbe während der gesamten Partie sichtbar, auch nach weiteren Würfen, Blattwechsel und Wiederaufnahme. Die Anzeige liest alle gespeicherten bestätigten Abschlüsse ohne Rundengrenze. Minen entfernen verlorene Abschlüsse und aktualisieren übertragene Farbprämien bereits in der gemeinsamen Engine; die Karten übernehmen diesen aktuellen Stand. Im verdeckten Spiel bleiben Prämienwerte und fremde Blätter verborgen. Kein zusätzlicher Timer, Push, Datenabruf oder neues Speicherformat.
+
+Prüfstand: **10.11.2026 · Client 1.17.3**. Automatisierte und gerenderte Prüfungen werden im [Prüfumfang](responsive-qa.md) getrennt ausgewiesen.
 
 ## Neu 1.17.2: Gemeinsame Statusgestaltung und Mehrspieler-Start
 
@@ -27,7 +33,7 @@ Drei geheime **Bonusfelder** vergeben je +2 an alle ersten Finder desselben Wurf
 Ein freiwilliges lokales A/B-Testprotokoll hilft bei Offline-Kopplung und Spielabgleich; es ist aus Einstellungen und Kopplungsdialogen exportierbar. [Testanleitung und Datenschema](offline-diagnostics.md). Die neue Startoption **Minenangriff testen** wurde in 1.16.0 zunächst gegen den Computer erprobt; ab 1.17.0 gilt sie für alle Mehrspielerarten: gegnerischer Farbabschluss schaltet einen einmaligen Angriff für fünf Punkte frei. Ein leeres Zielfeld ist ein vollständiger Fehlschlag ohne Nachbarschaden. [Regeln, verdeckte Zielwahl und Wertung](mines.md).
 
 
-Client 1.17.2. The application interface and most feature guides are in German; repository setup instructions are in English.
+Client 1.17.3. The application interface and most feature guides are in German; repository setup instructions are in English.
 
 | Topic | Guide |
 |---|---|

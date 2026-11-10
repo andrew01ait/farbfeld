@@ -1,6 +1,12 @@
 # Änderungsprotokoll
 
-<!-- farbfeld-version: 1.17.2 -->
+<!-- farbfeld-version: 1.17.3 -->
+
+## 1.17.3 – 2026-11-10
+
+Farbabschlusskarten bleiben mit Namen und Farbe für die ganze Partie sichtbar. Die bisherige Begrenzung auf den letzten Wurf entfällt, auch in bestehenden Spielständen. Minenverlust, geerbte Prämien und erneuter Farbabschluss folgen weiterhin dem aktuellen Enginezustand; verdeckte Punkte bleiben verborgen. Keine neue Fähigkeit, Migration, Abhängigkeit oder Offline-Datei.
+
+397 automatisierte Regressionen einschließlich Rendererprüfung über alle fünf Spielmodi, Wiederaufnahme, verdeckte Werte und Minenbonus-Transfer bestanden. Browser- und Buildprüfung siehe docs/responsive-qa.md; physische Android-Abnahme separat.
 
 ## 1.17.2 – 2026-11-09
 

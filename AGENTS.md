@@ -1,10 +1,11 @@
 # Farbfeld contributor instructions
 
-<!-- farbfeld-version: 1.17.2 -->
+<!-- farbfeld-version: 1.17.3 -->
 
 ## Shared status design
 
 - Follow docs/ui-design.md: neutral theme-aware status surfaces and borders, 32-pixel icons, 14-pixel small-card radius. Reserve green accents for readiness/rewards and red for damage/errors. Do not restore large unrelated green/beige bonus/mine/result boxes.
+- Keep all confirmed colour completion cards visible for the whole current match; never filter by recent rounds. Reuse saved announcements and the engine’s mine pruning/bonus reassignment. Reload, inspected sheet and orientation changes must retain them; hidden points remain redacted.
 - Colour cards and toasts use colorCompletionText after colorAnnouncements has redacted hidden values; use Du hast and named-player hat. Bonus summaries stay compact, with all winner names and rounds available in the native details history. Preserve hiding of own/opponent points in visible text and accessible labels.
 - New local/direct/room games expose Random, mines and bonus options. Only the host configures network games; direct requires complete pairing and real capabilities. Do not describe an unpaired device as an outdated client.
 

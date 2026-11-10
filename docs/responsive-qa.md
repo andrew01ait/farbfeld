@@ -1,6 +1,14 @@
 # Responsive QA
 
-<!-- farbfeld-version: 1.17.2 -->
+<!-- farbfeld-version: 1.17.3 -->
+
+## Prüfumfang 1.17.3
+
+397 Regressionen einschließlich zweier neuer Prüfungen des tatsächlichen Karten-Renderers bestanden. Sie prüfen alle fünf Modi, alte Abschlüsse nach zwölf weiteren Runden und JSON-Wiederaufnahme, verdeckte Prämien, Minenverlust, sofortige Übertragung des Erstbonus und erneuten Abschluss ohne doppelte Karten. Raum-/Kopplungs-API-Integration und TypeScript bestanden.
+
+Synthetische Sechserpartie in der verwalteten Vorschau: alle sechs Farbabschlusskarten aus Wurf 1 bleiben bei Wurf 20 und nach Betätigen von „12 Würfe später“ bei Wurf 32 vorhanden. Alle zwölf verbindlichen CSS-Viewportgrößen wurden gerendert, jeweils sechs sichtbare Karten, keine horizontale Seiten- oder Kartenüberbreite. Lange Spielernamen umbrechen vollständig. Hochformat verwendet die Karten über dem Blatt, kompaktes Querformat dasselbe Karten-Rendering im scrollbaren Seitenpanel.
+
+Verdeckte Partie bei 393×851: Namen und Farben sichtbar, null Prämienwerte oder Punkte-Labels in den Karten. Dies sind real gerenderte eingebettete CSS-Viewports mit lokalen synthetischen Spielständen, keine physischen Handys und keine produktiven Raumaktionen. Spielregeln, Push und Bildschirmsperrverhalten werden nicht geändert. Physische Android-Abnahme bleibt separat.
 
 ## Release 1.17.2
 

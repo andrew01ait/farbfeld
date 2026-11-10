@@ -1,6 +1,23 @@
 # Gemeinsame Gestaltung der Spielhinweise
 
-<!-- farbfeld-version: 1.17.2 -->
+<!-- farbfeld-version: 1.17.3 -->
+
+## Dauerhafte Farbhinweise
+
+Farbabschlüsse bleiben mit Spielername und Farbe während der gesamten Partie sichtbar, auch nach weiteren Würfen, Blattwechsel und Wiederaufnahme. Die Anzeige liest alle gespeicherten bestätigten Abschlüsse ohne Rundengrenze. Minen entfernen verlorene Abschlüsse und aktualisieren übertragene Farbprämien bereits in der gemeinsamen Engine; die Karten übernehmen diesen aktuellen Stand. Im verdeckten Spiel bleiben Prämienwerte und fremde Blätter verborgen. Kein zusätzlicher Timer, Push, Datenabruf oder neues Speicherformat.
+
+Minen, Bonusfelder, Farbabschluss, Punkte und Ergebnis folgen derselben ruhigen Kartensprache. Die gedruckten Brettfarben vermitteln das Spiel; zusätzliche Flächenfarben vermitteln nur einen konkreten Zustand.
+
+| Element | Vertrag |
+|---|---|
+| Grundfläche / Kontur | `--status-surface` aus `--card`, `--status-border` aus `--line`, daher passend zu allen sechs Designs |
+| Kleine Statuskarte | 14 Pixel Radius, 8–10 Pixel Innenabstand, 32-Pixel-Symbolfeld |
+| Symbole | lokale SVGs mit 22–24 Pixeln; Mine bleibt außerhalb der seitlich scrollbaren Namen |
+| Bereitschaft / Prämie | dunkelgrüner Text oder kleines sanftgrünes Symbol-/Wertfeld; nie nur Farbe als Signal |
+| Schaden / Fehler | gedämpftes Rot mit erklärendem Text, gestrichelten betroffenen Kreuzen und zugänglicher Zellbeschreibung |
+| Handlungswarnung | Bernstein nur bei tatsächlich nötiger Korrektur, nicht für normale Spielinfos |
+| Zug / Betrachtetes Blatt | dunkler aktiver Spieler, Kontur/Unterstrich für betrachtetes Blatt; Rollen bleiben textlich erhalten |
+| Ergebnis | neutrale Fläche, Gewinnerzeile mit kleinem grünen Textakzent; Aufschlüsselungen im selben Flächensystem |
 
 Minen, Bonusfelder, Farbabschluss, Punkte und Ergebnis folgen derselben ruhigen Kartensprache. Die gedruckten Brettfarben vermitteln das Spiel; zusätzliche Flächenfarben vermitteln nur einen konkreten Zustand.
 

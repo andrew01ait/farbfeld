@@ -1,6 +1,10 @@
 # Benachrichtigungen
 
-<!-- farbfeld-version: 1.17.2 -->
+<!-- farbfeld-version: 1.17.3 -->
+
+## Dauerhafte Karten ab 1.17.3
+
+Farbabschlusskarten bleiben während der Partie sichtbar. Der kurze Toast erscheint weiterhin nur bei einem neuen Abschluss; Wiederaufnahme erzeugt keine alten Toasts. Farbe bleibt ein reiner Spielhinweis und erzeugt keinen Push. Verdeckte Prämien bleiben auch in zugänglichen Labels verborgen.
 
 ## Visuelle Spielhinweise 1.17.2
 

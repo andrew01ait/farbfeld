@@ -1,6 +1,6 @@
 # Offline auf zwei bis sechs Handys
 
-<!-- farbfeld-version: 1.17.2 -->
+<!-- farbfeld-version: 1.17.3 -->
 
 ## Neue Partien mit Zusatzregeln
 

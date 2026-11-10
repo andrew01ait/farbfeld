@@ -226,8 +226,8 @@ async function sendEmoji(emoji,{scale=1}={}){
 }
 function scores(){const g=currentGame();if(!g||handover)return;openModal('Punkte im Überblick.','<div class="score-content">'+scoreCardsHTML(g)+'</div>','scores');}
 function completionsHTML(g){
- const recent=colorAnnouncements(g,myPid(g)).filter(e=>e.round>=g.round-1);if(!recent.length)return '';
- return '<div class="color-notices" role="status">'+recent.map(e=>'<span class="completion-item"><span class="status-icon" aria-hidden="true"><i class="color-dot" data-color="'+e.color+'"></i></span><span class="completion-copy">'+esc(colorCompletionText(e,{withPoints:false}))+'</span>'+(e.points!==undefined?'<b class="status-score" aria-label="'+e.points+' Punkte">+'+e.points+'</b>':'')+'</span>').join('')+'</div>';
+ const events=colorAnnouncements(g,myPid(g));if(!events.length)return '';
+ return '<div class="color-notices" role="status" aria-label="Abgeschlossene Farben">'+events.map(e=>'<span class="completion-item"><span class="status-icon" aria-hidden="true"><i class="color-dot" data-color="'+e.color+'"></i></span><span class="completion-copy">'+esc(colorCompletionText(e,{withPoints:false}))+'</span>'+(e.points!==undefined?'<b class="status-score" aria-label="'+e.points+' Punkte">+'+e.points+'</b>':'')+'</span>').join('')+'</div>';
 }
 function announceColors(g){
  const id=g?.gameId||'';if(!id)return;

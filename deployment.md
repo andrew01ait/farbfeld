@@ -1,6 +1,10 @@
 # Development and deployment
 
-<!-- farbfeld-version: 1.17.2 -->
+<!-- farbfeld-version: 1.17.3 -->
+
+## Release 1.17.3
+
+Persistent in-game colour cards show every confirmed participant/colour completion for the whole current match. Saved games need no migration. Mine losses and inherited bonuses continue to use authoritative engine announcements; concealed rewards remain redacted. 397 regressions, both API integrations, TypeScript and twelve rendered CSS viewport sizes passed in the hosted source. No dependency, protocol, capability or offline asset changes. Normal PWA update preserves existing games. [QA scope](docs/responsive-qa.md).
 
 ## Release 1.17.2
 
