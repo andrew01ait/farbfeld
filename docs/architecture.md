@@ -1,6 +1,10 @@
 # Architektur
 
-<!-- farbfeld-version: 1.17.3 -->
+<!-- farbfeld-version: 1.17.4 -->
+
+## Direct recovery 1.17.4
+
+WebRTC star topology and host authority remain unchanged. Prefer completed ICE gathering; at the bounded deadline freeze available local UDP host candidates in one protocol-2 handshake. No addresses or SDP enter diagnostics. No new signaling/polling dependency, storage schema, migration or offline file.
 
 ## Farbabschlussanzeige
 

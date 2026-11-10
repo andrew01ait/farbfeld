@@ -1,12 +1,16 @@
 # Farbfeld documentation
 
-<!-- farbfeld-version: 1.17.3 -->
+<!-- farbfeld-version: 1.17.4 -->
+
+## Client 1.17.4: direct recovery and UI
+
+Bounded Android candidate fallback, correct manual-QR timeout handling, compact direct match/session layouts and grouped settings. See [offline multiplayer](offline-multiplayer.md), [diagnostics](offline-diagnostics.md), [UI design](ui-design.md) and [responsive validation](responsive-qa.md).
 
 ## Neu 1.17.3: Dauerhafte Farbabschlusskarten
 
 Farbabschlüsse bleiben mit Spielername und Farbe während der gesamten Partie sichtbar, auch nach weiteren Würfen, Blattwechsel und Wiederaufnahme. Die Anzeige liest alle gespeicherten bestätigten Abschlüsse ohne Rundengrenze. Minen entfernen verlorene Abschlüsse und aktualisieren übertragene Farbprämien bereits in der gemeinsamen Engine; die Karten übernehmen diesen aktuellen Stand. Im verdeckten Spiel bleiben Prämienwerte und fremde Blätter verborgen. Kein zusätzlicher Timer, Push, Datenabruf oder neues Speicherformat.
 
-Prüfstand: **10.11.2026 · Client 1.17.3**. Automatisierte und gerenderte Prüfungen werden im [Prüfumfang](responsive-qa.md) getrennt ausgewiesen.
+Prüfstand: **10.11.2026 · Client 1.17.4**. Automatisierte und gerenderte Prüfungen werden im [Prüfumfang](responsive-qa.md) getrennt ausgewiesen.
 
 ## Neu 1.17.2: Gemeinsame Statusgestaltung und Mehrspieler-Start
 

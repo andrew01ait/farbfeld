@@ -1,13 +1,17 @@
 # Offline-Testprotokoll für zwei Handys
 
-<!-- farbfeld-version: 1.17.3 -->
+<!-- farbfeld-version: 1.17.4 -->
+
+## Recovery diagnostics 1.17.4
+
+The bounded local-address fallback is logged as candidate-fallback without addresses or SDP. Find the test recorder under Einstellungen → Hilfe & Diagnose → Offline-Testprotokoll; it also stays available in pairing screens. Preserve both reports before starting a new numbered test. Device checks distinguish usable fallback candidates from full collection completion.
 
 Das lokale Testprotokoll hilft, Gerätevorbereitung, QR-Kopplung, tatsächlichen Verbindungsaufbau und Spielabgleich getrennt zu untersuchen. Es repariert eine Verbindung nicht selbst und ist kein Nachweis physischer Android-/Hotspot-Kompatibilität. Die bisherige **Offline-Verbindung prüfen → Prüfergebnis kopieren** bleibt als separater Einzelgerätetest erhalten.
 
 ## Kurzer Testlauf
 
 1. Beide PWAs aktualisieren und **Offline bereit** abwarten. Eine App-Ansicht pro Handy verwenden. Modelle, Betriebssystem- und Browserversionen gesondert notieren; die automatische Browserangabe ist nur eine grobe Erkennung, keine vollständige Geräteauskunft.
-2. **Einstellungen → Offline-Testprotokoll** öffnen. Derselbe Zugang steht in den Offline-Kopplungsdialogen, auch bei einem Fehler. Auf einem Handy **A**, auf dem anderen **B** wählen, auf beiden dieselbe **Testnummer** und dieselbe Netzbeschreibung einstellen. „Hotspot von A“ bezeichnet den Netzgeber, nicht automatisch den Spielgastgeber.
+2. **Einstellungen → Hilfe & Diagnose → Offline-Testprotokoll** öffnen. Derselbe Zugang steht in den Offline-Kopplungsdialogen, auch bei einem Fehler. Auf einem Handy **A**, auf dem anderen **B** wählen, auf beiden dieselbe **Testnummer** und dieselbe Netzbeschreibung einstellen. „Hotspot von A“ bezeichnet den Netzgeber, nicht automatisch den Spielgastgeber.
 3. Auf beiden **Aufzeichnung starten**. Zur Kopplung zurückkehren, A erstellt die Partie, B scannt das Angebot und A die Antwort. Beide Apps offen lassen. Genauen letzten erfolgreichen Schritt und Fehlermeldung notieren.
 4. Bei Erfolg Classic mit offenen Punkten starten und drei Runden spielen. Würfel, Runde, aktive Person, bestätigte Züge und Punkte vergleichen.
 5. Bei Erfolg im normalen WLAN mit einem Hotspot ohne mobile Daten wiederholen. Wenn es scheitert, zunächst bei gleichem Hotspot nur die Spielgastgeberrolle tauschen. Netzgeber und Spielgastgeber sind getrennte Variablen. Wiederverbindung/kurzer Hintergrundaufenthalt erst danach separat prüfen.

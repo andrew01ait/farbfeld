@@ -1,6 +1,14 @@
 # Änderungsprotokoll
 
-<!-- farbfeld-version: 1.17.3 -->
+<!-- farbfeld-version: 1.17.4 -->
+
+## 1.17.4 – 2026-11-10
+
+- Local QR recovery uses an immutable snapshot of available local UDP host candidates at the 20-second deadline if Android keeps gathering. Normal completion remains preferred; missing, TCP-only and relay-only candidates do not qualify for the fallback. Cancellation stays effective and no Internet/STUN/TURN service is added.
+- The host connection timeout starts after accepting the return answer, preserving the time needed for manual QR scanning.
+- Direct matches have a separate phone title row, compact expandable connection details above players, and a smaller saved-session card. Hidden connection labels stay anchored inside their dots. Narrow dice groups stack; waiting on another player does not cover the sheet with disabled floating controls.
+- Settings separate installation/backups and help/diagnostics, retain direct version/update access, and omit duplicate game-exit actions. Diagnostics now live under Settings → Hilfe & Diagnose.
+- Shared-source validation: 402 regression tests, both API integrations, TypeScript and 98 rendered synthetic layouts. A renewed physical recovery/hotspot test remains separate.
 
 ## 1.17.3 – 2026-11-10
 

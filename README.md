@@ -1,6 +1,10 @@
 # Farbfeld
 
-<!-- farbfeld-version: 1.17.3 -->
+<!-- farbfeld-version: 1.17.4 -->
+
+## Neu in 1.17.4
+
+Begrenzter lokaler UDP-Fallback für die QR-Wiederkopplung nach Netzverlust. Lesbarer Direkt-Spielkopf, kompakte Verbindungsdetails oberhalb der Spielernamen und kleinere Startkarte. Spielaktionen bleiben im Spiel; Diagnose liegt unter **Einstellungen → Hilfe & Diagnose**. Updates und Version bleiben direkt erreichbar. Bestehende bestätigte Direktstände und Spielerplätze werden weiterverwendet. Physische Wiederkopplung und Hotspot-Kompatibilität nach dem Fix separat prüfen.
 
 ## Neu 1.17.3: Farbabschlüsse dauerhaft sichtbar
 
@@ -38,7 +42,7 @@ Drei geheime **Bonusfelder** vergeben je +2 an alle ersten Finder desselben Wurf
 
 An installable, offline-ready dice game PWA with solo play, computer opponents, local and online multiplayer, and push notifications.
 
-[Play Farbfeld](https://farbfeld-andrew.endruuu.chatgpt.site/play) · [Version 1.17.3](public/version.json) · [Documentation](docs/README.md)
+[Play Farbfeld](https://farbfeld-andrew.endruuu.chatgpt.site/play) · [Version 1.17.4](public/version.json) · [Documentation](docs/README.md)
 
 The game interface is in German. Farbfeld needs no user account. It is an independent implementation of the basic rules of *Noch mal!* by Inka and Markus Brand (Schmidt Spiele), using its own interface and assets; this repository is not an official publisher release.
 

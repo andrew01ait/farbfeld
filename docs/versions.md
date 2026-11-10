@@ -1,6 +1,10 @@
 # Versionen und Kompatibilität
 
-<!-- farbfeld-version: 1.17.3 -->
+<!-- farbfeld-version: 1.17.4 -->
+
+## Compatibility 1.17.4
+
+Normal PWA update on all phones. Existing direct game/backup schema 1, protocol 2 and capabilities remain unchanged; 40 offline assets. Re-pair the saved match after reload. No migration or runtime secret change.
 
 ## Kompatibilität 1.17.3
 
@@ -49,7 +53,7 @@ Die aktuelle maschinenlesbare Code-Version steht in [public/version.json](../pub
 
 | Gegenstand | Vertrag |
 | --- | --- |
-| Client | aktuell 1.16.0; semantische Version, Benachrichtigungen ab 1.7.0 |
+| Client | aktuell 1.17.4; semantische Version, Benachrichtigungen ab 1.7.0 |
 | Direktprotokoll | 2, Gruppenunterstützung ab 1.4.0 |
 | Lokale Spiele / Backup | Schema bzw. Backupversion 1 |
 | Direkt-Speicher | `farbfeld.direct.v1`, Schema 1 |

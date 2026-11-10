@@ -1,6 +1,10 @@
 # Emoji-Reaktionen
 
-<!-- farbfeld-version: 1.17.3 -->
+<!-- farbfeld-version: 1.17.4 -->
+
+## Direct recovery 1.17.4
+
+Compact connection details and re-pairing keep the existing direct player identities and reaction transport. Direct reactions still require the actual live channel. No push or new signaling request.
 
 Revanche-Hinweise ab 1.15.0 betreffen ausschließlich den tatsächlichen Neustart einer Internet-Partie. Reaktionen, Emoji-Flüge und deren Empfängerwahl lösen weiterhin keine Pushs aus; Fähigkeiten und Übertragung der fünf Reaktionen bleiben unverändert.
 

@@ -43,7 +43,9 @@ test('Adresssuche läuft begrenzt und ein Abbruch beendet nur den temporären Te
   await collecting;controller.abort();await assert.rejects(pending,/abgebrochen/);
   assert(f.peers[0].closed&&f.peers[0].channelClosed);
   const timed=await inspectOfflineSetup({environment:f.environment,iceTimeout:5});
-  assert.equal(timed.rows.find(row=>row.id==='rtc').state,'error');assert(f.peers[1].closed);
+  assert.equal(timed.rows.find(row=>row.id==='rtc').state,'warning');assert.match(timed.rows.find(row=>row.id==='rtc').detail,/Adresssuche bleibt offen/);assert(f.peers[1].closed);
+  const empty=fixture({complete:false,candidates:false}),failed=await inspectOfflineSetup({environment:empty.environment,iceTimeout:5});
+  assert.equal(failed.rows.find(row=>row.id==='rtc').state,'error');assert(empty.peers[0].closed);
 });
 test('Nicht unterstützte Berechtigungsabfragen sperren einen erfolgreichen lokalen Test nicht',async()=>{
   const f=fixture();delete f.environment.navigator.permissions;

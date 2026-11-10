@@ -1,6 +1,10 @@
 # Responsive QA
 
-<!-- farbfeld-version: 1.17.3 -->
+<!-- farbfeld-version: 1.17.4 -->
+
+## Validation 1.17.4
+
+Shared source: 402 automated regression tests, both API integrations and TypeScript passed. The actual app renderer was exercised in twelve required sizes plus 680×650 and 681×651: connected/paused with two/six players, saved session with two/six players, and settings, totaling 98 rendered synthetic views. No horizontal page/dialog overflow, broken direct-title word, oversized session card or game-exit action in Settings. Connection details expose disconnect. These are browser renderings with synthetic data; physical Android recovery and offline hotspot testing remain separate.
 
 ## Prüfumfang 1.17.3
 

@@ -1,6 +1,10 @@
 # Offline auf zwei bis sechs Handys
 
-<!-- farbfeld-version: 1.17.3 -->
+<!-- farbfeld-version: 1.17.4 -->
+
+## Android recovery 1.17.4
+
+When Android leaves gathering open despite local UDP host candidates, QR preparation freezes those available candidates after the 20-second deadline. Normal gathering completion stays preferred. Without usable local UDP data, show an error rather than a false ready state. Re-pair the existing saved player/game. The host connection timeout starts only after accepting the return QR answer; manual scan time is excluded. Physical recovery/hotspot verification remains separate from automated tests.
 
 ## Neue Partien mit Zusatzregeln
 

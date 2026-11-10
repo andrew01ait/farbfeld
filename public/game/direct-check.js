@@ -39,7 +39,7 @@ export async function inspectOfflineSetup({version,offlineInfo={},environment=gl
     await pc.setLocalDescription(await pc.createOffer());aborted(signal);
     const description=await waitForIce(pc,iceTimeout,signal);aborted(signal);
     result.candidates=candidateSummary(description.sdp);
-    const row=rows.find(row=>row.id==='rtc');row.state='ok';row.detail=result.candidates.count+' lokale Adresse(n) erhalten'+(result.candidates.mdns?' · teilweise als geschützter .local-Name':'')+'. Angebot und QR können vorbereitet werden.';
+    const fallback=pc.iceGatheringState!=='complete',row=rows.find(row=>row.id==='rtc');row.state=fallback?'warning':'ok';row.detail=result.candidates.count+' lokale Adresse(n) erhalten'+(result.candidates.mdns?' · teilweise als geschützter .local-Name':'')+'. '+(fallback?'Adresssuche bleibt offen; vorhandene lokale UDP-Adressen werden verwendet. ':'')+'Angebot und QR können vorbereitet werden.';
   }catch(error){
     aborted(signal);const row=rows.find(row=>row.id==='rtc');row.state='error';
     row.detail=/keine lokale Netzwerkadresse/i.test(error.message)?'Der Browser liefert keine lokale Netzwerkadresse. Deshalb kann noch kein nutzbarer Angebots-QR entstehen. WLAN/Hotspot, VPN und Chrome-Berechtigungen prüfen; danach erneut versuchen.':'Lokale Verbindungsdaten konnten nicht vollständig gesammelt werden. WLAN/Hotspot und Chrome-Berechtigungen prüfen; danach erneut versuchen.';

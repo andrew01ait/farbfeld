@@ -1,6 +1,10 @@
 # Benachrichtigungen
 
-<!-- farbfeld-version: 1.17.3 -->
+<!-- farbfeld-version: 1.17.4 -->
+
+## Scope 1.17.4
+
+Local QR recovery and UI only. Push transport, event policy, opt-in, durable jobs and keys remain unchanged. Local gathering recovery does not add a push, reminder or background polling loop.
 
 ## Dauerhafte Karten ab 1.17.3
 

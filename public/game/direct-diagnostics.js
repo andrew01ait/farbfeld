@@ -7,7 +7,7 @@ export const RETENTION_MS=24*60*60*1000;
 const TYPES=new Set(['capture','lifecycle','pairing','rtc','scan','session','message','action','error','check','stats']);
 const ENUMS={
   role:['host','guest','none'],
-  stage:['started','stopped','expired','reload','foreground','background','pagehide','offer-start','offer-ready','answer-start','answer-ready','answer-accepted','pair-complete','pair-cancelled','restored','disconnect','heartbeat-stalled','heartbeat-recovered','code-start','code-ready','code-failed'],
+  stage:['started','stopped','expired','reload','foreground','background','pagehide','offer-start','candidate-fallback','offer-ready','answer-start','answer-ready','answer-accepted','pair-complete','pair-cancelled','restored','disconnect','heartbeat-stalled','heartbeat-recovered','code-start','code-ready','code-failed'],
   connection:['new','connecting','connected','disconnected','failed','closed'],
   ice:['new','checking','connected','completed','failed','disconnected','closed'],
   gathering:['new','gathering','complete'],
@@ -42,7 +42,7 @@ export function diagnosticError(error){
   if(/abgebrochen|abort/i.test(message))return 'aborted';
   if(/notallowed|permission|berechtigung|freigabe.*block/i.test(message))return 'permission-denied';
   if(/keine lokale Netzwerkadresse|keine.*candidate/i.test(message))return 'no-candidates';
-  if(/keine vollständigen lokalen|ice.*timeout/i.test(message))return 'ice-timeout';
+  if(/keine (?:vollständigen|nutzbaren) lokalen|ice.*timeout/i.test(message))return 'ice-timeout';
   if(/timeout|zeitüberschreitung/i.test(message))return 'connection-timeout';
   if(/QR|FF1|decoder/i.test(message))return 'qr-invalid';
   if(/angebot|antwort|kopplung|spielerplatz/i.test(message))return 'handshake';

@@ -1,6 +1,10 @@
 # Farbfeld contributor instructions
 
-<!-- farbfeld-version: 1.17.3 -->
+<!-- farbfeld-version: 1.17.4 -->
+
+## Direct recovery and layout
+
+Prefer complete gathering, then allow a frozen local-UDP candidate snapshot at the 20-second deadline. Never use absent, relay-only or TCP-only candidates for this fallback. Preserve cancellation, existing match/player identity and no-Internet operation. Start the host connection timeout only after accepting the return answer. Keep direct phone titles on their own row and connection details above players. Keep game exit actions out of Settings, and diagnostics inside Hilfe & Diagnose. Anchor hidden peer-status labels so scrolled peers cannot widen the document.
 
 ## Shared status design
 

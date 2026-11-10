@@ -1,6 +1,10 @@
 # Development and deployment
 
-<!-- farbfeld-version: 1.17.3 -->
+<!-- farbfeld-version: 1.17.4 -->
+
+## Version 1.17.4
+
+Normal PWA update on every participating device. Preserve the saved direct match, then re-pair its existing seats after an app reload. No new migration, runtime setting, secret, capability or offline asset. The hosted deployment remains a separate operation from this source publication.
 
 ## Release 1.17.3
 
