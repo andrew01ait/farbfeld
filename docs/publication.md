@@ -1,6 +1,10 @@
 # Public source snapshot
 
-<!-- farbfeld-version: 1.17.3 -->
+<!-- farbfeld-version: 1.18.0 -->
+
+## Source update 1.17.4
+
+Reviewed local QR recovery, direct game layouts and settings cleanup. Preserve the public generic environment/build setup. Personal diagnostic exports, original screenshots and host-specific operational records are excluded. This commit updates public source and does not itself deploy a hosted instance.
 
 ## Update 1.17.3 — 10 November 2026
 

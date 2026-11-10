@@ -1,6 +1,14 @@
 # Farbfeld contributor instructions
 
-<!-- farbfeld-version: 1.17.3 -->
+<!-- farbfeld-version: 1.18.0 -->
+
+## Direct names and contextual leaving
+
+Keep optional direct roomName (normalized, max 48 characters) and roomNameRevision separate from engine/game revisions. Only the original direct host may rename, even while paused; broadcast through the existing authenticated ordered channel and retain the latest metadata across stale states and reconnects. Never reset selection, retry/double a pending move, advance a round, mutate RNG or send Push for renaming. Include the optional name in QR setup; keep protocol 2 and legacy unnamed records valid. Direct home cards offer Open only. In-progress forfeiting stays behind the game Beenden confirmation; access/pairing management remains contextual inside the direct session.
+
+## Direct recovery and layout
+
+Prefer complete gathering, then allow a frozen local-UDP candidate snapshot at the 20-second deadline. Never use absent, relay-only or TCP-only candidates for this fallback. Preserve cancellation, existing match/player identity and no-Internet operation. Start the host connection timeout only after accepting the return answer. Keep direct phone titles on their own row and connection details above players. Keep game exit actions out of Settings, and diagnostics inside Hilfe & Diagnose. Anchor hidden peer-status labels so scrolled peers cannot widen the document.
 
 ## Shared status design
 

@@ -1,6 +1,14 @@
 # Versionen und Kompatibilität
 
-<!-- farbfeld-version: 1.17.3 -->
+<!-- farbfeld-version: 1.18.0 -->
+
+## Kompatibilität 1.18.0
+
+Optionale roomName/roomNameRevision-Felder ergänzen vorhandene Schema-1-Direktstände und Protokoll-2-Angebote. Alte unbenannte Sitzungen bleiben gültig; zum Anzeigen/Ändern des Namens beide Apps regulär aktualisieren. 40 Offline-Dateien, keine neue Fähigkeit, Migration oder Runtime-Konfiguration. Wiederkopplung setzt die gespeicherte Sitzung mit Namen fort.
+
+## Compatibility 1.17.4
+
+Normal PWA update on all phones. Existing direct game/backup schema 1, protocol 2 and capabilities remain unchanged; 40 offline assets. Re-pair the saved match after reload. No migration or runtime secret change.
 
 ## Kompatibilität 1.17.3
 
@@ -49,7 +57,7 @@ Die aktuelle maschinenlesbare Code-Version steht in [public/version.json](../pub
 
 | Gegenstand | Vertrag |
 | --- | --- |
-| Client | aktuell 1.16.0; semantische Version, Benachrichtigungen ab 1.7.0 |
+| Client | aktuell 1.17.4; semantische Version, Benachrichtigungen ab 1.7.0 |
 | Direktprotokoll | 2, Gruppenunterstützung ab 1.4.0 |
 | Lokale Spiele / Backup | Schema bzw. Backupversion 1 |
 | Direkt-Speicher | `farbfeld.direct.v1`, Schema 1 |

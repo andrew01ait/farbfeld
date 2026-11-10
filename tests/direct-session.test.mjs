@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {DirectDiagnostics} from '../public/game/direct-diagnostics.js';
 import {DirectSession} from '../public/game/direct.js';
+import {waitForIce} from '../public/game/direct-connection.js';
 import {DIRECT_PROTOCOL,validRecord} from '../public/game/direct-game.js';
 import {decodeQrText} from '../public/game/qr.js';
 import {findMove,BOARD} from '../public/game/engine.js';
@@ -347,4 +348,28 @@ test('Opt-in logs on both phones capture pairing, committed revisions and recove
 test('Throwing diagnostic observers cannot interrupt a paired game or its game storage',async()=>{
  const broken={record(){throw Error('unavailable');},error(){throw Error('unavailable');}};
  const f=fixture({}, {host:broken,guest:broken});try{await qrPair(f);await step(f,0,'start');await step(f,0,'roll');assert.equal(f.calls,0);assert.equal(f.host.ready,true);assert.equal(f.guest.ready,true);}finally{f.dispose();}
+});
+
+// Reproduce the Android recovery regression: the local interface has candidates but never
+// changes gathering to complete after the guest switches Wi-Fi off and on.
+test('Existing match re-pairs the same phone after Android gathering stalls, without resetting a round or using HTTP',async()=>{
+ const f=fixture();try{
+  await qrPair(f);await step(f,0,'start');await step(f,0,'roll');await step(f,0,'move',{move:{pass:true}});await step(f,1,'move',{move:{pass:true}});
+  const before=structuredClone(f.host.snapshot);f.guest.rtc.close();assert.equal(f.host.ready,false);
+  class AndroidRecoveryConnection extends TestConnection{async offer(...args){const pc=new EventTarget();pc.iceGatheringState='gathering';pc.localDescription={type:'offer',sdp:'v=0\r\na=candidate:1 1 udp 1 192.0.2.1 12345 typ host'};await waitForIce(pc,8);return super.offer(...args);}}
+  f.host.Connection=AndroidRecoveryConnection;await f.host.host('',true);
+  assert.equal(f.host.pairing.pid,1);assert(f.host.pairing.qr.length>0);assert.deepEqual(f.host.snapshot,before);
+  await f.guest.join(f.host.pairing.data,'Bea');await f.host.accept(f.guest.pairing.data);await wait(()=>f.host.ready&&f.guest.ready);
+  assert.deepEqual(f.host.snapshot,before);assert.deepEqual(f.guest.snapshot,before);assert.equal(f.calls,0);assert.deepEqual(f.errors,[]);
+ }finally{f.dispose();}
+});
+
+test('Named direct sessions synchronize metadata and keep the name when the same saved phones re-pair',async()=>{
+ let f=fixture();try{
+  await f.host.host('Host',false,'Unsere Direktpartie');await f.guest.join(f.host.pairing.data,'Gast');await f.host.accept(f.guest.pairing.data);await wait(()=>f.host.ready&&f.guest.ready);
+  assert.equal(f.guest.snapshot.roomName,'Unsere Direktpartie');await step(f,0,'start');const game=structuredClone(f.host.snapshot.game),revision=f.host.snapshot.version;
+  f.host.renameRoom('Abendrunde');await wait(()=>f.guest.snapshot.roomName==='Abendrunde');assert.equal(f.host.snapshot.version,revision);assert.deepEqual(f.host.snapshot.game,game);
+  f.guest.disconnect();f.host.renameRoom('Neue Abendrunde');const records=structuredClone(f.saved);f.dispose();f=fixture(records);await qrPair(f,true);
+  assert.equal(f.host.snapshot.roomName,'Neue Abendrunde');assert.equal(f.guest.snapshot.roomName,'Neue Abendrunde');assert.deepEqual(f.host.snapshot.game,game);assert.equal(f.calls,0);
+ }finally{f.dispose();}
 });

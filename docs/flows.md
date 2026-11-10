@@ -1,6 +1,14 @@
 # Abläufe
 
-<!-- farbfeld-version: 1.17.3 -->
+<!-- farbfeld-version: 1.18.0 -->
+
+## Benennen und Aussteigen in Direktpartien
+
+Erstellen: eigener Spielername und optional Name der Direktpartie, danach die vorhandene Kopplung. Gastgeber: in der Lobby Name der Direktpartie ändern oder im Spiel die Überschrift mit Stift antippen. Namensänderung erhält eigene Auswahl und wartende Bestätigungen. Startseite öffnet ausschließlich den gespeicherten Direktstand. Erst Beenden im Spiel öffnet die Bestätigung mit −10 Punkten/Niederlage; die anderen spielen weiter. Dasselbe Prinzip gilt für normale Gruppenräume und Ein-Handy-Partien.
+
+## Re-pair an existing direct match
+
+Local loss pauses the game. A surviving channel may resynchronize; a failed channel requires the original host to re-pair the existing participant. The QR preparation can use collected local UDP candidates after 20 seconds even if Android still reports gathering. Keep the same saved game, player and round. Connection details expose disconnect; game exit stays in the match. Diagnostics: Einstellungen → Hilfe & Diagnose → Offline-Testprotokoll.
 
 ## Farbabschlüsse wiederfinden
 

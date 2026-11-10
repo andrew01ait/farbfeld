@@ -1,6 +1,14 @@
 # Gemeinsame Gestaltung der Spielhinweise
 
-<!-- farbfeld-version: 1.17.3 -->
+<!-- farbfeld-version: 1.18.0 -->
+
+## Direktname und Aktionen
+
+Direkte Startkarten dienen ausschließlich dem Wiederöffnen. Kein Verlassen-Menü und kein Strafpunktehinweis auf der Startseite. Beenden im Spiel öffnet die gemeinsame Verlassen-Bestätigung. Optionale Direktnamen stehen vollständig in Startkarte, Lobby und Spielkopf; Gastgeber können über die vorhandene Stift-Sprache umbenennen, Gäste sehen reinen Titeltext. Eigenständiger Spielername und gemeinsamer Partiename erhalten getrennte beschriftete Felder.
+
+## Direct matches and settings
+
+On narrow phones, direct match titles have their own row above equal-width round/score/exit controls. Compact connection details are above player names; expand them to disconnect. A paused connection exposes recovery directly. Saved direct cards use 44-pixel open/manage controls. Score labels wrap. Settings have no duplicate game-exit buttons; installation/backups and help/diagnostics are collapsed native sections. Version/update remains directly available. Hidden connection labels are anchored to their status dot.
 
 ## Dauerhafte Farbhinweise
 

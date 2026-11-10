@@ -1,6 +1,6 @@
 {
   "name": "farbfeld",
-  "version": "1.17.3",
+  "version": "1.18.0",
   "private": true,
   "engines": {
     "node": ">=22.13.0"

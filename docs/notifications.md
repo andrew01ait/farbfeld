@@ -1,6 +1,14 @@
 # Benachrichtigungen
 
-<!-- farbfeld-version: 1.17.3 -->
+<!-- farbfeld-version: 1.18.0 -->
+
+## Abgrenzung 1.18.0
+
+Direktnamen sind lokale Sitzungsmetadaten. Umbenennen und die veränderte Startkarte lösen weder Push noch Erinnerungen oder zusätzliche Statusabfragen aus. Die bereits erlaubten Internet-Ereignisse bleiben unverändert.
+
+## Scope 1.17.4
+
+Local QR recovery and UI only. Push transport, event policy, opt-in, durable jobs and keys remain unchanged. Local gathering recovery does not add a push, reminder or background polling loop.
 
 ## Dauerhafte Karten ab 1.17.3
 

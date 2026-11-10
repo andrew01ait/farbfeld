@@ -1,6 +1,15 @@
 # Development and deployment
 
-<!-- farbfeld-version: 1.17.3 -->
+<!-- farbfeld-version: 1.18.0 -->
+
+## Version 1.18.0
+
+Direct names add optional metadata to schema-1 records and protocol-2 QR offers. No database migration, runtime variable or offline-asset count change. Update each PWA normally and reconnect its existing player seat. This source is prepared in draft PR #1; GitHub changes do not deploy an application automatically.
+
+
+## Version 1.17.4
+
+Normal PWA update on every participating device. Preserve the saved direct match, then re-pair its existing seats after an app reload. No new migration, runtime setting, secret, capability or offline asset. The hosted deployment remains a separate operation from this source publication.
 
 ## Release 1.17.3
 

@@ -16,16 +16,22 @@ const uid=directId;
 const name=value=>String(value||'').trim().slice(0,24);
 const seat=i=>Number.isInteger(i)&&i>=1&&i<MAX_DIRECT_PLAYERS;
 const secret=value=>typeof value==='string'&&value.length>=32&&value.length<=160;
-export function hostRecord(hostName){
+export function normalizeDirectRoomName(value=''){
+  if(typeof value!=='string')throw Error('Bitte einen Namen für die Direktpartie eingeben.');
+  const normalized=value.replace(/\s+/gu,' ').trim();
+  if(normalized.length>48)throw Error('Der Name der Direktpartie darf höchstens 48 Zeichen enthalten.');
+  return normalized;
+}
+export function hostRecord(hostName,roomName=''){
   const sessionId=uid();
-  return {schema:1,role:'host',secret:uid()+uid(),guestSecrets:{},seen:[],pending:null,snapshot:{sessionId,version:0,members:[{id:sessionId+':0',name:name(hostName)||'Gastgeber'},{id:sessionId+':1',name:''}],game:null}};
+  return {schema:1,role:'host',secret:uid()+uid(),guestSecrets:{},seen:[],pending:null,snapshot:{sessionId,version:0,roomName:normalizeDirectRoomName(roomName),roomNameRevision:0,members:[{id:sessionId+':0',name:name(hostName)||'Gastgeber'},{id:sessionId+':1',name:''}],game:null}};
 }
 export function guestRecord(offer,guestName,previous=null){
   const pid=offer.pid??1;
   const resume=previous?.schema===1&&previous.role==='guest'&&(previous.pid??1)===pid&&previous.snapshot?.sessionId===offer.sessionId;
   const members=offer.members?clone(offer.members):[{id:offer.sessionId+':0',name:name(offer.hostName)||'Gastgeber'},{id:offer.sessionId+':1',name:''}];
   if(members[pid])members[pid].name=name(guestName)||previous?.name||'Person '+(pid+1);
-  return {schema:1,role:'guest',pid,secret:offer.secret,name:name(guestName)||previous?.name||'Person '+(pid+1),seen:[],pending:resume?previous.pending:null,snapshot:resume?clone(previous.snapshot):{sessionId:offer.sessionId,version:0,members,game:null}};
+  return {schema:1,role:'guest',pid,secret:offer.secret,name:name(guestName)||previous?.name||'Person '+(pid+1),seen:[],pending:resume?previous.pending:null,snapshot:resume?clone(previous.snapshot):{sessionId:offer.sessionId,version:0,roomName:normalizeDirectRoomName(offer.roomName),roomNameRevision:offer.roomNameRevision??0,members,game:null}};
 }
 export function validRecord(record){
   return (record?.role!=='host'||validBonusState(record.snapshot?.game)&&validMineState(record.snapshot?.game))&&record?.schema===1&&['host','guest'].includes(record.role)&&secret(record.secret)&&Array.isArray(record.seen)&&record.seen.every(a=>a&&typeof a.id==='string'&&Number.isInteger(a.actor)&&a.actor>=0&&a.actor<MAX_DIRECT_PLAYERS)&&validSnapshot(record.snapshot)&&(!record.snapshot.game||(record.role==='host'?!record.snapshot.game.players.some(p=>p.hidden):!record.snapshot.game.players[record.pid??1]?.hidden))&&(record.role!=='guest'||seat(record.pid??1)&&(record.pid??1)<record.snapshot.members.length)&&(record.role!=='host'||!record.guestSecrets||typeof record.guestSecrets==='object'&&Object.entries(record.guestSecrets).every(([i,key])=>seat(Number(i))&&secret(key)))&&(!record.pending||(record.pending.type==='action'&&[1,DIRECT_PROTOCOL].includes(record.pending.protocol)&&record.pending.sessionId===record.snapshot.sessionId&&typeof record.pending.actionId==='string'&&Number.isSafeInteger(record.pending.version)&&record.pending.payload&&typeof record.pending.payload==='object'));
@@ -33,6 +39,8 @@ export function validRecord(record){
 export function validSnapshot(s){
   if(!s||typeof s.sessionId!=='string'||s.sessionId.length>80||!Number.isSafeInteger(s.version)||s.version<0||!Array.isArray(s.members)||s.members.length<2||s.members.length>MAX_DIRECT_PLAYERS||!s.members.every((m,i)=>m&&m.id===s.sessionId+':'+i&&typeof m.name==='string'&&m.name.length<=24))return false;
   if(!validBoardId(s.boardId)||s.bonusFields!==undefined&&typeof s.bonusFields!=='boolean'||s.mines!==undefined&&typeof s.mines!=='boolean')return false;
+  if(s.roomName!==undefined&&(typeof s.roomName!=='string'||s.roomName.length>48||s.roomName!==s.roomName.replace(/\s+/gu,' ').trim()))return false;
+  if(s.roomNameRevision!==undefined&&(!Number.isSafeInteger(s.roomNameRevision)||s.roomNameRevision<0))return false;
   const g=s.game,n=s.members.length;if(!g)return true;
   return validLeavingState(g)&&validMineState(g,{allowProjection:true})&&validBonusState(g,{allowProjection:true})&&validGameBoard(g)&&g.schema===1&&g.mode==='direct'&&Array.isArray(g.players)&&g.players.length===n&&g.players.every((p,i)=>p.id===s.members[i].id&&typeof p.name==='string'&&(p.hidden===true?g.hiddenScores===true&&g.status!=='finished':Array.isArray(p.marks)&&p.marks.length===105&&p.marks.every(x=>typeof x==='boolean')&&Number.isInteger(p.jokers)&&p.jokers>=0&&p.jokers<=8&&Array.isArray(p.columns)&&p.columns.length===15&&p.columns.every(x=>x===null||Number.isInteger(x)&&x>=0&&x<=5)&&Array.isArray(p.lastMove)&&COLORS.every(c=>p.colors?.[c]===null||[3,5].includes(p.colors?.[c]))))&&Number.isInteger(g.active)&&g.active>=0&&g.active<n&&Number.isSafeInteger(g.round)&&g.round>=1&&['roll','choose','finished'].includes(g.phase)&&['playing','finished'].includes(g.status)&&Array.isArray(g.submitted)&&new Set(g.submitted).size===g.submitted.length&&g.submitted.every(i=>Number.isInteger(i)&&i>=0&&i<n)&&Array.isArray(g.columnClaims)&&g.columnClaims.length===15&&COLORS.every(c=>g.colorClaims?.[c]===null||Number.isInteger(g.colorClaims?.[c]))&&Array.isArray(g.log)&&(g.phase!=='choose'||g.dice&&g.dice.colors?.length===3&&g.dice.numbers?.length===3);
 }
@@ -61,6 +69,16 @@ export class DirectGame {
   persist(record){
     try{if(this.save(clone(record))===false)throw Error('Speichern fehlgeschlagen.');this.record=record;return true;}
     catch{this.storageFailed=true;this.ready=false;this.onError('Der Spielstand kann auf diesem Handy nicht gespeichert werden. Bitte Gerätespeicher freigeben. Die Partie pausiert.');this.broadcast();this.onChange();return false;}
+  }
+  renameRoom(value){
+    if(this.pid!==0)throw Error('Nur der Gastgeber kann die Direktpartie umbenennen.');
+    const roomName=normalizeDirectRoomName(value);
+    if(roomName===(this.snapshot.roomName??''))return false;
+    const next=clone(this.record),revision=(next.snapshot.roomNameRevision??0)+1;
+    if(!Number.isSafeInteger(revision))throw Error('Die Namensänderung kann nicht gespeichert werden.');
+    next.snapshot.roomName=roomName;next.snapshot.roomNameRevision=revision;
+    if(!this.persist(next))throw Error('Der Name der Direktpartie konnte nicht gespeichert werden.');
+    this.emit();this.broadcast();return true;
   }
   emit(){this.onChange();}
   transmit(message,actor=1){
@@ -153,6 +171,10 @@ export class DirectGame {
       this.ready=false;this.onError('Der Gastgeber hat einen älteren Spielstand. Diese gespeicherte Partie wird nicht überschrieben. Bitte auf dem ursprünglichen Gastgeber-Handy fortsetzen.');this.emit();return;
     }
     const next=clone(this.record);next.snapshot=clone(m.payload.snapshot);
+    // Names are metadata, independent of game revisions and in-flight moves.
+    if((this.snapshot.roomNameRevision??0)>(next.snapshot.roomNameRevision??0)){
+      next.snapshot.roomName=this.snapshot.roomName;next.snapshot.roomNameRevision=this.snapshot.roomNameRevision;
+    }
     const acknowledged=next.pending?.actionId===m.payload.ack;
     if(acknowledged)next.pending=null;
     if(!this.persist(next))return;

@@ -1,6 +1,14 @@
 # Raumstatus, Zuganzeige und Wartezeit
 
-<!-- farbfeld-version: 1.17.3 -->
+<!-- farbfeld-version: 1.18.0 -->
+
+## Benannte Direktpartien
+
+Der gemeinsame Name ist kein Verbindungsnachweis. Verbindungspunkte und Neu-koppeln-Zustand kommen weiter vom tatsächlichen Direktkanal. Die Startkarte nennt den gespeicherten Namen, Spielerzahl/Wurf und Verbindungsstatus; sie öffnet nur den vorhandenen Stand.
+
+## Direct status 1.17.4
+
+Compact direct status is above the player strip; expandable details hold Disconnect. Paused games expose re-pairing. Real transport/authenticated state determines connection status, never Internet reachability. Hidden status labels cannot widen the document when their players scroll out of view.
 
 Ausgestiegene werden als **Partie verlassen · −10 Punkte** angezeigt und nicht mehr als am Zug. Die laufende Gruppe behält feste Indizes; Online-Präsenz ist weiterhin getrennt vom freiwilligen Ausstieg. Internet-Gastgeberwechsel ist atomar, Offline-Gastgeber bleibt Relay. [Regeln](leaving.md).
 

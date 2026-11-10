@@ -1,6 +1,11 @@
 # Internet-Spielräume
 
-<!-- farbfeld-version: 1.17.3 -->
+<!-- farbfeld-version: 1.18.0 -->
+
+## Direktnamen 1.18.0
+
+Direktpartien verwenden nun dieselbe kontextuelle Beenden-/Verlassen-Bestätigung wie Internet-Gruppenräume. Ihr optionaler Name bleibt eigene lokal synchronisierte Direktmetadaten; Internet-Raumcode, Hostrechte, Datenbank und Statusabrufe bleiben unverändert.
+
 
 ## Neue Partien mit Zusatzregeln
 

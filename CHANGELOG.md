@@ -1,6 +1,21 @@
 # Änderungsprotokoll
 
-<!-- farbfeld-version: 1.17.3 -->
+<!-- farbfeld-version: 1.18.0 -->
+
+## 1.18.0 – 2026-11-10
+
+- Direktpartien können einen optionalen Namen mit bis zu 48 Zeichen erhalten. Der Gastgeber setzt ihn beim Erstellen oder ändert ihn in Lobby/Spielkopf. Der Name wird lokal gespeichert, per QR und bestehender Direktverbindung weitergegeben und bleibt nach Wiederkopplung erhalten.
+- Namensänderungen sind eigenständige Metadaten: keine neue Spielrevision, keine Änderung an Würfeln, Runde, unbestätigter Auswahl oder ausstehender Zugbestätigung. Gäste dürfen nicht umbenennen; ältere Namensstände überschreiben keine neueren.
+- Startseite: Direktkarte zeigt nur Name, Status und Öffnen. Verlassen bleibt im Spiel über Beenden mit Bestätigung und −10-Punkte-Hinweis. Die gemeinsame Verlassen-Regel für Internet-Gruppenräume und Ein-Handy-Partien bleibt erhalten.
+- Spiel-/Backupschema 1, Direktprotokoll 2 und 40 Offline-Dateien bleiben erhalten. Keine Datenbankmigration, neue Netzwerkabfrage oder Push-Art. Physische Namens-/Wiederkopplungsprüfung separat.
+
+## 1.17.4 – 2026-11-10
+
+- Local QR recovery uses an immutable snapshot of available local UDP host candidates at the 20-second deadline if Android keeps gathering. Normal completion remains preferred; missing, TCP-only and relay-only candidates do not qualify for the fallback. Cancellation stays effective and no Internet/STUN/TURN service is added.
+- The host connection timeout starts after accepting the return answer, preserving the time needed for manual QR scanning.
+- Direct matches have a separate phone title row, compact expandable connection details above players, and a smaller saved-session card. Hidden connection labels stay anchored inside their dots. Narrow dice groups stack; waiting on another player does not cover the sheet with disabled floating controls.
+- Settings separate installation/backups and help/diagnostics, retain direct version/update access, and omit duplicate game-exit actions. Diagnostics now live under Settings → Hilfe & Diagnose.
+- Shared-source validation: 402 regression tests, both API integrations, TypeScript and 98 rendered synthetic layouts. A renewed physical recovery/hotspot test remains separate.
 
 ## 1.17.3 – 2026-11-10
 
