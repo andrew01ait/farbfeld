@@ -1,10 +1,15 @@
 # Farbfeld contributor instructions
 
-<!-- farbfeld-version: 1.19.2 -->
+<!-- farbfeld-version: 1.19.3 -->
+
+## Direct joining and local discard
+
+Keep joining concise: name, primary offline QR card, collapsed code alternative requiring Internet, collapsed WLAN/diagnostics help and contextual Back/discard. Beenden must offer explicit local discard even when peers are absent, pending or unsupported. Local discard needs confirmation, persists removal before forgetting, guards generation/session/game identity, cancels transient UI and clears only direct access. No fabricated shared leave, forfeit, result, host migration or new game message. Preserve connected shared leaving at −10. On 11 November the user confirmed creating a two-phone direct session over hotspot without Internet; do not overstate that as full-game/background/recovery acceptance.
+
 
 ## Direct roll visibility
 
-While a connected direct player waits for the roller’s first choice, render the six authoritative public dice as a compact noninteractive preview above the score strip. Preserve canAct, hidden sheets, confirmed-turn hiding, pause/pending state and the existing active dice controls. No new transport, timer, dice generation or protocol capability. OnePlus existing-match re-pairing and loss detection were user-confirmed on 11 November 2026; automatic recovery varied. Exact installed version was not supplied; hotspot without Internet remains unverified.
+While a connected direct player waits for the roller’s first choice, render the six authoritative public dice as a compact noninteractive preview above the score strip. Preserve canAct, hidden sheets, confirmed-turn hiding, pause/pending state and the existing active dice controls. No new transport, timer, dice generation or protocol capability. OnePlus existing-match re-pairing and loss detection were user-confirmed on 11 November 2026; automatic recovery varied. Exact installed version was not supplied; two-phone hotspot pairing/session creation without Internet was subsequently user-confirmed.
 
 
 ## Compact room surfaces

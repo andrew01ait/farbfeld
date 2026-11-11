@@ -753,3 +753,26 @@ dialog[data-panel="rooms"] .modal-head h2{font-size:22px}
 .roll-preview-die{display:grid;place-items:center;width:27px;height:27px;border:1px solid var(--line);border-radius:7px;background:var(--cell,var(--paper));color:var(--ink);font-size:17px;font-weight:700;line-height:1}
 @media(max-width:680px) and (min-height:501px){.choosing-game:has(.direct-roll-preview) .game-layout{padding-bottom:0}}
 @media(orientation:landscape) and (max-height:650px){.direct-roll-preview{margin-bottom:6px;padding:6px 8px;gap:5px 9px}.direct-roll-preview p{font-size:10px}}
+
+dialog[data-panel="direct-join"] .modal{padding:20px}
+dialog[data-panel="direct-join"] .modal-head{margin-bottom:10px;align-items:flex-start;gap:10px}
+dialog[data-panel="direct-join"] .modal-head h2{font-size:22px;line-height:1.2;overflow-wrap:normal}
+.direct-join-intro{margin:0;color:var(--muted)}
+.modal .direct-join-resume{padding:9px 10px;border:1px solid var(--line);border-radius:10px;background:var(--card);margin-top:10px;line-height:1.45}
+.direct-join-qr{margin-top:16px;padding:13px;border:1px solid var(--line);border-radius:14px;background:var(--card)}
+.direct-join-method{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.direct-join-method svg{width:28px;height:28px;flex:none;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.direct-join-method h3{font-size:14px;line-height:1.3;margin:0}
+.modal .direct-join-method p{font-size:11px;line-height:1.4;margin:2px 0 0}
+.modal .direct-join-qr>p{font-size:11px;line-height:1.5;margin:0}
+.modal .direct-join-qr .primary{margin-top:11px;min-height:44px;font-size:13px;padding:11px}
+.direct-join-code,.direct-join-help{margin-top:8px;border-bottom:1px solid var(--line)}
+.direct-join-code>summary,.direct-join-help>summary{padding:12px 0;min-height:44px;font-size:11px;line-height:1.5;cursor:pointer}
+.direct-join-code label{margin-top:10px}
+.direct-join-code .outline-btn{margin-bottom:12px;min-height:44px}
+.direct-join-help .text-btn{display:block;width:100%;text-align:left;min-height:44px;padding:9px 0}
+.direct-join-footer{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:3px 12px;margin-top:7px}
+.direct-join-footer .text-btn{min-height:44px;text-align:left;max-width:100%;white-space:normal}
+.danger-text{color:#985e50}
+
+:is(dialog[data-panel="direct-end"],dialog[data-panel="discard-direct"],dialog[data-panel="leave-game"]) :is(.primary,.outline-btn,.text-btn){min-height:44px}

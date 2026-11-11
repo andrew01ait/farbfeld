@@ -1,6 +1,12 @@
 # Änderungsprotokoll
 
-<!-- farbfeld-version: 1.19.2 -->
+<!-- farbfeld-version: 1.19.3 -->
+
+## 1.19.3 – 2026-11-11
+
+- Beitrittsdialog gestrafft: eigener Name und Offline-QR zuerst, Kopplungscode/Internet und WLAN-Hilfe aufklappbar. Kontextueller Zurück-/Verwerfen-Footer.
+- Beenden bietet bestätigtes lokales Verwerfen auch ohne Gegenstelle, während ausstehender Aktionen und bei alten Clients. Nur Direktstand/Zugang dieses Geräts entfernen; übrige Partien/Statistiken erhalten. Gemeinsames Verlassen mit −10 Punkten unverändert.
+- Schutz vor veralteter Bestätigung und Speicherfehlern. Kein neuer Spiel-/Pushversand, keine Migration oder Protokolländerung. Hotspot-Kopplung und Erstellen ohne Internet durch Nutzer bestätigt; neue UI separat geprüft.
 
 ## 1.19.2 – 2026-11-11
 

@@ -1,6 +1,11 @@
 # Development and deployment
 
-<!-- farbfeld-version: 1.19.2 -->
+<!-- farbfeld-version: 1.19.3 -->
+
+## Client 1.19.3
+
+Beitrittsdialog und lokales Verwerfen von Direktzugängen aktualisiert. Bestehende PWA regulär aktualisieren. Keine API-/DB-/Protokolländerung, neue Offline-Datei oder Laufzeitkonfiguration. Die neue Option benötigt nur dieses Handy.
+
 
 ## Client 1.19.2
 

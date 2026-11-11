@@ -1,6 +1,11 @@
 # Raumstatus, Zuganzeige und Wartezeit
 
-<!-- farbfeld-version: 1.19.2 -->
+<!-- farbfeld-version: 1.19.3 -->
+
+## Lokaler Direktzugang
+
+Verwerfen einer Direktpartie setzt keine Verbindung voraus und entfernt ihre Startkarte erst nach erfolgreicher lokaler Speicherung der Entfernung. Wiederkoppeln bleibt eine separate Möglichkeit zur Fortsetzung. Raum-/Local-/Computerzugänge und deren Status werden nicht gelöscht.
+
 
 ## Direktwurf im Wartestatus
 

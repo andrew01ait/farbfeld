@@ -1,6 +1,11 @@
 # Offline-Testprotokoll für zwei Handys
 
-<!-- farbfeld-version: 1.19.2 -->
+<!-- farbfeld-version: 1.19.3 -->
+
+## Hotspot-Rückmeldung 11. November 2026
+
+Zusätzlich zur bestätigten Wiederkopplung hat der Nutzer zwei offline befindliche Handys über einen direkten WLAN-Hotspot gekoppelt und eine Direktpartie erstellt, ohne Internet. Die genaue installierte Version wurde nicht genannt. Dies bestätigt Kopplung/Erstellen in diesem konkreten Aufbau; vollständige Partie, Hintergrundbetrieb und zuverlässige automatische Erholung nach jedem Netzabbruch sind getrennte Prüfschritte. Die neue lokale Verwerfen-Option und der Beitrittsdialog werden gesondert geprüft.
+
 
 ## Nutzerrückmeldung 11. November 2026
 

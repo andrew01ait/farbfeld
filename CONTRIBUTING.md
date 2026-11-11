@@ -1,6 +1,11 @@
 # Contributing to Farbfeld
 
-<!-- farbfeld-version: 1.19.2 -->
+<!-- farbfeld-version: 1.19.3 -->
+
+## Join/discard checks
+
+Exercise concise joining with help/code expanded and long resume messages. Test offline local removal for both roles and 2/6 players, cancellation, pending actions, replaced sessions and storage failure. Keep local/online saves and statistics intact. Do not require another device for local discard or synthesize shared game results.
+
 
 ## Direct roll regression
 

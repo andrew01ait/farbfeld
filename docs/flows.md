@@ -1,6 +1,11 @@
 # Abläufe
 
-<!-- farbfeld-version: 1.19.2 -->
+<!-- farbfeld-version: 1.19.3 -->
+
+## Beenden ohne Gegenstelle
+
+Spiel → Beenden → bei fehlender Verbindung Erneut koppeln oder Auf diesem Gerät verwerfen → zusätzliche Löschbestätigung → Startseite ohne Direktkarte. Zurück behält den Stand. Bei bestehender Verbindung bleibt Verlassen mit −10 Punkten die gemeinsame Spielaktion; Nur auf diesem Gerät verwerfen ist eine getrennte Option. Der Beitritt beginnt mit Name und QR, alternative Codekopplung und Hilfe sind aufklappbar. Ein bereits ausgestiegener Direktspieler kann seinen gespeicherten Zugang ebenfalls lokal entfernen.
+
 
 ## Direktwurf und erste Wahl
 

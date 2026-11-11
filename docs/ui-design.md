@@ -1,6 +1,11 @@
 # Gemeinsame Gestaltung der Spielhinweise
 
-<!-- farbfeld-version: 1.19.2 -->
+<!-- farbfeld-version: 1.19.3 -->
+
+## Ruhiger Direktbeitritt
+
+Kurze gemeinsame WLAN-Zeile, Namensfeld und eine neutrale QR-Karte mit 28-Pixel-Symbol. Internetcode und Hilfe in getrennten nativen Details, 44-Pixel-Aktionen, kompakter kontextueller Footer statt langer vollständiger Anleitung vor dem Namen. Lokales Verwerfen wird ausdrücklich beschriftet und bestätigt; keine Löschaktion auf der Startkarte.
+
 
 ## Passive Direktwurf-Vorschau
 

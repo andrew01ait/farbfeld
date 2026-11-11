@@ -1,6 +1,11 @@
 # Offline auf zwei bis sechs Handys
 
-<!-- farbfeld-version: 1.19.2 -->
+<!-- farbfeld-version: 1.19.3 -->
+
+## Beitreten und lokale Entfernung
+
+Direktpartie beitreten zeigt zuerst den eigenen Namen und Angebots-QR scannen. Mit Kopplungscode · Internet nötig und WLAN & Hilfe lassen sich bei Bedarf öffnen. Auch nach einer gescheiterten Kopplung steht das Verwerfen eines gespeicherten Direktzugangs zur Verfügung. Im Spiel Beenden → Auf diesem Gerät verwerfen → nochmals bestätigen. Dies funktioniert ohne andere Handys und entfernt nur den Stand/Zugang dieses Geräts. Andere Partien und Statistiken bleiben erhalten. Auf anderen Handys wird keine gemeinsame Partie beendet; bei lokalem Verwerfen des Gastgebers kann dessen laufende Gruppe nicht weiter synchronisieren.
+
 
 ## Direktwurf sofort sichtbar
 

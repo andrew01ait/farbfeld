@@ -1,6 +1,11 @@
 # Emoji-Reaktionen
 
-<!-- farbfeld-version: 1.19.2 -->
+<!-- farbfeld-version: 1.19.3 -->
+
+## Lokales Verwerfen
+
+Das Verwerfen schließt die vorhandene lokale Direktsitzung; keine neue Reaktion, Empfängeränderung oder zusätzliche Übertragung.
+
 
 ## Direktwurf 1.19.2
 

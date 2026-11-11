@@ -1,6 +1,6 @@
 # Internet-Spielräume
 
-<!-- farbfeld-version: 1.19.2 -->
+<!-- farbfeld-version: 1.19.3 -->
 
 ## Kompakte Karten 1.19.1
 

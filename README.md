@@ -1,6 +1,11 @@
 # Farbfeld
 
-<!-- farbfeld-version: 1.19.2 -->
+<!-- farbfeld-version: 1.19.3 -->
+
+## Direkt beitreten und ohne Gegenstelle verwerfen
+
+Beim Beitreten stehen Name und QR-Kopplung im Vordergrund. Kopplungscode mit Internet sowie WLAN-Hilfe sind aufklappbar. In einer Direktpartie bietet Beenden auch ohne Verbindung Auf diesem Gerät verwerfen; erst die zusätzliche Bestätigung löscht den Direktzugang lokal. Andere Handys behalten ihren Stand. Verbundenes gemeinsames Verlassen mit −10 Punkten bleibt getrennt. Nutzerbestätigt: zwei Handys per Hotspot ohne Internet gekoppelt und Direktpartie erstellt.
+
 
 ## Gemeinsamen Direktwurf sofort sehen
 
@@ -61,7 +66,7 @@ Drei geheime **Bonusfelder** vergeben je +2 an alle ersten Finder desselben Wurf
 
 An installable, offline-ready dice game PWA with solo play, computer opponents, local and online multiplayer, and push notifications.
 
-[Play Farbfeld](https://farbfeld-andrew.endruuu.chatgpt.site/play) · [Version 1.19.2](public/version.json) · [Documentation](docs/README.md)
+[Play Farbfeld](https://farbfeld-andrew.endruuu.chatgpt.site/play) · [Version 1.19.3](public/version.json) · [Documentation](docs/README.md)
 
 The game interface is in German. Farbfeld needs no user account. It is an independent implementation of the basic rules of *Noch mal!* by Inka and Markus Brand (Schmidt Spiele), using its own interface and assets; this repository is not an official publisher release.
 

@@ -1,6 +1,11 @@
 # Versionen und Kompatibilität
 
-<!-- farbfeld-version: 1.19.2 -->
+<!-- farbfeld-version: 1.19.3 -->
+
+## Kompatibilität 1.19.3
+
+Bestehender Direktprotokoll-2-/Schema-1-Stand, gleiche 40 Offline-Dateien, keine neue Fähigkeit. Lokales Verwerfen benötigt nur die aktualisierte App auf dem betroffenen Handy. Die anderen Geräte müssen dafür nicht erreichbar sein.
+
 
 ## Kompatibilität 1.19.2
 

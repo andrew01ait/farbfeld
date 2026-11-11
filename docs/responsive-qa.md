@@ -1,6 +1,18 @@
 # Responsive QA
 
-<!-- farbfeld-version: 1.19.2 -->
+<!-- farbfeld-version: 1.19.3 -->
+
+## Prüfumfang 1.19.3 — 11. November 2026
+
+Beide Quellen bestanden 434 Regressionen einschließlich des echten DirectSession.forget-Pfads für pausierte Zweier-/Sechserpartien, Gastgeber/Gast, ausstehende Aktionen, verbundene normale −10-Verlassen-Option, veraltete Sitzungs-/Spielbestätigung und Speicherfehler. Die Beitrittsprüfungen erfassen Namensreihenfolge/-Escaping, aufklappbare Code-/Hilfefelder, Zurück mit erhaltenem Namen und gespeicherten lokalen Verwerfen-Zugang. TypeScript, beide API-Integrationen und Dokumentationsguard bestanden; Produktionsbuild wird vor Veröffentlichung geprüft.
+
+150 tatsächliche Browseransichten: neun Beitritts-/Beenden-/Bestätigungszustände in den zwölf verbindlichen Größen plus 380×650, 381×651, 759×800 und 760×800; zusätzlich der Beitritt in allen sechs Designs bei 393×851. Keine horizontale Seiten-/Dialog-/Titel-/Aktionsüberbreite, alle sichtbaren primären/sekundären Textaktionen mindestens 44 Pixel hoch. Neue, gespeicherte und aufgeklappte Codekopplung sowie pausierte Gastgeber/Gäste, Sechser-Gastgeberwarnung und bereits ausgestiegene Person geprüft.
+
+Tatsächlich durchgeklickt: Codealternative öffnen und ungültige achtstellige Eingabe abweisen, Beenden → lokal verwerfen → Zurück mit erhaltener Partie, erneut Beenden → Verwerfen → zusätzliche Bestätigung → Startseite ohne Direktkarte. Der UI-Test verwendet lokale synthetische DirectGame-Zustände und keine Produktivpartie. Unit-Prüfungen verifizieren gespeicherte Entfernung und Fehlerverhalten unabhängig davon; kein erfundener gemeinsamer Ausstieg, Statistik-/RNG-Eingriff oder neuer Transport.
+
+Separates Nutzerfeedback bestätigt nun zusätzlich Kopplung und Erstellen einer Direktpartie auf zwei offline befindlichen OnePlus-Handys im direkten WLAN-Hotspot ohne Internet. Genaue installierte Version nicht angegeben. Vollständige Hotspot-Partie, Hintergrund, zuverlässige automatische Erholung nach jedem Verlust sowie physische Abnahme der neuen Beitritts-/Verwerfen-Oberfläche bleiben eigenständige Prüfschritte.
+
+
 
 ## Prüfumfang 1.19.2 — 11. November 2026
 

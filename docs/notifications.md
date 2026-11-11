@@ -1,6 +1,11 @@
 # Benachrichtigungen
 
-<!-- farbfeld-version: 1.19.2 -->
+<!-- farbfeld-version: 1.19.3 -->
+
+## Direktzugang verwerfen
+
+Die neue gerätelokale Entfernung sendet keine Spiel- oder Push-Nachricht. Internet-Raumbindungen bleiben bestehen; kein neuer Poller.
+
 
 ## Direktwurf 1.19.2
 

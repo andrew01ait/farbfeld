@@ -1,6 +1,11 @@
 # Architektur
 
-<!-- farbfeld-version: 1.19.2 -->
+<!-- farbfeld-version: 1.19.3 -->
+
+## Lokales Verwerfen und Beitritt
+
+DirectUi.joinEntry führt Name/QR zuerst und trennt native Details für Kopplungscode und Hilfe. discard-direct-local öffnet die vorhandene gerätelokale Löschlogik mit ausdrücklicher Bestätigung, unabhängig von DirectSession.ready. Die Bestätigung bindet Generation, Sitzung und Spiel; bei Wechsel wird neu bestätigt. DirectSession.forget speichert null vor dem Schließen/Löschen der Sitzung, Fehler lassen Zugang und Spielstand erhalten. Keine leave-/abort-Nachricht, Engine-Wertung, Hostübernahme oder Statistik wird für lokale Entfernung erfunden.
+
 
 ## Direktwurf-Vorschau
 
