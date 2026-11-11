@@ -1,6 +1,11 @@
 # Abläufe
 
-<!-- farbfeld-version: 1.19.0 -->
+<!-- farbfeld-version: 1.19.1 -->
+
+## Kompakte Raumübersicht
+
+Die Karte nennt zuerst den Raumnamen, darunter Modus mit Code/Personenzahl oder Wurf, anschließend Namen/Gastgeber und aktuellen Status. Öffnen bleibt der 44-Pixel-Pfeil. Nur Alle Räume bietet daneben das beschriftete Zugang-entfernen-Symbol; es öffnet dieselbe Bestätigung wie bisher. Suche ist kurz als Räume suchen beschriftet. Der Sortier-Erklärungstext entfällt.
+
 
 ## Gespeicherte Partien finden
 

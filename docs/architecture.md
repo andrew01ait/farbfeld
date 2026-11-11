@@ -1,6 +1,11 @@
 # Architektur
 
-<!-- farbfeld-version: 1.19.0 -->
+<!-- farbfeld-version: 1.19.1 -->
+
+## Renderer 1.19.1
+
+savedGameMetaHTML fasst den vorhandenen Modus und bereits bekannte Raum-/Spielinformationen in einer Metazeile zusammen. roomResumeHTML, directResumeHTML und localResumeHTML verwenden dieselbe kompakte Oberfläche. Geändert werden nur DOM/CSS und sichtbare Kurzbeschriftungen; Index, Berechtigungen, Namenscache, Sortierung und Zehnerseiten bleiben unverändert.
+
 
 ## Übersichtsmodell 1.19.0
 

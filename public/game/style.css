@@ -716,3 +716,29 @@ dialog[data-panel="rooms"] .room-manager-list{flex:1;min-height:0;max-height:non
 .room-list-pages span{flex:1;white-space:nowrap}
 
 .room-list-pages .outline-btn{width:78px;min-width:0;max-width:90px;flex:0 0 auto;margin:0}
+
+/* Saved games use the same quiet surfaces and compact spacing as the game. */
+:root .saved-room-list>.resume:is(.room-resume,.direct-resume,.local-resume){display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:6px;margin:0;padding:9px 10px;border:1px solid var(--line);border-radius:12px;background:var(--card);box-shadow:none;min-width:0}
+:root .saved-room-list>.resume.room-resume.your-turn{border-color:var(--ink);background:var(--card)}
+.saved-room-list{gap:6px;align-content:start;grid-auto-rows:max-content}
+.saved-room-list :is(.room-resume-info,.direct-resume-info)>strong{display:block;margin:0;font-size:14px;line-height:1.25;font-weight:750;overflow-wrap:anywhere}
+.saved-room-list .room-card-meta{display:block;margin:2px 0 0;color:var(--muted);font-size:10.5px;line-height:1.35;overflow-wrap:anywhere}
+.saved-room-list .saved-game-mode{display:inline;width:auto;max-width:100%;padding:0;margin:0;border:0;border-radius:0;background:none;color:var(--muted);font-size:inherit;line-height:inherit;font-weight:650;letter-spacing:0}
+.saved-room-list .room-participants{margin:2px 0 0;font-size:11px;line-height:1.35;color:var(--muted);overflow-wrap:anywhere}
+.saved-room-list .room-participants .room-host{display:inline;font-size:inherit;line-height:inherit;font-weight:800;color:var(--ink)}
+.saved-room-list .room-resume-status{margin:3px 0 0;font-size:11px;line-height:1.35;gap:2px 4px}
+.saved-room-list .room-resume-status :is(.room-turn-title,.room-turn-detail){padding:0;border:0;border-radius:0;background:none;font-size:inherit}
+.saved-room-list .direct-resume-info>small,.saved-room-list .room-resume-info>small{display:block;margin:3px 0 0;font-size:11px;line-height:1.35;color:var(--muted)}
+.room-card-actions{display:flex;align-items:center;gap:0;flex:none}
+.room-card-actions .icon-btn{width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border:0;border-radius:10px;background:transparent;margin:0}
+.room-card-actions .icon-btn svg{width:17px;height:17px;stroke-width:1.7}
+.room-card-actions .room-remove{color:var(--muted)}
+.room-card-actions .icon-btn:hover{background:var(--paper)}
+.room-card-actions .room-remove:hover{color:#985e50}
+.saved-rooms-heading{margin-bottom:9px}
+.room-list-count{font-size:11px;margin:4px 0 6px}
+.room-list-filters{margin:9px 0}
+.room-list-filters .outline-btn{margin:0}
+
+dialog[data-panel="rooms"] .modal{padding:20px}
+dialog[data-panel="rooms"] .modal-head h2{font-size:22px}

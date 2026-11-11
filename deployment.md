@@ -1,6 +1,11 @@
 # Development and deployment
 
-<!-- farbfeld-version: 1.19.0 -->
+<!-- farbfeld-version: 1.19.1 -->
+
+## Release 1.19.1
+
+Reine Renderer-/CSS-Verdichtung der Raumkarten und Entfernung redundanter Erklärungstexte. Kein API-, Datenbank-, Speicher-, Push- oder Offline-Dateilistenwechsel. Normaler PWA-Updateweg auf die neue Clientversion, gleiche gespeicherte Zugänge.
+
 
 ## Release 1.19.0
 

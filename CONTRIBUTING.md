@@ -1,6 +1,11 @@
 # Contributing to Farbfeld
 
-<!-- farbfeld-version: 1.19.0 -->
+<!-- farbfeld-version: 1.19.1 -->
+
+## Compact card validation
+
+Verify compact home and overview cards with two and six long participant names, all themes and narrow viewports. Open/remove actions remain at least 44 pixels, accessible and distinct. Check the existing access-removal confirmation, search focus and pagination; do not alter game state for layout tests.
+
 
 ## Saved overview checks
 

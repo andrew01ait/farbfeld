@@ -1,6 +1,11 @@
 # Raumstatus, Zuganzeige und Wartezeit
 
-<!-- farbfeld-version: 1.19.0 -->
+<!-- farbfeld-version: 1.19.1 -->
+
+## Kompakte Statusdarstellung
+
+Modus und aktueller Status bleiben getrennte Informationen: der Modus steht in der Metazeile, der Zug-/Verbindungsstatus darunter. Eigene Spielgelegenheiten erhalten eine feine dunkle Kontur und lesbaren Status statt großer Farbflächen. Keine zusätzlich sichtbare Erklärung der Sortierung; die Priorisierung selbst bleibt unverändert.
+
 
 ## Modus, Namen und begrenzte Startvorschau
 

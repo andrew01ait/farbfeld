@@ -1,6 +1,11 @@
 # Offline auf zwei bis sechs Handys
 
-<!-- farbfeld-version: 1.19.0 -->
+<!-- farbfeld-version: 1.19.1 -->
+
+## Kompakte Direktkarte
+
+Die gespeicherte Direktpartie verwendet dieselbe schmale Kartenfläche wie Internet-Räume. Offline steht mit Handyzahl/Wurf in einer Metazeile. Namen, ursprünglicher Gastgeber und Kanalstatus bleiben sichtbar. Öffnen verwendet denselben gespeicherten Direktplatz; keine neue Kopplung oder Spieländerung durch das Layout.
+
 
 ## Direktpartie in der Übersicht
 

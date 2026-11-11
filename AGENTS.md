@@ -1,6 +1,11 @@
 # Farbfeld contributor instructions
 
-<!-- farbfeld-version: 1.19.0 -->
+<!-- farbfeld-version: 1.19.1 -->
+
+## Compact room surfaces
+
+Use compact theme-aware card surfaces matching game UI, 9/10-pixel padding, 12-pixel radius, no large seasonal fills or nested mode pills. Put mode and code/count/round in one wrapping metadata row under the title; preserve complete participant names and bold/crown host markers. Remove redundant sorting explanations and the home mode-count paragraph. All Rooms uses a 44-pixel labelled remove-access icon beside Open, still with the existing confirmation; home has Open only. Preserve three-card priority, search/filter/page state and all transport/gameplay rules.
+
 
 ## Saved games overview 1.19.0
 

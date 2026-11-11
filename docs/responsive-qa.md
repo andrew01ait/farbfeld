@@ -1,6 +1,16 @@
 # Responsive QA
 
-<!-- farbfeld-version: 1.19.0 -->
+<!-- farbfeld-version: 1.19.1 -->
+
+## Prüfumfang 1.19.1 — 11. November 2026
+
+Reine Layout-/Beschriftungsänderung. Beide Quellen bestanden 44 relevante bestehende Regressionen (room-book, room-status, view-state und direct-ui), JavaScript-Syntaxprüfung und TypeScript. Dokumentationsguard und Produktionsbuild werden vor Veröffentlichung erneut geprüft; keine API-, Speicher- oder Spielmechanikänderung.
+
+124 tatsächliche Browseransichten synthetischer lokaler Prüfdaten: sieben Zustände (wenige/viele Partien, Alle Räume, Start-/Gesamtliste mit sechs langen Namen, leer und offline) in allen zwölf verbindlichen Viewports sowie 380×650, 381×651, 759×800 und 760×800; zusätzlich Start-/Gesamtansicht in allen sechs Designs bei 393×851. Kein horizontaler Seiten-/Dialog-/Kartenüberlauf, höchstens drei Startkarten und zehn Gesamteinträge. Vollständige Namen, Gastgeber, Status und neutrale Themenfläche bleiben erhalten, Öffnen/Entfernen mindestens 44×44 Pixel.
+
+Bedienung im Browser: Entfernen-Symbol öffnet die vorhandene Bestätigung; Abbruch behält alle 52 Einträge. Code-Suche findet genau einen Raum; Offline-Filter zeigt lokale und direkte Partie; Weiter wechselt auf Seite 2 von 6. Der Sortier-Erklärungstext entfällt. Die Startkarten messen im Zweier-Test 88 Pixel Höhe. Browserdaten und CSS-Viewports ersetzen keine physische Handyabnahme. Keine Produktivpartie oder Push-Nachricht für diese Prüfung verwendet.
+
+
 
 ## Prüfumfang 1.19.0
 

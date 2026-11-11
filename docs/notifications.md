@@ -1,6 +1,11 @@
 # Benachrichtigungen
 
-<!-- farbfeld-version: 1.19.0 -->
+<!-- farbfeld-version: 1.19.1 -->
+
+## Layout 1.19.1
+
+Die schlankeren Raumkarten ändern weder Ereignisse noch Zustellung, Hintergrundverhalten oder Push-Abfragen. Keine zusätzliche Netzwerkaktivität durch Renderer oder CSS.
+
 
 ## Abgrenzung Übersicht 1.19.0
 

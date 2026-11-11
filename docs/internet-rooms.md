@@ -1,6 +1,11 @@
 # Internet-Spielräume
 
-<!-- farbfeld-version: 1.19.0 -->
+<!-- farbfeld-version: 1.19.1 -->
+
+## Kompakte Karten 1.19.1
+
+Online steht zusammen mit Code und bestätigter Spielerzahl in der Metazeile. Raum- und Teilnehmernamen umbrechen vollständig; der aktuelle Gastgeber bleibt fett mit ♛. Neutrale Kartenfläche und kleine Aktionen ersetzen die großen Farbflächen. Zugang entfernen in Alle Räume bleibt bestätigt und gerätelokal; Raumabrufe und Berechtigungen bleiben gleich.
+
 
 ## Viele Räume und Teilnehmer
 

@@ -1,6 +1,11 @@
 # Versionen und Kompatibilität
 
-<!-- farbfeld-version: 1.19.0 -->
+<!-- farbfeld-version: 1.19.1 -->
+
+## Kompatibilität 1.19.1
+
+Client-Update mit unveränderten Schema-1-Zugängen, Direktprotokoll 2 und 40 Offline-Dateien. Renderer-/CSS-Anpassung; keine neue Fähigkeit oder API-Erweiterung. Beide Geräte regulär aktualisieren.
+
 
 ## Kompatibilität 1.19.0
 

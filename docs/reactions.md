@@ -1,6 +1,11 @@
 # Emoji-Reaktionen
 
-<!-- farbfeld-version: 1.19.0 -->
+<!-- farbfeld-version: 1.19.1 -->
+
+## Raumkarten 1.19.1
+
+Die neue Kartendichte und Metazeile ändern keine Reaktionsdaten, Ziele, Transportwege oder Gesten.
+
 
 ## Gespeicherte Raumübersicht
 

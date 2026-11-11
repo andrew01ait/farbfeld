@@ -1,6 +1,11 @@
 # Farbfeld
 
-<!-- farbfeld-version: 1.19.0 -->
+<!-- farbfeld-version: 1.19.1 -->
+
+## Schlanke Raumkarten
+
+Gespeicherte Räume erscheinen als kompakte neutrale Karten, passend zum Spielbereich. Modus, Raumcode/Spielerzahl stehen in einer gemeinsamen Metazeile; Namen und Gastgeber bleiben vollständig sichtbar. In Alle Räume ist Zugang entfernen ein beschriftetes Symbol mit derselben ausdrücklichen Bestätigung. Der erklärende Sortierhinweis und die zusätzliche Startseiten-Zusammenfassung entfallen. Drei Startkarten, Priorität, Suche, Filter und Zehnerseiten bleiben erhalten.
+
 
 ## Deine Räume: kompakt und eindeutig
 
@@ -51,7 +56,7 @@ Drei geheime **Bonusfelder** vergeben je +2 an alle ersten Finder desselben Wurf
 
 An installable, offline-ready dice game PWA with solo play, computer opponents, local and online multiplayer, and push notifications.
 
-[Play Farbfeld](https://farbfeld-andrew.endruuu.chatgpt.site/play) · [Version 1.19.0](public/version.json) · [Documentation](docs/README.md)
+[Play Farbfeld](https://farbfeld-andrew.endruuu.chatgpt.site/play) · [Version 1.19.1](public/version.json) · [Documentation](docs/README.md)
 
 The game interface is in German. Farbfeld needs no user account. It is an independent implementation of the basic rules of *Noch mal!* by Inka and Markus Brand (Schmidt Spiele), using its own interface and assets; this repository is not an official publisher release.
 

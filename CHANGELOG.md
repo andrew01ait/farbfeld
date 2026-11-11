@@ -1,6 +1,13 @@
 # Änderungsprotokoll
 
-<!-- farbfeld-version: 1.19.0 -->
+<!-- farbfeld-version: 1.19.1 -->
+
+## 1.19.1 – 2026-11-11
+
+- Schlankere Raumkarten auf Startseite und in Alle Räume: neutrale Spielfläche, kleinere Abstände, keine großen saisonalen Flächen und keine Modus-Kapseln.
+- Modus, Code/Personenzahl oder Wurf teilen eine Metazeile. Vollständige Namen und fett/♛ markierter Gastgeber bleiben sichtbar. Öffnen und Zugang entfernen bleiben 44-Pixel-Aktionen; die bisherige Bestätigung zum Entfernen bleibt erhalten.
+- Erklärender Sortierhinweis und zusätzliche Startseiten-Zusammenfassung entfernt. Drei Startkarten, Priorität offener Züge, Suche/Filter und Zehnerseiten unverändert.
+- Keine Spielmechanik, API, Speicherung, Migration oder Push-Änderung; Testumfang und gerenderte Größen im QA-Protokoll.
 
 ## 1.19.0 – 2026-11-11
 
