@@ -1,6 +1,16 @@
 # Responsive QA
 
-<!-- farbfeld-version: 1.19.1 -->
+<!-- farbfeld-version: 1.19.2 -->
+
+## Prüfumfang 1.19.2 — 11. November 2026
+
+Beide Quellen bestanden 423 Regressionen einschließlich fünf neuer Fälle mit dem echten DirectGame-Abgleich und dem tatsächlichen Vorschaurenderer. Geprüft wurden zwei/sechs Personen, Gastgeber- und Gastwürfe jeweils vor der ersten Auswahl, offene/verdeckte Blätter, unveränderte Würfel/Revisionen bei unerlaubtem Frühzug, normale Freigabe nach erster Bestätigung sowie Pause, ausstehende Bestätigung, Inspektion und eigener bestätigter Zug. TypeScript und beide Raum-/Kopplungs-API-Integrationen bestanden; Produktionsbuild und Dokumentationsguard werden vor Veröffentlichung geprüft.
+
+134 tatsächliche lokale Browseransichten: acht Direktzustände in den zwölf verbindlichen Größen plus 380×650, 381×651, 759×800 und 760×800; zusätzlich wartende Vorschau in allen sechs Designs bei 393×851. Keine horizontale Seiten-/Vorschauüberbreite, sechs sichtbare Würfel nur in den passenden Warteständen, keine interaktive oder schwebende Vorschau. Der tatsächliche UI-Ablauf vor Wurf → Vorschau unmittelbar nach Wurf → drei freigegebene Farbwürfel nach erster Bestätigung → eigener Passzug und nächste Würfelberechtigung wurde durchgeklickt. Der Test verwendet echte DirectGame-Zustandsnachrichten über einen lokalen synthetischen Transport, keine physische WebRTC-Verbindung.
+
+Nutzerfeedback vom 11.11. bestätigt separat die Wiederkopplung einer bestehenden OnePlus-Partie und Verlustdetektion nach WLAN-Abschalten; automatische Erholung gelang einmal direkt, einmal mit neuer Kopplung. Genaue installierte Version nicht angegeben. Neue Vorschau auf beiden Handys und Hotspot ohne Internet bleiben physisch zu prüfen. Keine produktiven Spiele oder Push-Nachrichten für diese Prüfung verändert.
+
+
 
 ## Prüfumfang 1.19.1 — 11. November 2026
 

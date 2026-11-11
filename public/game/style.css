@@ -742,3 +742,14 @@ dialog[data-panel="rooms"] .room-manager-list{flex:1;min-height:0;max-height:non
 
 dialog[data-panel="rooms"] .modal{padding:20px}
 dialog[data-panel="rooms"] .modal-head h2{font-size:22px}
+
+/* The public roll stays visible while another direct player chooses first. */
+.direct-roll-preview{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px 12px;padding:9px 10px;margin-bottom:12px;border:1px solid var(--line);border-radius:12px;background:var(--card);min-width:0}
+.direct-roll-preview p{flex:1 1 130px;min-width:0;font-size:11px;line-height:1.35;overflow-wrap:anywhere}
+.direct-roll-preview strong,.direct-roll-preview p>span{display:block}
+.direct-roll-preview p>span{color:var(--muted);margin-top:2px}
+.roll-preview-dice,.roll-preview-dice>div{display:flex;align-items:center;gap:5px}
+.roll-preview-dice{gap:12px;flex:none}
+.roll-preview-die{display:grid;place-items:center;width:27px;height:27px;border:1px solid var(--line);border-radius:7px;background:var(--cell,var(--paper));color:var(--ink);font-size:17px;font-weight:700;line-height:1}
+@media(max-width:680px) and (min-height:501px){.choosing-game:has(.direct-roll-preview) .game-layout{padding-bottom:0}}
+@media(orientation:landscape) and (max-height:650px){.direct-roll-preview{margin-bottom:6px;padding:6px 8px;gap:5px 9px}.direct-roll-preview p{font-size:10px}}

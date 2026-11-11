@@ -1,6 +1,11 @@
 # Contributing to Farbfeld
 
-<!-- farbfeld-version: 1.19.1 -->
+<!-- farbfeld-version: 1.19.2 -->
+
+## Direct roll regression
+
+Exercise host and guest rollers before their first move, with two/six players and concealed sheets. The observer must see the actual shared dice with no enabled action. Validate the transition to normal choice, submitted-state hiding, pause, pending and inspection. Do not change protocol or repeat a roll for display.
+
 
 ## Compact card validation
 

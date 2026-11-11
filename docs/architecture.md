@@ -1,6 +1,11 @@
 # Architektur
 
-<!-- farbfeld-version: 1.19.1 -->
+<!-- farbfeld-version: 1.19.2 -->
+
+## Direktwurf-Vorschau
+
+directRollPreviewHTML liest ausschließlich g.dice aus dem bereits autoritativ synchronisierten Zustand. DirectGame verteilt den bestätigten roll-Zustand schon vor der ersten move-Aktion an alle authentifizierten Gäste. Die bisherige Darstellung blendete wartende Würfel aus. Die neue Vorschau verwendet statische, zugänglich beschriftete Elemente vor der Punktezeile; sie verändert keine Engine, Revision, Nachricht, eigenen Entwurf oder versteckten Daten.
+
 
 ## Renderer 1.19.1
 

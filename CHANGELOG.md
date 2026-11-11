@@ -1,6 +1,12 @@
 # Änderungsprotokoll
 
-<!-- farbfeld-version: 1.19.1 -->
+<!-- farbfeld-version: 1.19.2 -->
+
+## 1.19.2 – 2026-11-11
+
+- Wartende Personen in Direktpartien sehen die sechs gemeinsamen Würfel sofort nach dem Wurf, bevor die aktive Person ihre erste Kombination bestätigt. Kompakte nicht interaktive Vorschau oberhalb der Punkte.
+- Zugrechte, normale Auswahl, Pause/Abgleich, verdeckte Werte und das Ausblenden nach eigenem bestätigten Zug bleiben erhalten. Kein zusätzlicher Wurf, Transport oder Push.
+- Nutzerbestätigte Wiederkopplung einer bestehenden OnePlus-Partie dokumentiert; automatische Erholung nach WLAN-Verlust variierte. Hotspot und physische Abnahme der Vorschau separat. Prüfungen im QA-Protokoll.
 
 ## 1.19.1 – 2026-11-11
 

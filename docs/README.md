@@ -1,8 +1,13 @@
 # Farbfeld documentation
 
-<!-- farbfeld-version: 1.19.1 -->
+<!-- farbfeld-version: 1.19.2 -->
 
-## Oberfläche in Client 1.19.1
+## Client 1.19.2: Direktwurf
+
+Kompakte Vorschau aller sechs Würfel während die aktive Person zuerst wählt, ohne vorzeitige Auswahlaktionen. 423 Regressionen, TypeScript, beide API-Integrationen und 134 Browseransichten bestanden; Nachweis in [QA](responsive-qa.md). Nutzerbestätigte Wiederkopplung und wechselndes automatisches Erholen nach WLAN-Verlust: [Offline-Testprotokoll](offline-diagnostics.md). Physische Prüfung der neuen Vorschau und Hotspot ohne Internet separat.
+
+
+## Oberfläche in Client 1.19.2
 
 Raumkarten sind auf Startseite und in Alle Räume schlanker: neutrale Spielfläche, gemeinsame Metazeile und kleine Aktionen. Teilnehmer-/Gastgeberanzeige und Such-/Filter-/Prioritätsmodell bleiben erhalten. 44 relevante Regressionen, TypeScript und 124 gerenderte Ansichten geprüft; physische Handyabnahme separat. Nachweise im [QA-Protokoll](responsive-qa.md), Gestaltung in [UI-Design](ui-design.md).
 

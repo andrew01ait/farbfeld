@@ -1,6 +1,11 @@
 # Offline auf zwei bis sechs Handys
 
-<!-- farbfeld-version: 1.19.1 -->
+<!-- farbfeld-version: 1.19.2 -->
+
+## Direktwurf sofort sichtbar
+
+Die kompakte nicht bedienbare Vorschau zeigt bereits vor der ersten Wahl alle sechs gemeinsam gewürfelten Werte. Die aktive Person bleibt zuerst berechtigt. Nach ihrer Bestätigung werden die normalen eigenen Würfelaktionen verfügbar. Die Vorschau liegt im normalen Spielfluss oberhalb der Punkte, ohne schwebendes gesperrtes Bedienfeld. Bei bestätigtem eigenem Zug, Pause, ausstehender Bestätigung und Blattinspektion erscheint sie nicht.
+
 
 ## Kompakte Direktkarte
 

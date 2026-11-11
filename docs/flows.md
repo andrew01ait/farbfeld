@@ -1,6 +1,11 @@
 # Abläufe
 
-<!-- farbfeld-version: 1.19.1 -->
+<!-- farbfeld-version: 1.19.2 -->
+
+## Direktwurf und erste Wahl
+
+Aktive Person würfelt → bestätigter gemeinsamer Zustand erreicht die Handys → wartende Personen sehen sechs Würfel und den Namen der zuerst wählenden Person → nach deren Bestätigung erscheint die normale eigene Auswahl. Nach eigenem bestätigten Zug verschwindet die Vorschau; bei Unterbrechung oder ausstehender Bestätigung gelten weiterhin Pause/Abgleich. Kein zusätzlicher Wurf und keine zusätzliche Übertragung.
+
 
 ## Kompakte Raumübersicht
 

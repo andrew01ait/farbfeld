@@ -1,6 +1,11 @@
 # Versionen und Kompatibilität
 
-<!-- farbfeld-version: 1.19.1 -->
+<!-- farbfeld-version: 1.19.2 -->
+
+## Kompatibilität 1.19.2
+
+Reines Client-Rendering mit Direktprotokoll 2, bestehenden Fähigkeiten und 40 atomaren Offline-Dateien. Alte Handys spielen weiter; für die sofort sichtbare Wurfvorschau das anzeigende Handy aktualisieren. Kein Daten-/Speichermigrationsschritt.
+
 
 ## Kompatibilität 1.19.1
 

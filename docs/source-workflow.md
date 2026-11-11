@@ -1,6 +1,6 @@
 # Source and documentation workflow
 
-<!-- farbfeld-version: 1.19.1 -->
+<!-- farbfeld-version: 1.19.2 -->
 
 ## Review 1.19.0
 

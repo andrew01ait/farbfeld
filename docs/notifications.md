@@ -1,6 +1,11 @@
 # Benachrichtigungen
 
-<!-- farbfeld-version: 1.19.1 -->
+<!-- farbfeld-version: 1.19.2 -->
+
+## Direktwurf 1.19.2
+
+Die passive Wurfvorschau verwendet vorhandene Direktdaten. Keine zusätzliche Push-Nachricht, HTTP-Abfrage oder periodische Aktualisierung.
+
 
 ## Layout 1.19.1
 

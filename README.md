@@ -1,6 +1,11 @@
 # Farbfeld
 
-<!-- farbfeld-version: 1.19.1 -->
+<!-- farbfeld-version: 1.19.2 -->
+
+## Gemeinsamen Direktwurf sofort sehen
+
+Wartende Personen sehen alle sechs Würfel sofort nach dem bestätigten Wurf als kompakte Vorschau oberhalb der Punkte. Die würfelnde Person wählt weiterhin zuerst; danach erscheinen die normalen Auswahlaktionen. Die Wiederkopplung einer bestehenden Partie auf OnePlus Open/7T wurde vom Nutzer bestätigt. Nach WLAN-Verlust gelang einmal die direkte Fortsetzung, einmal war erneutes Koppeln nötig; Hotspot ohne Internet bleibt separat zu prüfen.
+
 
 ## Schlanke Raumkarten
 
@@ -56,7 +61,7 @@ Drei geheime **Bonusfelder** vergeben je +2 an alle ersten Finder desselben Wurf
 
 An installable, offline-ready dice game PWA with solo play, computer opponents, local and online multiplayer, and push notifications.
 
-[Play Farbfeld](https://farbfeld-andrew.endruuu.chatgpt.site/play) · [Version 1.19.1](public/version.json) · [Documentation](docs/README.md)
+[Play Farbfeld](https://farbfeld-andrew.endruuu.chatgpt.site/play) · [Version 1.19.2](public/version.json) · [Documentation](docs/README.md)
 
 The game interface is in German. Farbfeld needs no user account. It is an independent implementation of the basic rules of *Noch mal!* by Inka and Markus Brand (Schmidt Spiele), using its own interface and assets; this repository is not an official publisher release.
 

@@ -1,6 +1,11 @@
 # Gemeinsame Gestaltung der Spielhinweise
 
-<!-- farbfeld-version: 1.19.1 -->
+<!-- farbfeld-version: 1.19.2 -->
+
+## Passive Direktwurf-Vorschau
+
+Kleine neutrale Fläche vor der Punktezeile, vollständiger aktiver Name, drei Farb- und drei Zahlenwürfel als nicht interaktive Elemente mit zugänglichen Wertbezeichnungen. Flexible Gruppen umbrechen auf schmalen Handys. Kein gesperrtes schwebendes Würfelpanel; normale Auswahl und Aktionen bleiben ausschließlich der berechtigten Person vorbehalten.
+
 
 ## Schlanke Raumkarten 1.19.1
 

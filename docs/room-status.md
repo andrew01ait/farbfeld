@@ -1,6 +1,11 @@
 # Raumstatus, Zuganzeige und Wartezeit
 
-<!-- farbfeld-version: 1.19.1 -->
+<!-- farbfeld-version: 1.19.2 -->
+
+## Direktwurf im Wartestatus
+
+Warten vor der ersten Direktwahl zeigt den tatsächlichen gemeinsamen Wurf als nicht interaktive Vorschau mit Name der aktiven Person. Zugrechte und Verbindungsstatus bleiben getrennt; ein gespeicherter oder pausierter Wurf wird nicht als neue Spielgelegenheit ausgegeben. Internet-Raumdarstellung unverändert.
+
 
 ## Kompakte Statusdarstellung
 

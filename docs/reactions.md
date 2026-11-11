@@ -1,6 +1,11 @@
 # Emoji-Reaktionen
 
-<!-- farbfeld-version: 1.19.1 -->
+<!-- farbfeld-version: 1.19.2 -->
+
+## Direktwurf 1.19.2
+
+Würfelvorschau und Reaktionen bleiben unabhängig. Gesten, Empfänger, Kanal und Ereignisversionen unverändert.
+
 
 ## Raumkarten 1.19.1
 

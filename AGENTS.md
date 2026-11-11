@@ -1,6 +1,11 @@
 # Farbfeld contributor instructions
 
-<!-- farbfeld-version: 1.19.1 -->
+<!-- farbfeld-version: 1.19.2 -->
+
+## Direct roll visibility
+
+While a connected direct player waits for the roller’s first choice, render the six authoritative public dice as a compact noninteractive preview above the score strip. Preserve canAct, hidden sheets, confirmed-turn hiding, pause/pending state and the existing active dice controls. No new transport, timer, dice generation or protocol capability. OnePlus existing-match re-pairing and loss detection were user-confirmed on 11 November 2026; automatic recovery varied. Exact installed version was not supplied; hotspot without Internet remains unverified.
+
 
 ## Compact room surfaces
 

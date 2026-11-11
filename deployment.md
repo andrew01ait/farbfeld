@@ -1,6 +1,11 @@
 # Development and deployment
 
-<!-- farbfeld-version: 1.19.1 -->
+<!-- farbfeld-version: 1.19.2 -->
+
+## Client 1.19.2
+
+Direktwurf-Vorschau aus bereits synchronisiertem Spielstand. Keine API-, DB-, Transport-, Protokoll- oder neue Offline-Dateiänderung. Bestehende PWA regulär aktualisieren; gespeicherte Partien bleiben fortsetzbar.
+
 
 ## Release 1.19.1
 
