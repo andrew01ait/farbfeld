@@ -2,6 +2,9 @@
 
 <!-- farbfeld-version: 1.19.4 -->
 
+Follow the user-ranked feature roadmap in [docs/roadmap.md](docs/roadmap.md): Battleship first, then discovery, public objectives, periodic color changes and Color Swap. Preserve ranks 8/9/10 for bridges/co-op/growing grid. Ranks 6/7 are unassigned. Challenge-Code is explicitly excluded; preplaced mines remain undecided. The ranking sets priority, not finalized game rules.
+
+
 ## Menüreihenfolge 1.19.4
 
 Keep the Together menu ordered Internet – Spielraum, Offline – mehrere Handys, Ein Handy weitergeben. Preserve each existing action, label and flow; reordering must not start or mutate a game.

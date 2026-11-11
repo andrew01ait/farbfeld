@@ -2,6 +2,9 @@
 
 <!-- farbfeld-version: 1.19.4 -->
 
+[Priorisierte Spielideen und nächster Planungsschritt](docs/roadmap.md): Battleship zuerst; Challenge-Code ausgeschlossen, vorab platzierte Minen noch offen.
+
+
 ## Menüreihenfolge 1.19.4
 
 Im Menü Zusammen steht Internet – Spielraum zuerst, danach Offline – mehrere Handys und Ein Handy weitergeben. Die drei bestehenden Ziele, Beschriftungen und Abläufe bleiben erhalten. Reine DOM-Reihenfolge; keine zusätzliche Anfrage, Spiel-/Push- oder Speicheränderung.

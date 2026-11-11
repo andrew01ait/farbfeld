@@ -2,6 +2,9 @@
 
 <!-- farbfeld-version: 1.19.4 -->
 
+[Priorisierte Spielideen](roadmap.md): vom Nutzer festgelegte Reihenfolge mit Battleship an erster Stelle, zwei freien Rängen, ausgeschlossenem Challenge-Code und offener Minenvariante.
+
+
 ## Menüreihenfolge 1.19.4
 
 Client 1.19.4 zeigt Internet – Spielraum zuerst im Menü Zusammen. Prüfung der drei Ziele und gerenderten Größen im [QA-Protokoll](responsive-qa.md).
