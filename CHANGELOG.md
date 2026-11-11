@@ -1,6 +1,38 @@
 # Änderungsprotokoll
 
-<!-- farbfeld-version: 1.18.0 -->
+<!-- farbfeld-version: 1.19.4 -->
+
+## 1.19.4 – 2026-11-11
+
+- Internet – Spielraum steht beim Öffnen von Zusammen an erster Stelle. Danach folgen Offline – mehrere Handys und Ein Handy weitergeben. Bestehende Ziele/Beschriftungen unverändert.
+- Reine DOM-Reihenfolge, keine Spiel-, Speicher-, API- oder Pushänderung. Syntax, TypeScript, Dokumentationsguard, Build und gerenderte Menüzustände werden geprüft.
+
+## 1.19.3 – 2026-11-11
+
+- Beitrittsdialog gestrafft: eigener Name und Offline-QR zuerst, Kopplungscode/Internet und WLAN-Hilfe aufklappbar. Kontextueller Zurück-/Verwerfen-Footer.
+- Beenden bietet bestätigtes lokales Verwerfen auch ohne Gegenstelle, während ausstehender Aktionen und bei alten Clients. Nur Direktstand/Zugang dieses Geräts entfernen; übrige Partien/Statistiken erhalten. Gemeinsames Verlassen mit −10 Punkten unverändert.
+- Schutz vor veralteter Bestätigung und Speicherfehlern. Kein neuer Spiel-/Pushversand, keine Migration oder Protokolländerung. Hotspot-Kopplung und Erstellen ohne Internet durch Nutzer bestätigt; neue UI separat geprüft.
+
+## 1.19.2 – 2026-11-11
+
+- Wartende Personen in Direktpartien sehen die sechs gemeinsamen Würfel sofort nach dem Wurf, bevor die aktive Person ihre erste Kombination bestätigt. Kompakte nicht interaktive Vorschau oberhalb der Punkte.
+- Zugrechte, normale Auswahl, Pause/Abgleich, verdeckte Werte und das Ausblenden nach eigenem bestätigten Zug bleiben erhalten. Kein zusätzlicher Wurf, Transport oder Push.
+- Nutzerbestätigte Wiederkopplung einer bestehenden OnePlus-Partie dokumentiert; automatische Erholung nach WLAN-Verlust variierte. Hotspot und physische Abnahme der Vorschau separat. Prüfungen im QA-Protokoll.
+
+## 1.19.1 – 2026-11-11
+
+- Schlankere Raumkarten auf Startseite und in Alle Räume: neutrale Spielfläche, kleinere Abstände, keine großen saisonalen Flächen und keine Modus-Kapseln.
+- Modus, Code/Personenzahl oder Wurf teilen eine Metazeile. Vollständige Namen und fett/♛ markierter Gastgeber bleiben sichtbar. Öffnen und Zugang entfernen bleiben 44-Pixel-Aktionen; die bisherige Bestätigung zum Entfernen bleibt erhalten.
+- Erklärender Sortierhinweis und zusätzliche Startseiten-Zusammenfassung entfernt. Drei Startkarten, Priorität offener Züge, Suche/Filter und Zehnerseiten unverändert.
+- Keine Spielmechanik, API, Speicherung, Migration oder Push-Änderung; Testumfang und gerenderte Größen im QA-Protokoll.
+
+## 1.19.0 – 2026-11-11
+
+- Startseite auf höchstens drei gespeicherte Partien begrenzt, bekannte offene Züge zuerst. Gesamtzahl schließt Internet-, Direkt- und lokale Partien ein; weitere offene Züge bleiben als Anzahl sichtbar.
+- Alle Räume bündelt sämtliche gespeicherten Partien mit lokaler Suche nach Namen, Raumcode oder Person, Online-/Offline-Filter und zehn Einträgen pro Seite. Keine zusätzlichen Netzwerkabfragen für Suche/Filter/Blättern.
+- Jede Karte kennzeichnet Online · Internet-Raum, Offline · Direktpartie oder Offline · Dieses Handy. Teilnehmernamen stehen in den Rauminfos, der aktuelle Gastgeber fett mit ♛; Direkt-Gastgeber bleibt der ursprüngliche Host.
+- Teilnehmerliste ergänzt den vorhandenen authentifizierten Sammelabruf und den lokalen Übersichtscache. Keine Tokens, Blätter oder verdeckten Punkte in der Ergänzung; fehlender/verweigerter Zugang liefert keine Namen. Alte namenlose Übersichtsdaten bleiben lesbar.
+- Kein Schemawechsel, keine Migration, Push-Art oder zusätzliche Offline-Datei. Browser-/Regressionsprüfung und physische Grenzen im QA-Protokoll.
 
 ## 1.18.0 – 2026-11-10
 

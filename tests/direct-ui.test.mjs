@@ -16,8 +16,27 @@ test('Abbruch steht schon bei Vorbereitung, QR, Scanner, Anleitung und Fehler zu
  const f=fixture();try{
   f.ui.entry();f.ui.joinEntry();f.ui.wait();f.ui.showScanner('offer');f.ui.failure('Kein WLAN');f.ui.networkHelp();
   f.session.pairing={kind:'offer',qr:['test'],error:''};f.ui.showPair();
-  assert.equal(f.panels.length,7);for(const panel of f.panels)assert.match(panel.html,/data-action="direct-discard">Direktpartie abbrechen/);
+  assert.equal(f.panels.length,7);for(const panel of f.panels)assert.match(panel.html,panel.panel==='direct-join'?/data-action="direct-join-back">Zurück/:/data-action="direct-discard">Direktpartie abbrechen/);
   await f.ui.handle('direct-discard');assert.equal(f.discard,1);
+ }finally{f.dispose();}
+});
+
+test('Join prioritizes the name and offline QR; optional code/help stay collapsed and Back preserves the name',async()=>{
+ const f=fixture();try{
+  f.ui.name='Robin <A>';f.ui.joinEntry();const panel=f.panels.at(-1);
+  assert.equal(panel.panel,'direct-join');assert.match(panel.html,/value="Robin &lt;A&gt;"/);assert(panel.html.indexOf('id="direct-name"')<panel.html.indexOf('direct-join-qr'));
+  assert.match(panel.html,/<details class="direct-join-code"><summary>Mit Kopplungscode/);assert.match(panel.html,/<details class="direct-join-help"><summary>WLAN & Hilfe/);
+  assert.doesNotMatch(panel.html,/class="direct-instructions"|<details[^>]* open|Direktpartie abbrechen|discard-direct-local/);
+  globalThis.document.querySelector=selector=>selector==='#direct-name'?{value:'Bea'}:null;
+  await f.ui.handle('direct-join-back');assert.match(f.panels.at(-1).html,/value="Bea"/);
+ }finally{f.dispose();}
+});
+
+test('Rejoining a saved match offers explicit local discard without requiring a peer',()=>{
+ const f=fixture();try{
+  f.session.saved={name:'Robin'};f.session.ready=false;f.ui.joinEntry('Bestehende Partie erneut koppeln.');
+  assert.match(f.panels.at(-1).html,/role="status">Bestehende Partie/);
+  assert.match(f.panels.at(-1).html,/data-action="discard-direct-local">Gespeicherte Direktpartie verwerfen/);
  }finally{f.dispose();}
 });
 test('Abgebrochene Oberflächenaktion meldet keine späten Fehler und blockiert keinen neuen Versuch',async()=>{

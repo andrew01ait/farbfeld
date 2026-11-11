@@ -1,6 +1,16 @@
 # Offline-Testprotokoll für zwei Handys
 
-<!-- farbfeld-version: 1.18.0 -->
+<!-- farbfeld-version: 1.19.4 -->
+
+## Hotspot-Rückmeldung 11. November 2026
+
+Zusätzlich zur bestätigten Wiederkopplung hat der Nutzer zwei offline befindliche Handys über einen direkten WLAN-Hotspot gekoppelt und eine Direktpartie erstellt, ohne Internet. Die genaue installierte Version wurde nicht genannt. Dies bestätigt Kopplung/Erstellen in diesem konkreten Aufbau; vollständige Partie, Hintergrundbetrieb und zuverlässige automatische Erholung nach jedem Netzabbruch sind getrennte Prüfschritte. Die neue lokale Verwerfen-Option und der Beitrittsdialog werden gesondert geprüft.
+
+
+## Nutzerrückmeldung 11. November 2026
+
+Auf OnePlus Open/7T konnte eine bestehende Partie erneut gekoppelt werden. WLAN-Abschalten wurde als Verbindungsverlust erkannt; einmal konnte die Partie unmittelbar fortgesetzt werden, einmal war Wiederkopplung nötig. Die genaue installierte Version und neue Diagnoseberichte wurden nicht angegeben. Dies bestätigt vorhandene Wiederaufnahme, keine Garantie automatischer Erholung bei jedem Abbruch. Hotspot ohne Internet bleibt offen. Zusätzlich gemeldet: wartende Person sah Würfel erst nach der ersten Auswahl; 1.19.2 korrigiert die Anzeige bereits vorhandener öffentlicher Würfeldaten. Physische Abnahme dieser Anzeige steht separat aus.
+
 
 ## Recovery diagnostics 1.17.4
 

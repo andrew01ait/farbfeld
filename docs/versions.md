@@ -1,6 +1,31 @@
 # Versionen und Kompatibilität
 
-<!-- farbfeld-version: 1.18.0 -->
+<!-- farbfeld-version: 1.19.4 -->
+
+## Menüreihenfolge 1.19.4
+
+Im Menü Zusammen steht Internet – Spielraum zuerst, danach Offline – mehrere Handys und Ein Handy weitergeben. Die drei bestehenden Ziele, Beschriftungen und Abläufe bleiben erhalten. Reine DOM-Reihenfolge; keine zusätzliche Anfrage, Spiel-/Push- oder Speicheränderung.
+
+
+## Kompatibilität 1.19.3
+
+Bestehender Direktprotokoll-2-/Schema-1-Stand, gleiche 40 Offline-Dateien, keine neue Fähigkeit. Lokales Verwerfen benötigt nur die aktualisierte App auf dem betroffenen Handy. Die anderen Geräte müssen dafür nicht erreichbar sein.
+
+
+## Kompatibilität 1.19.2
+
+Reines Client-Rendering mit Direktprotokoll 2, bestehenden Fähigkeiten und 40 atomaren Offline-Dateien. Alte Handys spielen weiter; für die sofort sichtbare Wurfvorschau das anzeigende Handy aktualisieren. Kein Daten-/Speichermigrationsschritt.
+
+
+## Kompatibilität 1.19.1
+
+Client-Update mit unveränderten Schema-1-Zugängen, Direktprotokoll 2 und 40 Offline-Dateien. Renderer-/CSS-Anpassung; keine neue Fähigkeit oder API-Erweiterung. Beide Geräte regulär aktualisieren.
+
+
+## Kompatibilität 1.19.0
+
+Normaler PWA-Updateweg, weiterhin 40 atomar gecachte Dateien und Schema 1. Optionales participants-Feld im vorhandenen Index/Übersichtscache; alte Zugänge ohne Namensliste bleiben gültig. Ältere Clients ignorieren die Ergänzung. Keine Migration oder Runtime-Variable; Spielstand und Zuordnungen bleiben erhalten.
+
 
 ## Kompatibilität 1.18.0
 

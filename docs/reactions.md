@@ -1,6 +1,31 @@
 # Emoji-Reaktionen
 
-<!-- farbfeld-version: 1.18.0 -->
+<!-- farbfeld-version: 1.19.4 -->
+
+## Menüreihenfolge 1.19.4
+
+Im Menü Zusammen steht Internet – Spielraum zuerst, danach Offline – mehrere Handys und Ein Handy weitergeben. Die drei bestehenden Ziele, Beschriftungen und Abläufe bleiben erhalten. Reine DOM-Reihenfolge; keine zusätzliche Anfrage, Spiel-/Push- oder Speicheränderung.
+
+
+## Lokales Verwerfen
+
+Das Verwerfen schließt die vorhandene lokale Direktsitzung; keine neue Reaktion, Empfängeränderung oder zusätzliche Übertragung.
+
+
+## Direktwurf 1.19.2
+
+Würfelvorschau und Reaktionen bleiben unabhängig. Gesten, Empfänger, Kanal und Ereignisversionen unverändert.
+
+
+## Raumkarten 1.19.1
+
+Die neue Kartendichte und Metazeile ändern keine Reaktionsdaten, Ziele, Transportwege oder Gesten.
+
+
+## Gespeicherte Raumübersicht
+
+Teilnehmernamen und Gastgeberkennzeichen sind nur Übersichtsdaten. Suche/Filter/Seiten ändern keine Reaktionsadresse, Empfänger oder Anzeige-Cursor. Keine neue Abfrage oder Benachrichtigung.
+
 
 ## Kompatibilität mit Direktnamen
 

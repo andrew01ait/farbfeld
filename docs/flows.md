@@ -1,6 +1,31 @@
 # Abläufe
 
-<!-- farbfeld-version: 1.18.0 -->
+<!-- farbfeld-version: 1.19.4 -->
+
+## Menüreihenfolge 1.19.4
+
+Im Menü Zusammen steht Internet – Spielraum zuerst, danach Offline – mehrere Handys und Ein Handy weitergeben. Die drei bestehenden Ziele, Beschriftungen und Abläufe bleiben erhalten. Reine DOM-Reihenfolge; keine zusätzliche Anfrage, Spiel-/Push- oder Speicheränderung.
+
+
+## Beenden ohne Gegenstelle
+
+Spiel → Beenden → bei fehlender Verbindung Erneut koppeln oder Auf diesem Gerät verwerfen → zusätzliche Löschbestätigung → Startseite ohne Direktkarte. Zurück behält den Stand. Bei bestehender Verbindung bleibt Verlassen mit −10 Punkten die gemeinsame Spielaktion; Nur auf diesem Gerät verwerfen ist eine getrennte Option. Der Beitritt beginnt mit Name und QR, alternative Codekopplung und Hilfe sind aufklappbar. Ein bereits ausgestiegener Direktspieler kann seinen gespeicherten Zugang ebenfalls lokal entfernen.
+
+
+## Direktwurf und erste Wahl
+
+Aktive Person würfelt → bestätigter gemeinsamer Zustand erreicht die Handys → wartende Personen sehen sechs Würfel und den Namen der zuerst wählenden Person → nach deren Bestätigung erscheint die normale eigene Auswahl. Nach eigenem bestätigten Zug verschwindet die Vorschau; bei Unterbrechung oder ausstehender Bestätigung gelten weiterhin Pause/Abgleich. Kein zusätzlicher Wurf und keine zusätzliche Übertragung.
+
+
+## Kompakte Raumübersicht
+
+Die Karte nennt zuerst den Raumnamen, darunter Modus mit Code/Personenzahl oder Wurf, anschließend Namen/Gastgeber und aktuellen Status. Öffnen bleibt der 44-Pixel-Pfeil. Nur Alle Räume bietet daneben das beschriftete Zugang-entfernen-Symbol; es öffnet dieselbe Bestätigung wie bisher. Suche ist kurz als Räume suchen beschriftet. Der Sortier-Erklärungstext entfällt.
+
+
+## Gespeicherte Partien finden
+
+Deine Räume zählt Online-, Direkt- und lokale Partien gemeinsam. Maximal drei Karten: bekannte offene Züge zuerst, dann zuletzt geöffnete Internet-Räume. Weitere offene Züge werden gezählt. Alle Räume öffnet die vollständige Übersicht; Alle/Online/Offline, Suche nach Raumname/Code/Person und Zurück/Weiter arbeiten lokal mit zehn Karten pro Seite. Filtern setzt auf Seite eins zurück; Statusantworten erhalten Suchtext, Filter und Eingabefokus. Öffnen benutzt jeweils den bestehenden Raumzugang, Direktplatz oder lokalen Spielstand. ♛/Fettschrift zeigt den aktuellen Gastgeber.
+
 
 ## Benennen und Aussteigen in Direktpartien
 

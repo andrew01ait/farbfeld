@@ -1,6 +1,11 @@
 # Source and documentation workflow
 
-<!-- farbfeld-version: 1.18.0 -->
+<!-- farbfeld-version: 1.19.4 -->
+
+## Review 1.19.0
+
+Die Raumübersicht bleibt eine reine Anzeige-/Indexergänzung; neue Spielmechaniken werden nicht umgesetzt. Gemeinsamer Code und generische Dokumentation werden separat als geprüfter Änderungsvorschlag vorbereitet. PR #1 mit Client 1.18.0 wurde bereits ausdrücklich freigegeben und übernommen. Keine automatische Synchronisierung oder Freigabe weiterer Main-Änderungen daraus ableiten.
+
 
 ## Entwurf für die laufende Änderung
 

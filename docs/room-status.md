@@ -1,6 +1,31 @@
 # Raumstatus, Zuganzeige und Wartezeit
 
-<!-- farbfeld-version: 1.18.0 -->
+<!-- farbfeld-version: 1.19.4 -->
+
+## Menüreihenfolge 1.19.4
+
+Im Menü Zusammen steht Internet – Spielraum zuerst, danach Offline – mehrere Handys und Ein Handy weitergeben. Die drei bestehenden Ziele, Beschriftungen und Abläufe bleiben erhalten. Reine DOM-Reihenfolge; keine zusätzliche Anfrage, Spiel-/Push- oder Speicheränderung.
+
+
+## Lokaler Direktzugang
+
+Verwerfen einer Direktpartie setzt keine Verbindung voraus und entfernt ihre Startkarte erst nach erfolgreicher lokaler Speicherung der Entfernung. Wiederkoppeln bleibt eine separate Möglichkeit zur Fortsetzung. Raum-/Local-/Computerzugänge und deren Status werden nicht gelöscht.
+
+
+## Direktwurf im Wartestatus
+
+Warten vor der ersten Direktwahl zeigt den tatsächlichen gemeinsamen Wurf als nicht interaktive Vorschau mit Name der aktiven Person. Zugrechte und Verbindungsstatus bleiben getrennt; ein gespeicherter oder pausierter Wurf wird nicht als neue Spielgelegenheit ausgegeben. Internet-Raumdarstellung unverändert.
+
+
+## Kompakte Statusdarstellung
+
+Modus und aktueller Status bleiben getrennte Informationen: der Modus steht in der Metazeile, der Zug-/Verbindungsstatus darunter. Eigene Spielgelegenheiten erhalten eine feine dunkle Kontur und lesbaren Status statt großer Farbflächen. Keine zusätzlich sichtbare Erklärung der Sortierung; die Priorisierung selbst bleibt unverändert.
+
+
+## Modus, Namen und begrenzte Startvorschau
+
+Modus und Verbindungsstatus sind getrennt: Online · Internet-Raum, Offline · Direktpartie und Offline · Dieses Handy bleiben unabhängig von Empfang oder Kanalzustand. Höchstens drei Startkarten, bekannte eigene Zuggelegenheiten zuerst; weitere offene Züge als Anzahl. Alle Räume zeigt alle Partien mit lokaler Suche/Modusfilter und zehn Einträgen pro Seite. Die Namensliste stammt aus dem autorisierten Index oder dem eigenen Offline-Stand; fett/♛ markiert den tatsächlichen Host. Alte Caches zeigen bis zur nächsten normalen Antwort keine erfundenen Namen.
+
 
 ## Benannte Direktpartien
 

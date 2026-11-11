@@ -1,8 +1,36 @@
 # Farbfeld documentation
 
-<!-- farbfeld-version: 1.18.0 -->
+<!-- farbfeld-version: 1.19.4 -->
 
-## Neu in Client 1.18.0
+[Priorisierte Spielideen](roadmap.md): vom Nutzer festgelegte Reihenfolge mit Battleship an erster Stelle, zwei freien Rängen, ausgeschlossenem Challenge-Code und offener Minenvariante.
+
+
+## Menüreihenfolge 1.19.4
+
+Client 1.19.4 zeigt Internet – Spielraum zuerst im Menü Zusammen. Prüfung der drei Ziele und gerenderten Größen im [QA-Protokoll](responsive-qa.md).
+
+
+## Client 1.19.4: Beitreten und Verwerfen
+
+434 Regressionen, TypeScript, beide API-Integrationen und 150 Browseransichten geprüft. Schlanker Beitritt mit QR im Vordergrund, Code/Hilfe aufklappbar. Beenden bietet ausdrücklich bestätigtes Verwerfen auf diesem Gerät auch ohne Gegenstelle. Gemeinsames Verlassen und lokale Entfernung bleiben getrennt; siehe [Abläufe](flows.md), [Verlassen](leaving.md), [Offline](offline-multiplayer.md) und [QA](responsive-qa.md). Hotspot ohne Internet für Kopplung/Erstellen durch Nutzer bestätigt; vollständige Partie, Hintergrund und neue Abbruchoberfläche physisch separat.
+
+
+## Client 1.19.3: Direktwurf
+
+Kompakte Vorschau aller sechs Würfel während die aktive Person zuerst wählt, ohne vorzeitige Auswahlaktionen. 423 Regressionen, TypeScript, beide API-Integrationen und 134 Browseransichten bestanden; Nachweis in [QA](responsive-qa.md). Nutzerbestätigte Wiederkopplung und wechselndes automatisches Erholen nach WLAN-Verlust: [Offline-Testprotokoll](offline-diagnostics.md). Physische Prüfung der neuen Vorschau und Hotspot ohne Internet separat.
+
+
+## Oberfläche in Client 1.19.2
+
+Raumkarten sind auf Startseite und in Alle Räume schlanker: neutrale Spielfläche, gemeinsame Metazeile und kleine Aktionen. Teilnehmer-/Gastgeberanzeige und Such-/Filter-/Prioritätsmodell bleiben erhalten. 44 relevante Regressionen, TypeScript und 124 gerenderte Ansichten geprüft; physische Handyabnahme separat. Nachweise im [QA-Protokoll](responsive-qa.md), Gestaltung in [UI-Design](ui-design.md).
+
+
+## Übersicht 1.19.0
+
+Startvorschau mit drei Partien, Online-/Offline-Kennzeichnung, Teilnehmernamen und Gastgeber, vollständige lokale Suche/Filter/Seiten in Alle Räume. 418 Regressionen, API-Integrationen, TypeScript und 80 gerenderte Ansichten; physische Abnahme separat. Siehe [Raumstatus](room-status.md), [Abläufe](flows.md), [Gestaltung](ui-design.md) und [QA](responsive-qa.md).
+
+
+## Direktnamen 1.18.0
 
 Benannte Direktpartien mit hostgesteuerter Erstellung/Umbenennung und eigenständiger Metadatenrevision. 411 Regressionen, beide API-Integrationen, TypeScript und 112 gerenderte Ansichten geprüft; physische Abnahme separat. Startkarte nur zum Öffnen; Beenden im Spiel erklärt das gemeinsame Verlassen. Details: [Offline-Mehrspieler](offline-multiplayer.md), [Abläufe](flows.md), [Gestaltung](ui-design.md), [Verlassen](leaving.md).
 

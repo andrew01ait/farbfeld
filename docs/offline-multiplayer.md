@@ -1,6 +1,26 @@
 # Offline auf zwei bis sechs Handys
 
-<!-- farbfeld-version: 1.18.0 -->
+<!-- farbfeld-version: 1.19.4 -->
+
+## Beitreten und lokale Entfernung
+
+Direktpartie beitreten zeigt zuerst den eigenen Namen und Angebots-QR scannen. Mit Kopplungscode · Internet nötig und WLAN & Hilfe lassen sich bei Bedarf öffnen. Auch nach einer gescheiterten Kopplung steht das Verwerfen eines gespeicherten Direktzugangs zur Verfügung. Im Spiel Beenden → Auf diesem Gerät verwerfen → nochmals bestätigen. Dies funktioniert ohne andere Handys und entfernt nur den Stand/Zugang dieses Geräts. Andere Partien und Statistiken bleiben erhalten. Auf anderen Handys wird keine gemeinsame Partie beendet; bei lokalem Verwerfen des Gastgebers kann dessen laufende Gruppe nicht weiter synchronisieren.
+
+
+## Direktwurf sofort sichtbar
+
+Die kompakte nicht bedienbare Vorschau zeigt bereits vor der ersten Wahl alle sechs gemeinsam gewürfelten Werte. Die aktive Person bleibt zuerst berechtigt. Nach ihrer Bestätigung werden die normalen eigenen Würfelaktionen verfügbar. Die Vorschau liegt im normalen Spielfluss oberhalb der Punkte, ohne schwebendes gesperrtes Bedienfeld. Bei bestätigtem eigenem Zug, Pause, ausstehender Bestätigung und Blattinspektion erscheint sie nicht.
+
+
+## Kompakte Direktkarte
+
+Die gespeicherte Direktpartie verwendet dieselbe schmale Kartenfläche wie Internet-Räume. Offline steht mit Handyzahl/Wurf in einer Metazeile. Namen, ursprünglicher Gastgeber und Kanalstatus bleiben sichtbar. Öffnen verwendet denselben gespeicherten Direktplatz; keine neue Kopplung oder Spieländerung durch das Layout.
+
+
+## Direktpartie in der Übersicht
+
+Direktpartien erscheinen als Offline · Direktpartie mit gespeichertem Namen und Teilnehmerliste. Der ursprüngliche Gastgeber ist fett mit ♛. Sie teilen sich die auf drei Karten begrenzte Startvorschau mit anderen Partien; bekannte eigene Züge werden vorgezogen, alle übrigen bleiben in Alle Räume über Offline-Filter und Namen-/Personensuche erreichbar. Pausierte Direktpartien bleiben Offline-Modus und werden nicht fälschlich als spielbereite eigene Zuggelegenheit sortiert.
+
 
 ## Name der Direktpartie und Beenden
 

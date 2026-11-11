@@ -1,6 +1,6 @@
 # Computer-Stärken
 
-<!-- farbfeld-version: 1.18.0 -->
+<!-- farbfeld-version: 1.19.4 -->
 
 ## Hinweise und verdeckte Ansicht
 

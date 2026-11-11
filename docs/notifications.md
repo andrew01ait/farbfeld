@@ -1,6 +1,31 @@
 # Benachrichtigungen
 
-<!-- farbfeld-version: 1.18.0 -->
+<!-- farbfeld-version: 1.19.4 -->
+
+## Menüreihenfolge 1.19.4
+
+Im Menü Zusammen steht Internet – Spielraum zuerst, danach Offline – mehrere Handys und Ein Handy weitergeben. Die drei bestehenden Ziele, Beschriftungen und Abläufe bleiben erhalten. Reine DOM-Reihenfolge; keine zusätzliche Anfrage, Spiel-/Push- oder Speicheränderung.
+
+
+## Direktzugang verwerfen
+
+Die neue gerätelokale Entfernung sendet keine Spiel- oder Push-Nachricht. Internet-Raumbindungen bleiben bestehen; kein neuer Poller.
+
+
+## Direktwurf 1.19.2
+
+Die passive Wurfvorschau verwendet vorhandene Direktdaten. Keine zusätzliche Push-Nachricht, HTTP-Abfrage oder periodische Aktualisierung.
+
+
+## Layout 1.19.1
+
+Die schlankeren Raumkarten ändern weder Ereignisse noch Zustellung, Hintergrundverhalten oder Push-Abfragen. Keine zusätzliche Netzwerkaktivität durch Renderer oder CSS.
+
+
+## Abgrenzung Übersicht 1.19.0
+
+Neue Modus-/Teilnehmeranzeigen und Suche/Filter/Seitennavigation erzeugen keinen Push und keine zusätzlichen Statusabfragen. Bekannte eigene Zuggelegenheiten bestimmen nur die Kartenreihenfolge. Die vorhandenen Benachrichtigungsarten und Deduplizierung bleiben unverändert.
+
 
 ## Abgrenzung 1.18.0
 

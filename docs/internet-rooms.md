@@ -1,6 +1,21 @@
 # Internet-Spielräume
 
-<!-- farbfeld-version: 1.18.0 -->
+<!-- farbfeld-version: 1.19.4 -->
+
+## Menüreihenfolge 1.19.4
+
+Im Menü Zusammen steht Internet – Spielraum zuerst, danach Offline – mehrere Handys und Ein Handy weitergeben. Die drei bestehenden Ziele, Beschriftungen und Abläufe bleiben erhalten. Reine DOM-Reihenfolge; keine zusätzliche Anfrage, Spiel-/Push- oder Speicheränderung.
+
+
+## Kompakte Karten 1.19.1
+
+Online steht zusammen mit Code und bestätigter Spielerzahl in der Metazeile. Raum- und Teilnehmernamen umbrechen vollständig; der aktuelle Gastgeber bleibt fett mit ♛. Neutrale Kartenfläche und kleine Aktionen ersetzen die großen Farbflächen. Zugang entfernen in Alle Räume bleibt bestätigt und gerätelokal; Raumabrufe und Berechtigungen bleiben gleich.
+
+
+## Viele Räume und Teilnehmer
+
+Die Startseite zeigt höchstens drei gespeicherte Partien, bekannte eigene Zuggelegenheiten zuerst. Alle Räume enthält alle Zugänge mit Online-/Offline-Filter, Suche nach Raumname/Code/Person und zehn Einträgen pro Seite. Karten zeigen Online · Internet-Raum und die Teilnehmer; der aktuelle Host ist fett mit ♛, auch nach Gastgeberwechsel. Teilnehmernamen kommen im bestehenden authentifizierten Index, ausschließlich nach Prüfung des jeweiligen Raumtokens. Keine neuen Polls, keine verlorenen Zugänge durch Filtern.
+
 
 ## Direktnamen 1.18.0
 

@@ -1,6 +1,26 @@
 # Gemeinsame Gestaltung der Spielhinweise
 
-<!-- farbfeld-version: 1.18.0 -->
+<!-- farbfeld-version: 1.19.4 -->
+
+## Ruhiger Direktbeitritt
+
+Kurze gemeinsame WLAN-Zeile, Namensfeld und eine neutrale QR-Karte mit 28-Pixel-Symbol. Internetcode und Hilfe in getrennten nativen Details, 44-Pixel-Aktionen, kompakter kontextueller Footer statt langer vollständiger Anleitung vor dem Namen. Lokales Verwerfen wird ausdrücklich beschriftet und bestätigt; keine Löschaktion auf der Startkarte.
+
+
+## Passive Direktwurf-Vorschau
+
+Kleine neutrale Fläche vor der Punktezeile, vollständiger aktiver Name, drei Farb- und drei Zahlenwürfel als nicht interaktive Elemente mit zugänglichen Wertbezeichnungen. Flexible Gruppen umbrechen auf schmalen Handys. Kein gesperrtes schwebendes Würfelpanel; normale Auswahl und Aktionen bleiben ausschließlich der berechtigten Person vorbehalten.
+
+
+## Schlanke Raumkarten 1.19.1
+
+Raumkarten folgen den ruhigen Spielflächen: var(--card), dünner var(--line)-Rand, 12-Pixel-Radius, kein Schatten, 9×10 Pixel Innenabstand und sechs Pixel Abstand zwischen Karten. Titel 14 Pixel, vollständige Namen/Status 11 Pixel. Modus ist normaler Text in derselben Metazeile wie Code/Personenzahl bzw. Wurf; keine Kapsel über dem Titel. Öffnen und Zugang entfernen sind klare 44-Pixel-Symbolaktionen, Entfernen nur in der Gesamtübersicht und weiterhin bestätigt. Suche/Filter/Seiten bleiben; redundante Sortier- und Zusammenfassungszeilen entfallen.
+
+
+## Ruhige Raumübersicht
+
+Eine gemeinsame Sektion zählt alle gespeicherten Partien. Maximal drei Startkarten; bekannte eigene Zuggelegenheiten zuerst und weitere als kompakter Hinweis. Alle Räume bietet eine vollständige Übersicht mit Suchfeld, drei 44-Pixel-Modusfiltern und zehn Einträgen pro Seite in einem begrenzt scrollenden Listenbereich. Modus steht als ruhiger Text in der gemeinsamen Metazeile unter dem Namen. Unter Code/Spielerzahl stehen alle Teilnehmer; Host fett mit ♛ und zugänglicher Gastgeberbeschriftung. Lange Raum-/Teilnehmernamen umbrechen vollständig; Öffnen-Pfeil bleibt mindestens 44 Pixel.
+
 
 ## Direktname und Aktionen
 

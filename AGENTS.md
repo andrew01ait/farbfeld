@@ -1,6 +1,34 @@
 # Farbfeld contributor instructions
 
-<!-- farbfeld-version: 1.18.0 -->
+<!-- farbfeld-version: 1.19.4 -->
+
+Follow the user-ranked feature roadmap in [docs/roadmap.md](docs/roadmap.md): Battleship first, then discovery, public objectives, periodic color changes and Color Swap. Preserve ranks 8/9/10 for bridges/co-op/growing grid. Ranks 6/7 are unassigned. Challenge-Code is explicitly excluded; preplaced mines remain undecided. The ranking sets priority, not finalized game rules.
+
+
+## Menüreihenfolge 1.19.4
+
+Keep the Together menu ordered Internet – Spielraum, Offline – mehrere Handys, Ein Handy weitergeben. Preserve each existing action, label and flow; reordering must not start or mutate a game.
+
+
+## Direct joining and local discard
+
+Keep joining concise: name, primary offline QR card, collapsed code alternative requiring Internet, collapsed WLAN/diagnostics help and contextual Back/discard. Beenden must offer explicit local discard even when peers are absent, pending or unsupported. Local discard needs confirmation, persists removal before forgetting, guards generation/session/game identity, cancels transient UI and clears only direct access. No fabricated shared leave, forfeit, result, host migration or new game message. Preserve connected shared leaving at −10. On 11 November the user confirmed creating a two-phone direct session over hotspot without Internet; do not overstate that as full-game/background/recovery acceptance.
+
+
+## Direct roll visibility
+
+While a connected direct player waits for the roller’s first choice, render the six authoritative public dice as a compact noninteractive preview above the score strip. Preserve canAct, hidden sheets, confirmed-turn hiding, pause/pending state and the existing active dice controls. No new transport, timer, dice generation or protocol capability. OnePlus existing-match re-pairing and loss detection were user-confirmed on 11 November 2026; automatic recovery varied. Exact installed version was not supplied; two-phone hotspot pairing/session creation without Internet was subsequently user-confirmed.
+
+
+## Compact room surfaces
+
+Use compact theme-aware card surfaces matching game UI, 9/10-pixel padding, 12-pixel radius, no large seasonal fills or nested mode pills. Put mode and code/count/round in one wrapping metadata row under the title; preserve complete participant names and bold/crown host markers. Remove redundant sorting explanations and the home mode-count paragraph. All Rooms uses a 44-pixel labelled remove-access icon beside Open, still with the existing confirmation; home has Open only. Preserve three-card priority, search/filter/page state and all transport/gameplay rules.
+
+
+## Saved games overview 1.19.0
+
+Keep one combined home section for saved Internet, direct and local games, at most three cards, known actionable turns first then last-opened order. All Rooms holds the complete list with local search/filter and ten entries per page. Never delete access, add requests or reset drafts when browsing. Each card names the mode independently of reachability and lists participants. Bold/crown marks the actual current Internet host or original direct host, never guessed from display names. Include only name/host booleans in the existing authenticated index; bound cached names to six/24 characters, clear on denied/missing access and accept legacy absent lists.
+
 
 ## Direct names and contextual leaving
 

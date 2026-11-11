@@ -1,6 +1,54 @@
 # Responsive QA
 
-<!-- farbfeld-version: 1.18.0 -->
+<!-- farbfeld-version: 1.19.4 -->
+
+## Prüfumfang 1.19.4
+
+Reine Umordnung der drei vorhandenen Zusammen-Schaltflächen: Internet – Spielraum, Offline – mehrere Handys, Ein Handy weitergeben. Keine CSS-/Geometrie-, API-, Speicher- oder Spielregeländerung. JavaScript-Syntax, TypeScript und Dokumentationsguard in beiden Quellen geprüft; Produktionsbuild vor Veröffentlichung. Die letzte vollständige Regression gehört zu 1.19.3 (434 Fälle), sie wird für diese reine Reihenfolgeänderung nicht erneut als neuer Testlauf ausgegeben.
+
+Die verwaltete lokale Vorschau ist aktuell durch Keep Score belegt; die Browseransicht lieferte dessen 404 statt des eigenen Prüfdokuments. Der fremde Preview wurde unverändert gelassen. Deshalb keine neue simulierte Handy-/Tablet-Matrix für diesen Durchgang. Reihenfolge und drei Einstiege werden nach Veröffentlichung im bestehenden Live-Browser geprüft, ohne eine Partie zu starten. Physische Geräteabnahme separat.
+
+
+
+## Prüfumfang 1.19.3 — 11. November 2026
+
+Beide Quellen bestanden 434 Regressionen einschließlich des echten DirectSession.forget-Pfads für pausierte Zweier-/Sechserpartien, Gastgeber/Gast, ausstehende Aktionen, verbundene normale −10-Verlassen-Option, veraltete Sitzungs-/Spielbestätigung und Speicherfehler. Die Beitrittsprüfungen erfassen Namensreihenfolge/-Escaping, aufklappbare Code-/Hilfefelder, Zurück mit erhaltenem Namen und gespeicherten lokalen Verwerfen-Zugang. TypeScript, beide API-Integrationen und Dokumentationsguard bestanden; Produktionsbuild wird vor Veröffentlichung geprüft.
+
+150 tatsächliche Browseransichten: neun Beitritts-/Beenden-/Bestätigungszustände in den zwölf verbindlichen Größen plus 380×650, 381×651, 759×800 und 760×800; zusätzlich der Beitritt in allen sechs Designs bei 393×851. Keine horizontale Seiten-/Dialog-/Titel-/Aktionsüberbreite, alle sichtbaren primären/sekundären Textaktionen mindestens 44 Pixel hoch. Neue, gespeicherte und aufgeklappte Codekopplung sowie pausierte Gastgeber/Gäste, Sechser-Gastgeberwarnung und bereits ausgestiegene Person geprüft.
+
+Tatsächlich durchgeklickt: Codealternative öffnen und ungültige achtstellige Eingabe abweisen, Beenden → lokal verwerfen → Zurück mit erhaltener Partie, erneut Beenden → Verwerfen → zusätzliche Bestätigung → Startseite ohne Direktkarte. Der UI-Test verwendet lokale synthetische DirectGame-Zustände und keine Produktivpartie. Unit-Prüfungen verifizieren gespeicherte Entfernung und Fehlerverhalten unabhängig davon; kein erfundener gemeinsamer Ausstieg, Statistik-/RNG-Eingriff oder neuer Transport.
+
+Separates Nutzerfeedback bestätigt nun zusätzlich Kopplung und Erstellen einer Direktpartie auf zwei offline befindlichen OnePlus-Handys im direkten WLAN-Hotspot ohne Internet. Genaue installierte Version nicht angegeben. Vollständige Hotspot-Partie, Hintergrund, zuverlässige automatische Erholung nach jedem Verlust sowie physische Abnahme der neuen Beitritts-/Verwerfen-Oberfläche bleiben eigenständige Prüfschritte.
+
+
+
+## Prüfumfang 1.19.2 — 11. November 2026
+
+Beide Quellen bestanden 423 Regressionen einschließlich fünf neuer Fälle mit dem echten DirectGame-Abgleich und dem tatsächlichen Vorschaurenderer. Geprüft wurden zwei/sechs Personen, Gastgeber- und Gastwürfe jeweils vor der ersten Auswahl, offene/verdeckte Blätter, unveränderte Würfel/Revisionen bei unerlaubtem Frühzug, normale Freigabe nach erster Bestätigung sowie Pause, ausstehende Bestätigung, Inspektion und eigener bestätigter Zug. TypeScript und beide Raum-/Kopplungs-API-Integrationen bestanden; Beide Produktionsbuilds und der Dokumentationsguard bestanden.
+
+134 tatsächliche lokale Browseransichten: acht Direktzustände in den zwölf verbindlichen Größen plus 380×650, 381×651, 759×800 und 760×800; zusätzlich wartende Vorschau in allen sechs Designs bei 393×851. Keine horizontale Seiten-/Vorschauüberbreite, sechs sichtbare Würfel nur in den passenden Warteständen, keine interaktive oder schwebende Vorschau. Der tatsächliche UI-Ablauf vor Wurf → Vorschau unmittelbar nach Wurf → drei freigegebene Farbwürfel nach erster Bestätigung → eigener Passzug und nächste Würfelberechtigung wurde durchgeklickt. Der Test verwendet echte DirectGame-Zustandsnachrichten über einen lokalen synthetischen Transport, keine physische WebRTC-Verbindung.
+
+Nutzerfeedback vom 11.11. bestätigt separat die Wiederkopplung einer bestehenden OnePlus-Partie und Verlustdetektion nach WLAN-Abschalten; automatische Erholung gelang einmal direkt, einmal mit neuer Kopplung. Genaue installierte Version nicht angegeben. Neue Vorschau auf beiden Handys und Hotspot ohne Internet bleiben physisch zu prüfen. Keine produktiven Spiele oder Push-Nachrichten für diese Prüfung verändert.
+
+
+
+## Prüfumfang 1.19.1 — 11. November 2026
+
+Reine Layout-/Beschriftungsänderung. Beide Quellen bestanden 44 relevante bestehende Regressionen (room-book, room-status, view-state und direct-ui), JavaScript-Syntaxprüfung und TypeScript. Dokumentationsguard und Produktionsbuild werden vor Veröffentlichung erneut geprüft; keine API-, Speicher- oder Spielmechanikänderung.
+
+124 tatsächliche Browseransichten synthetischer lokaler Prüfdaten: sieben Zustände (wenige/viele Partien, Alle Räume, Start-/Gesamtliste mit sechs langen Namen, leer und offline) in allen zwölf verbindlichen Viewports sowie 380×650, 381×651, 759×800 und 760×800; zusätzlich Start-/Gesamtansicht in allen sechs Designs bei 393×851. Kein horizontaler Seiten-/Dialog-/Kartenüberlauf, höchstens drei Startkarten und zehn Gesamteinträge. Vollständige Namen, Gastgeber, Status und neutrale Themenfläche bleiben erhalten, Öffnen/Entfernen mindestens 44×44 Pixel.
+
+Bedienung im Browser: Entfernen-Symbol öffnet die vorhandene Bestätigung; Abbruch behält alle 52 Einträge. Code-Suche findet genau einen Raum; Offline-Filter zeigt lokale und direkte Partie; Weiter wechselt auf Seite 2 von 6. Der Sortier-Erklärungstext entfällt. Die Startkarten messen im Zweier-Test 88 Pixel Höhe. Browserdaten und CSS-Viewports ersetzen keine physische Handyabnahme. Keine Produktivpartie oder Push-Nachricht für diese Prüfung verwendet.
+
+
+
+## Prüfumfang 1.19.0
+
+418 Regressionen, beide API-Integrationen und TypeScript bestanden. Neue Fälle prüfen die feste Drei-Karten-Grenze, Zugpriorität, vollständige Pagination über 50 Internet- und zwei Offline-Partien, Namens-/Code-/Personensuche, Filter-/Seitengrenzen sowie begrenzte optionale Teilnehmercaches und den aktuellen Gastgeber nach Rollenwechsel. Der Raumindex gibt Namen/Gastgeberflags nur nach tokenbezogener Autorisierung aus; Blätter, verdeckte Werte und Zugangsdaten bleiben ausgeschlossen. Reine Übersicht ändert weder Spielrevision noch Spielstand.
+
+Gerenderte synthetische lokale Ansichten in allen zwölf verbindlichen Viewports plus 380×650, 381×651, 759×800 und 760×800: jeweils drei gemischte Partien, 52 Partien, Alle Räume, leer und ausschließlich offline (80 Ansichten). Maximal drei Startkarten und zehn Übersichtseinträge, volle Modus-/Teilnehmernamen, kein horizontaler Seiten-/Dialog-/Karten-/Seitennavigationsüberlauf. Suchfeld, Filter, Liste und Seitennavigation bei hohen Viewports getrennt; niedrige Querformate bleiben vollständig scrollbar. Versteckte Öffnen-Texte sind am jeweiligen Knopf verankert und vergrößern den äußeren Dialog nicht.
+
+Tatsächliche UI-Aktionen zusätzlich: Seite 1 → 2, Suche eines Raums außerhalb der Startvorschau, Offline-Filter mit lokaler und direkter Partie, Personenfilter und erhaltener Suchfokus. Im 52-Partien-Fall drei eigene Zuggelegenheiten sichtbar und vier weitere gezählt. Gastgeberanzeige im Browser mit Schriftgewicht 800 und ♛ geprüft. Keine Produktivräume oder Pushs für Tests verwendet. Dies sind Browseransichten lokaler Prüfdaten; physische Handyabnahme bleibt separat. Neue Spielideen aus der begleitenden Recherche wurden nicht implementiert.
 
 ## Prüfumfang 1.18.0
 

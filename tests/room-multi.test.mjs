@@ -88,3 +88,10 @@ test('Zwei Räume spielen unabhängig: zweite Partie beenden und neu starten erh
  assert.equal((await h.post('move',{...hosts[0],token:hosts[1].token,version:states[0].version},{move:{pass:true}})).status,403);
  const reopened=await h.post('open',hosts[0]);assert.equal(reopened.game.gameId,states[0].game.gameId);assert.deepEqual(reopened.game.dice,states[0].game.dice);assert.equal((await h.post('move',{...hosts[0],version:reopened.version},{move:{pass:true}})).status,200);
 });
+
+test('Raumindex liefert Teilnehmer und aktuellen Gastgeber nur nach Prüfung des Raumtokens',async t=>{
+ const h=await harness(t),code='HOST2345',room=h.seed(code);room.game.hiddenScores=true;room.hostId=room.members[1].id;h.sql.prepare('UPDATE rooms SET state = ? WHERE code = ?').run(JSON.stringify(room),code);
+ const before=h.state(code),index=await h.post('index',{}, {rooms:[{code,token:'fixture-host'}]});assert.equal(index.status,200);assert.deepEqual(index.rooms[0].participants,room.members.map(m=>({name:m.name,host:m.id===room.hostId})));assert.deepEqual(h.state(code),before);
+ const text=JSON.stringify(index);for(const forbidden of ['fixture-host','fixture-guest','"marks"','"jokers"','"score"'])assert(!text.includes(forbidden));
+ const denied=await h.post('index',{}, {rooms:[{code,token:'not-a-member'}]});assert.deepEqual(denied.rooms,[{code,access:'denied'}]);
+});

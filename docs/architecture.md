@@ -1,6 +1,31 @@
 # Architektur
 
-<!-- farbfeld-version: 1.18.0 -->
+<!-- farbfeld-version: 1.19.4 -->
+
+## Menüreihenfolge 1.19.4
+
+Im Menü Zusammen steht Internet – Spielraum zuerst, danach Offline – mehrere Handys und Ein Handy weitergeben. Die drei bestehenden Ziele, Beschriftungen und Abläufe bleiben erhalten. Reine DOM-Reihenfolge; keine zusätzliche Anfrage, Spiel-/Push- oder Speicheränderung.
+
+
+## Lokales Verwerfen und Beitritt
+
+DirectUi.joinEntry führt Name/QR zuerst und trennt native Details für Kopplungscode und Hilfe. discard-direct-local öffnet die vorhandene gerätelokale Löschlogik mit ausdrücklicher Bestätigung, unabhängig von DirectSession.ready. Die Bestätigung bindet Generation, Sitzung und Spiel; bei Wechsel wird neu bestätigt. DirectSession.forget speichert null vor dem Schließen/Löschen der Sitzung, Fehler lassen Zugang und Spielstand erhalten. Keine leave-/abort-Nachricht, Engine-Wertung, Hostübernahme oder Statistik wird für lokale Entfernung erfunden.
+
+
+## Direktwurf-Vorschau
+
+directRollPreviewHTML liest ausschließlich g.dice aus dem bereits autoritativ synchronisierten Zustand. DirectGame verteilt den bestätigten roll-Zustand schon vor der ersten move-Aktion an alle authentifizierten Gäste. Die bisherige Darstellung blendete wartende Würfel aus. Die neue Vorschau verwendet statische, zugänglich beschriftete Elemente vor der Punktezeile; sie verändert keine Engine, Revision, Nachricht, eigenen Entwurf oder versteckten Daten.
+
+
+## Renderer 1.19.1
+
+savedGameMetaHTML fasst den vorhandenen Modus und bereits bekannte Raum-/Spielinformationen in einer Metazeile zusammen. roomResumeHTML, directResumeHTML und localResumeHTML verwenden dieselbe kompakte Oberfläche. Geändert werden nur DOM/CSS und sichtbare Kurzbeschriftungen; Index, Berechtigungen, Namenscache, Sortierung und Zehnerseiten bleiben unverändert.
+
+
+## Übersichtsmodell 1.19.0
+
+savedGameItems verbindet vorhandene Raumzugänge mit lokalem und direktem Spielstand ausschließlich zur Darstellung. savedGamesPreview sortiert bekannte eigene Spielgelegenheiten vor zuletzt geöffnete Räume und begrenzt auf drei. filterSavedGames filtert/sucht denselben Index lokal und liefert maximal zehn Einträge pro Seite. Der bestehende tokengeprüfte Sammelabruf ergänzt participants mit name und host; keine IDs, Tokens, Blätter oder verdeckten Werte. RoomBook übernimmt optional höchstens sechs Namen à 24 Zeichen und verwirft Teilnehmerlisten bei fehlendem/verweigertem Zugang. Kein neuer Timer, keine Migration.
+
 
 ## Direktnamen 1.18.0
 

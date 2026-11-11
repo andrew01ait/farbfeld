@@ -1,6 +1,31 @@
 # Development and deployment
 
-<!-- farbfeld-version: 1.18.0 -->
+<!-- farbfeld-version: 1.19.4 -->
+
+## Menüreihenfolge 1.19.4
+
+Im Menü Zusammen steht Internet – Spielraum zuerst, danach Offline – mehrere Handys und Ein Handy weitergeben. Die drei bestehenden Ziele, Beschriftungen und Abläufe bleiben erhalten. Reine DOM-Reihenfolge; keine zusätzliche Anfrage, Spiel-/Push- oder Speicheränderung.
+
+
+## Client 1.19.3
+
+Beitrittsdialog und lokales Verwerfen von Direktzugängen aktualisiert. Bestehende PWA regulär aktualisieren. Keine API-/DB-/Protokolländerung, neue Offline-Datei oder Laufzeitkonfiguration. Die neue Option benötigt nur dieses Handy.
+
+
+## Client 1.19.2
+
+Direktwurf-Vorschau aus bereits synchronisiertem Spielstand. Keine API-, DB-, Transport-, Protokoll- oder neue Offline-Dateiänderung. Bestehende PWA regulär aktualisieren; gespeicherte Partien bleiben fortsetzbar.
+
+
+## Release 1.19.1
+
+Reine Renderer-/CSS-Verdichtung der Raumkarten und Entfernung redundanter Erklärungstexte. Kein API-, Datenbank-, Speicher-, Push- oder Offline-Dateilistenwechsel. Normaler PWA-Updateweg auf die neue Clientversion, gleiche gespeicherte Zugänge.
+
+
+## Release 1.19.0
+
+Begrenzte gemeinsame Startvorschau, vollständige lokale Übersicht und autorisierte Teilnehmer-/Gastgebernamen. Keine Migration, Laufzeit-/VAPID-Änderung oder zusätzliche Offline-Datei. Beide PWAs normal aktualisieren. Bestehende Raumzugänge und Direktpartien bleiben gespeichert; Teilnehmer alter Übersichtscaches ergänzen sich beim vorhandenen Sammelabruf.
+
 
 ## Version 1.18.0
 

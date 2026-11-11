@@ -1,6 +1,11 @@
 # Eine Partie freiwillig verlassen
 
-<!-- farbfeld-version: 1.18.0 -->
+<!-- farbfeld-version: 1.19.4 -->
+
+## Gerätelokal verwerfen ohne Verbindung
+
+Beenden einer Direktpartie bietet unabhängig von Erreichbarkeit eine zusätzliche ausdrücklich bestätigte Option Auf diesem Gerät verwerfen. Sie löscht nur den gespeicherten Direktstand samt Zugang und schließt lokale Kopplung/Kanäle. Andere Handys behalten ihre Kopie. Kein gemeinsamer Ausstieg, −10-Ergebnis, Sieg oder Gastgeberwechsel wird daraus abgeleitet. Der normale verbundene Verlassen-Zug mit −10 Punkten bleibt unverändert. Pausierte, ausstehende und bereits verlassene Direktpartien lassen sich lokal entfernen; Rückkehr aus dem Bestätigungsdialog verändert nichts. Veraltete Bestätigungen entfernen keine ersetzte Sitzung, Speicherausfälle lassen den bisherigen Zugang erhalten.
+
 
 ## Ort der Aktion
 

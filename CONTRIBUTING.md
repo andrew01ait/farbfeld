@@ -1,6 +1,26 @@
 # Contributing to Farbfeld
 
-<!-- farbfeld-version: 1.18.0 -->
+<!-- farbfeld-version: 1.19.4 -->
+
+## Join/discard checks
+
+Exercise concise joining with help/code expanded and long resume messages. Test offline local removal for both roles and 2/6 players, cancellation, pending actions, replaced sessions and storage failure. Keep local/online saves and statistics intact. Do not require another device for local discard or synthesize shared game results.
+
+
+## Direct roll regression
+
+Exercise host and guest rollers before their first move, with two/six players and concealed sheets. The observer must see the actual shared dice with no enabled action. Validate the transition to normal choice, submitted-state hiding, pause, pending and inspection. Do not change protocol or repeat a roll for display.
+
+
+## Compact card validation
+
+Verify compact home and overview cards with two and six long participant names, all themes and narrow viewports. Open/remove actions remain at least 44 pixels, accessible and distinct. Check the existing access-removal confirmation, search focus and pagination; do not alter game state for layout tests.
+
+
+## Saved overview checks
+
+Validate the fixed three-card preview with more than fifty mixed entries, action priority, search/filter/page boundaries, stale caches and host changes. Index participants must be token-authorized name/host pairs only; search and pagination must not add HTTP requests or mutate game/access state.
+
 
 ## Direktnamen 1.18.0
 
