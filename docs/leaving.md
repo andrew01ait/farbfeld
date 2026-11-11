@@ -1,6 +1,6 @@
 # Eine Partie freiwillig verlassen
 
-<!-- farbfeld-version: 1.19.3 -->
+<!-- farbfeld-version: 1.19.4 -->
 
 ## Gerätelokal verwerfen ohne Verbindung
 

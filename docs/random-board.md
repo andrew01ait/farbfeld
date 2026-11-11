@@ -1,6 +1,6 @@
 # Random-Spielbrett
 
-<!-- farbfeld-version: 1.19.3 -->
+<!-- farbfeld-version: 1.19.4 -->
 
 ## Mehrspieler-Auswahl
 

@@ -1,6 +1,6 @@
 # Geräteprofil und Statistik
 
-<!-- farbfeld-version: 1.19.3 -->
+<!-- farbfeld-version: 1.19.4 -->
 
 ## Dateinamen beim Sichern
 

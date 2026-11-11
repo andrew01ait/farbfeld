@@ -1,6 +1,6 @@
 # Offline auf zwei bis sechs Handys
 
-<!-- farbfeld-version: 1.19.3 -->
+<!-- farbfeld-version: 1.19.4 -->
 
 ## Beitreten und lokale Entfernung
 

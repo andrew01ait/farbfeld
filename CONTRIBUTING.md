@@ -1,6 +1,6 @@
 # Contributing to Farbfeld
 
-<!-- farbfeld-version: 1.19.3 -->
+<!-- farbfeld-version: 1.19.4 -->
 
 ## Join/discard checks
 

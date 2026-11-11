@@ -1,6 +1,6 @@
 # Offline-Testprotokoll für zwei Handys
 
-<!-- farbfeld-version: 1.19.3 -->
+<!-- farbfeld-version: 1.19.4 -->
 
 ## Hotspot-Rückmeldung 11. November 2026
 

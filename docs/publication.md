@@ -1,6 +1,6 @@
 # Public source snapshot
 
-<!-- farbfeld-version: 1.19.3 -->
+<!-- farbfeld-version: 1.19.4 -->
 
 ## Source update 1.17.4
 

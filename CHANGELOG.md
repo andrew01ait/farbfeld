@@ -1,6 +1,11 @@
 # Änderungsprotokoll
 
-<!-- farbfeld-version: 1.19.3 -->
+<!-- farbfeld-version: 1.19.4 -->
+
+## 1.19.4 – 2026-11-11
+
+- Internet – Spielraum steht beim Öffnen von Zusammen an erster Stelle. Danach folgen Offline – mehrere Handys und Ein Handy weitergeben. Bestehende Ziele/Beschriftungen unverändert.
+- Reine DOM-Reihenfolge, keine Spiel-, Speicher-, API- oder Pushänderung. Syntax, TypeScript, Dokumentationsguard, Build und gerenderte Menüzustände werden geprüft.
 
 ## 1.19.3 – 2026-11-11
 

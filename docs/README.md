@@ -1,8 +1,13 @@
 # Farbfeld documentation
 
-<!-- farbfeld-version: 1.19.3 -->
+<!-- farbfeld-version: 1.19.4 -->
 
-## Client 1.19.3: Beitreten und Verwerfen
+## Menüreihenfolge 1.19.4
+
+Client 1.19.4 zeigt Internet – Spielraum zuerst im Menü Zusammen. Prüfung der drei Ziele und gerenderten Größen im [QA-Protokoll](responsive-qa.md).
+
+
+## Client 1.19.4: Beitreten und Verwerfen
 
 434 Regressionen, TypeScript, beide API-Integrationen und 150 Browseransichten geprüft. Schlanker Beitritt mit QR im Vordergrund, Code/Hilfe aufklappbar. Beenden bietet ausdrücklich bestätigtes Verwerfen auf diesem Gerät auch ohne Gegenstelle. Gemeinsames Verlassen und lokale Entfernung bleiben getrennt; siehe [Abläufe](flows.md), [Verlassen](leaving.md), [Offline](offline-multiplayer.md) und [QA](responsive-qa.md). Hotspot ohne Internet für Kopplung/Erstellen durch Nutzer bestätigt; vollständige Partie, Hintergrund und neue Abbruchoberfläche physisch separat.
 

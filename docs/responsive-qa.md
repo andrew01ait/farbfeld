@@ -1,6 +1,14 @@
 # Responsive QA
 
-<!-- farbfeld-version: 1.19.3 -->
+<!-- farbfeld-version: 1.19.4 -->
+
+## Prüfumfang 1.19.4
+
+Reine Umordnung der drei vorhandenen Zusammen-Schaltflächen: Internet – Spielraum, Offline – mehrere Handys, Ein Handy weitergeben. Keine CSS-/Geometrie-, API-, Speicher- oder Spielregeländerung. JavaScript-Syntax, TypeScript und Dokumentationsguard in beiden Quellen geprüft; Produktionsbuild vor Veröffentlichung. Die letzte vollständige Regression gehört zu 1.19.3 (434 Fälle), sie wird für diese reine Reihenfolgeänderung nicht erneut als neuer Testlauf ausgegeben.
+
+Die verwaltete lokale Vorschau ist aktuell durch Keep Score belegt; die Browseransicht lieferte dessen 404 statt des eigenen Prüfdokuments. Der fremde Preview wurde unverändert gelassen. Deshalb keine neue simulierte Handy-/Tablet-Matrix für diesen Durchgang. Reihenfolge und drei Einstiege werden nach Veröffentlichung im bestehenden Live-Browser geprüft, ohne eine Partie zu starten. Physische Geräteabnahme separat.
+
+
 
 ## Prüfumfang 1.19.3 — 11. November 2026
 

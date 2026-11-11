@@ -1,6 +1,6 @@
 # Versteckte Bonusfelder
 
-<!-- farbfeld-version: 1.19.3 -->
+<!-- farbfeld-version: 1.19.4 -->
 
 ## Kompakte Anzeige
 

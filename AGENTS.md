@@ -1,6 +1,11 @@
 # Farbfeld contributor instructions
 
-<!-- farbfeld-version: 1.19.3 -->
+<!-- farbfeld-version: 1.19.4 -->
+
+## Menüreihenfolge 1.19.4
+
+Keep the Together menu ordered Internet – Spielraum, Offline – mehrere Handys, Ein Handy weitergeben. Preserve each existing action, label and flow; reordering must not start or mutate a game.
+
 
 ## Direct joining and local discard
 
