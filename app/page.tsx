@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { publicSiteUrl } from "../lib/public-site";
+import qrcode from "../public/game/vendor/qrcode.js";
 
 const title = "Farbfeld – Würfelspiel online und offline spielen";
 const description =
@@ -90,6 +91,17 @@ const variants = [
     color: "pink",
   },
 ];
+
+const coffeeUrl = "https://www.buymeacoffee.com/ichwardort";
+const supportCodes = [
+  { name: "PayPal", url: "https://www.paypal.com/qrcodes/p2pqrc/WUJZRNFHFGS9Y", hint: "Mit der PayPal-App scannen." },
+  { name: "Buy Me a Coffee", url: coffeeUrl, hint: "Mit der Handykamera scannen." },
+].map(({ name, url, hint }) => {
+  const qr = qrcode(0, "M");
+  qr.addData(url, "Byte");
+  qr.make();
+  return { name, hint, qrImage: qr.createDataURL(6, 24) };
+});
 
 export default function Home() {
   return (
@@ -232,6 +244,27 @@ export default function Home() {
             </dl>
             <a className="site-button site-button-primary" href="/play">Farbfeld spielen</a>
           </div>
+        </section>
+
+        <section className="site-width support-section" id="unterstuetzen" aria-labelledby="support-title">
+          <div className="support-row">
+            <div className="support-copy">
+              <h2 id="support-title">Ein Kaffee für Farbfeld</h2>
+              <p>Farbfeld ist ein Ein-Personen-Projekt. Ein freiwilliger Beitrag hilft, die laufenden Serverkosten zu decken und das Spiel weiterzuentwickeln.</p>
+            </div>
+            <a className="site-button site-button-outline" href={coffeeUrl} rel="noreferrer">Buy Me a Coffee</a>
+          </div>
+          <details className="support-details">
+            <summary>PayPal und QR-Codes</summary>
+            <div className="support-codes">
+              {supportCodes.map(({ name, hint, qrImage }) => (
+                <figure key={name}>
+                  <img src={qrImage} alt={`QR-Code für ${name}`} width="216" height="216" />
+                  <figcaption>{name}<small>{hint}</small></figcaption>
+                </figure>
+              ))}
+            </div>
+          </details>
         </section>
       </main>
 

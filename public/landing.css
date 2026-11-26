@@ -339,6 +339,47 @@ h3 { font-size: 1.25rem; letter-spacing: -0.025em; line-height: 1.2; }
 .extras-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem clamp(1rem, 5vw, 4.15rem); }
 .extras-list dt { font-weight: 750; }
 .extras-list dd { margin-top: 0.3rem; color: var(--muted); }
+
+.support-section { padding-block-end: clamp(1.2rem, 3vw, 2rem); }
+
+.support-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1.5rem;
+}
+
+.support-copy { flex: 1 1 25rem; max-width: 38rem; }
+.support-copy h2 { margin-bottom: 0.25rem; font-size: 1.2rem; }
+.support-copy p { color: var(--muted); }
+
+.support-details { margin-top: 0.25rem; }
+.support-details summary {
+  width: fit-content;
+  min-height: 2.75rem;
+  padding-block: 0.65rem;
+  color: var(--muted);
+  font-size: 0.92rem;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.support-details summary:hover { text-decoration: underline; }
+.support-codes { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 0.35rem; }
+.support-codes figure {
+  max-width: 100%;
+  padding: 0.45rem 0.55rem 0.65rem;
+  border: 1px solid var(--line);
+  border-radius: 0.75rem;
+  background: white;
+  text-align: center;
+}
+
+.support-codes img { image-rendering: pixelated; }
+.support-codes figcaption { font-size: 0.92rem; font-weight: 650; }
+.support-codes figcaption small { display: block; color: var(--muted); font-size: 0.8rem; font-weight: 400; }
+
 .site-footer { min-height: 5.65rem; padding-block: 0.8rem; border-top: 1px solid var(--line); flex-wrap: wrap; }
 .site-footer .site-brand { font-size: 1.18rem; }
 
