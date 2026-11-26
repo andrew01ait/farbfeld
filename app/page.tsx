@@ -5,8 +5,8 @@ import qrcode from "../public/game/vendor/qrcode.js";
 const title = "Farbfeld – Würfelspiel online und offline spielen";
 const description =
   "Würfle, kreuze Farbfelder an und sammle Punkte. Spiele Farbfeld solo, gegen den Computer oder mit bis zu sechs Personen – im Browser, im WLAN oder online.";
-const boardImage = "/game/tutorial/grundspiel.jpg";
-const boardAlt = "Farbfeld-Spielbrett mit Würfeln und drei ausgewählten gelben Feldern";
+const boardImage = "/landing/spielbrett.webp";
+const boardAlt = "Classic-Spielbrett mit vier angekreuzten blauen Feldern rund um Spalte H";
 
 export const metadata: Metadata = {
   metadataBase: new URL(publicSiteUrl),
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     url: "/",
     title,
     description,
-    images: [{ url: boardImage, width: 560, height: 336, alt: boardAlt }],
+    images: [{ url: boardImage, width: 776, height: 410, alt: boardAlt }],
   },
   twitter: {
     card: "summary_large_image",
@@ -72,21 +72,24 @@ const variants = [
   {
     name: "Schatzsuche",
     topic: "schatzsuche",
-    alt: "Spielbrett beim Fund eines Schatzes",
+    scene: "schatz-spur",
+    alt: "Die Schatzsuche zeigt den Heiß-Hinweis und die Spur der letzten Züge",
     detail: "Heiß, warm oder kalt? Verfolge die Hinweise nach deinen Zügen und finde drei versteckte Schätze.",
     color: "gold",
   },
   {
     name: "Schiffsboni",
     topic: "schiffe",
-    alt: "Schusskarte mit einem versenkten Schiff",
+    scene: "schiffe-auslegen",
+    alt: "Flottenaufstellung mit markierten Schiffsfeldern auf dem farbigen Brett",
     detail: "Legt zu zweit eure Flotten aus. Trefft beim Ankreuzen die gegnerischen Schiffe. Punkte gibt es für vollständig versenkte Schiffe.",
     color: "sky",
   },
   {
     name: "Öffentliche Aufträge",
     topic: "auftraege",
-    alt: "Spielbrett mit der Meldung für einen erfüllten Sternauftrag",
+    scene: "auftraege-plan",
+    alt: "Drei öffentliche Aufträge mit ihrem Fortschritt und den verbleibenden Runden",
     detail: "Erfülle drei gemeinsame Aufträge zu Spalten, Sternen und Farben. Dein Fortschritt und die Frist stehen direkt am Brett.",
     color: "pink",
   },
@@ -142,13 +145,13 @@ export default function Home() {
               <div className="hero-tiles" aria-hidden="true">
                 <span></span><span></span><span></span><span></span>
               </div>
-              <img src={boardImage} alt={boardAlt} width="560" height="336" fetchPriority="high" />
+              <img src={boardImage} alt={boardAlt} width="776" height="410" fetchPriority="high" />
               <div className="hero-dice" aria-hidden="true">
                 <span className="hero-die hero-die-color">✓</span>
-                <span className="hero-die hero-die-number"><i></i><i></i><i></i></span>
+                <span className="hero-die hero-die-number"><i></i><i></i><i></i><i></i></span>
               </div>
             </div>
-            <figcaption>Ein Beispielzug aus der Farbfeld-Spielanleitung</figcaption>
+            <figcaption><span>Classic · Vier blaue Felder rund um Spalte H.</span><a className="board-open" href={boardImage}>Brett vergrößern</a></figcaption>
           </figure>
         </section>
 
@@ -157,20 +160,29 @@ export default function Home() {
             <h2 id="rules-title">So geht Farbfeld</h2>
             <a className="site-link" href="/play?anleitung=grundspiel">Spielanleitung mit Videos</a>
           </div>
-          <ol className="rules-list">
-            <li>
-              <h3>Würfel kombinieren</h3>
-              <p>Wähle einen Farbwürfel und einen Zahlenwürfel. Die Zahl gibt vor, wie viele Felder du ankreuzt.</p>
-            </li>
-            <li>
-              <h3>Felder verbinden</h3>
-              <p>Kreuze zusammenhängende Felder in der gewählten Farbe an. Beginne in Spalte H oder schließe an ein vorhandenes Kreuz an.</p>
-            </li>
-            <li>
-              <h3>Punkte sammeln</h3>
-              <p>Volle Spalten und Farben bringen Punkte. Lass möglichst wenige Sterne offen und sichere dir die höheren Boni für erste Abschlüsse.</p>
-            </li>
-          </ol>
+          <div className="rules-demo">
+            <figure>
+              <video width="560" height="336" controls playsInline preload="none" poster="/game/tutorial/grundspiel.jpg" aria-label="Beispielzug mit drei gelben Feldern">
+                <source src="/game/tutorial/grundspiel.mp4" type="video/mp4" />
+                <a href="/game/tutorial/grundspiel.mp4">Spielzug ansehen</a>
+              </video>
+              <figcaption>Gelb und eine Drei. So entsteht ein Zug auf dem Blatt.</figcaption>
+            </figure>
+            <ol className="rules-list">
+              <li>
+                <h3>Würfel kombinieren</h3>
+                <p>Wähle einen Farbwürfel und einen Zahlenwürfel. Die Zahl gibt vor, wie viele Felder du ankreuzt.</p>
+              </li>
+              <li>
+                <h3>Felder verbinden</h3>
+                <p>Kreuze zusammenhängende Felder in der gewählten Farbe an. Beginne in Spalte H oder schließe an ein vorhandenes Kreuz an.</p>
+              </li>
+              <li>
+                <h3>Punkte sammeln</h3>
+                <p>Volle Spalten und Farben bringen Punkte. Lass möglichst wenige Sterne offen und sichere dir die höheren Boni für erste Abschlüsse.</p>
+              </li>
+            </ol>
+          </div>
         </section>
 
         <section className="modes-section" id="spielmodi" aria-labelledby="modes-title">
@@ -203,11 +215,11 @@ export default function Home() {
             <p className="section-description">Wähle beim Start, welche Zusatzregeln für eure Partie gelten.</p>
           </div>
           <div className="variant-grid">
-            {variants.map(({ name, topic, alt, detail, color }) => (
+            {variants.map(({ name, topic, scene, alt, detail, color }) => (
               <article className="variant-card" key={topic}>
-                <div className={`variant-image tone-${color}`}>
-                  <img src={`/game/tutorial/${topic}.jpg`} alt={alt} width="496" height="280" loading="lazy" decoding="async" />
-                </div>
+                <a className={`variant-image tone-${color}`} href={`/game/tutorial/${scene}.jpg`} aria-label={`${name} in Originalgröße öffnen`}>
+                  <img src={`/game/tutorial/${scene}.jpg`} alt={alt} width="560" height="336" loading="lazy" decoding="async" />
+                </a>
                 <div className="variant-copy">
                   <h3>{name}</h3>
                   <p>{detail}</p>
