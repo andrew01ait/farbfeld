@@ -1,6 +1,16 @@
 # Random-Spielbrett
 
-<!-- farbfeld-version: 1.19.4 -->
+<!-- farbfeld-version: 1.34.2 -->
+
+## Gruppen bei späterem Mischen 1.21.1
+
+Der Anfangsgenerator und seine Gruppen 1–6 bleiben unverändert. Die optionale spätere Mischung auf Random, Classic, Flusslauf und Mosaik tauscht ganze gleich große freie Farbgruppen. Größere Gruppen bleiben zusammen, kleine Inseln können sich verbinden; markierte Felder werden nicht umgefärbt. Einzelne sind erlaubt. Das Mischverfahren verlangt nicht die strengere Anfangseigenschaft genau einer Gruppe jeder Größe pro Farbe.
+
+
+## Individuelle Farbpläne 1.21.0
+
+Random und alle übrigen Bretter kombinieren sich mit menschlichen Varianten. Das gemeinsame Anfangsbrett wird einmal erzeugt; Mischen hält danach pro aktivem Teilnehmer einen eigenen gespeicherten Plan. Alle Farbanzahlen bleiben 21, markierte Farben bleiben fixiert. Züge, Fähigkeiten, Hinweise, Mine und Wertung lesen den korrekten eigenen Plan; verdeckte Gegnerpläne werden nicht übertragen.
+
 
 ## Mehrspieler-Auswahl
 

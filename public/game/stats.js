@@ -1,4 +1,5 @@
 import {FORFEIT_SCORE} from './engine.js';
+import {validFinishTime} from './game-info.js';
 const MODES=['solo','local','computer','room','direct'];
 export const statsCategory=mode=>mode==='solo'?'solo':mode==='computer'?'computer':['local','room','direct'].includes(mode)?'people':null;
 const sameName=name=>name.normalize('NFKC').trim().replace(/\s+/g,' ').toLocaleLowerCase('de');
@@ -22,6 +23,43 @@ export function mergeStats(value,entries=[]){
  return {schema:1,games:[...games.values()]};
 }
 const compare=(a,b)=>Number(!!b.left)-Number(!!a.left)||(a.left&&b.left?0:a.total-b.total||a.jokers-b.jokers);
+export const RECENT_RESULT_LIMIT=20;
+function resultOutcome(game){
+ if(game.mode==='solo')return 'solo';
+ const own=game.players[game.ownPid];
+ if(!own||own.hidden)return 'unknown';
+ if(own.left)return 'forfeit';
+ if(game.players.length<2||game.players.some(p=>p.hidden))return 'unknown';
+ const best=game.players.reduce((a,b)=>compare(a,b)>=0?a:b);
+ if(compare(own,best)<0)return 'loss';
+ return game.players.filter(p=>compare(p,best)===0).length>1?'shared':'win';
+}
+export function storedResult(entry){
+ const game=record(entry);
+ if(!game||entry.completed===false&&!game.forfeit)return null;
+ return {...game,completed:entry.completed===true,finishedAt:validFinishTime(entry.finishedAt)?entry.finishedAt:null,title:typeof entry.title==='string'?entry.title.slice(0,48):'',outcome:resultOutcome(game)};
+}
+export function recentResults(entries){
+ const ids=new Set(),results=[];
+ for(const entry of entries){
+  if(entry?.completed===false||entry?.forfeit===true&&(entry.completed!==true||entry.mode==='local'&&/:left:\d+$/.test(entry.id)))continue;
+  const result=storedResult(entry);
+  if(!result||ids.has(result.id)||result.players.some(p=>p.hidden))continue;
+  ids.add(result.id);
+  results.push(result);
+ }
+ return results.sort((a,b)=>(b.finishedAt??Date.parse(b.date))-(a.finishedAt??Date.parse(a.date))).slice(0,RECENT_RESULT_LIMIT);
+}
+export function resultStandings(result){
+ const players=result.players.map((p,pid)=>({...p,own:pid===result.ownPid,place:null}));
+ if(result.forfeit&&!result.completed||players.some(p=>p.hidden))return players;
+ const ordered=players.sort((a,b)=>compare(b,a));
+ let place=1;
+ return ordered.map((p,i)=>{
+  if(i>0&&compare(p,ordered[i-1])<0)place=i+1;
+  return {...p,place:p.left?null:place};
+ });
+}
 function orderedGames(value,category){
  if(!['people','computer','solo'].includes(category))throw new RangeError('Unbekannter Statistikbereich.');
  const games=validStats(value)?value.games.map(record).filter(game=>statsCategory(game.mode)===category):[];

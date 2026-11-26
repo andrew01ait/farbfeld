@@ -1,8 +1,8 @@
 {
   "name": "Farbfeld",
-  "version": "1.19.4",
-  "releaseDate": "2026-11-11",
-  "offlineAssetCount": 40,
+  "version": "1.34.2",
+  "releaseDate": "2026-11-26",
+  "offlineAssetCount": 101,
   "directProtocol": 2,
   "savedGameSchema": 1,
   "physicalAndroidPushVerified": true,
@@ -12,5 +12,27 @@
     "date": "2026-11-08",
     "automaticBackgroundTurnVerified": true,
     "automaticRematchVerified": false
+  },
+  "releaseNotes": {
+    "1.34.2": {
+      "highlights": [
+        "Neue Farbfeld-Website mit Regeln, Spielmodi und Bildern.",
+        "Website und Impressum sind jetzt auch direkt aus dem Spiel erreichbar."
+      ],
+      "details": [
+        "Die öffentliche Website zeigt das Grundspiel und Zusatzregeln anhand von Beispielen aus Farbfeld. Jetzt spielen führt direkt zur App und die Varianten verlinken auf ihre Spielanleitungen.",
+        "Das Impressum zeigt Telefonnummer und E-Mail-Adresse erst nach einem Klick. Eine Sitemap und Suchmaschinen-Metadaten helfen bei der Auffindbarkeit der öffentlichen Website."
+      ]
+    },
+    "1.34.1": {
+      "highlights": [
+        "Luftangriff-Karte mit bündiger Statuszeile und weniger Leerraum.",
+        "Die Hilfe hinter dem Fragezeichen erklärt die Regeln der laufenden Partie."
+      ],
+      "details": [
+        "Status und Freischaltungen stehen direkt unter dem Titel. Flugzeugsymbol, Punkte und Fragezeichen folgen dem Raster der anderen Spielkarten. Sobald ein Angriff bereit ist, erscheint Ziel wählen darunter.",
+        "Die Hilfe erklärt die Freigabe durch einen gewerteten Farbabschluss und bei neuen Partien auch durch 70 bestätigte Felder. Sie zeigt, wie du ein Ziel wählst, wann 5 Punkte abgezogen werden und was die Markierungen auf dem Brett bedeuten."
+      ]
+    }
   }
 }

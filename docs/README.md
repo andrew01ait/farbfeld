@@ -1,6 +1,12 @@
 # Farbfeld documentation
 
-<!-- farbfeld-version: 1.19.4 -->
+<!-- farbfeld-version: 1.34.2 -->
+
+## Client 1.34.2
+
+The public homepage covers the different ways to play, variants and screenshots. [Website and contact flow](flows.md#website-spiel-und-impressum-öffnen) · [Deployment](../deployment.md#public-home-and-imprint)
+
+The game includes installation and offline play, a step-by-step in-app guide, score statistics, shared objectives, fleet play, discovery, color mixing, treasure clues and hidden mines. See the [variant guide](computer-variants.md), [versions](versions.md) and [responsive checks](responsive-qa.md) for prerequisites and tested scope.
 
 [Priorisierte Spielideen](roadmap.md): vom Nutzer festgelegte Reihenfolge mit Battleship an erster Stelle, zwei freien Rängen, ausgeschlossenem Challenge-Code und offener Minenvariante.
 

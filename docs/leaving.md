@@ -1,6 +1,11 @@
 # Eine Partie freiwillig verlassen
 
-<!-- farbfeld-version: 1.19.4 -->
+<!-- farbfeld-version: 1.34.2 -->
+
+## Verlassen kombinierter Varianten 1.21.0
+
+Fester Ausstieg −10 und die letzte aktive Person als Sieger bleiben erhalten. Das gilt auch während der Flottenaufstellung; bei zwei Personen endet die Partie unmittelbar, ohne eine Flotte künstlich zu bestätigen. Bereits erworbene Variantenfakten bleiben gespeichert, vergebene Entdeckerfunde werden durch Ausstieg nicht erneut sammelbar. Ausgestiegene Farbpläne nehmen nicht mehr am Mischen teil. Host-/Relay-Regeln unverändert.
+
 
 ## Gerätelokal verwerfen ohne Verbindung
 

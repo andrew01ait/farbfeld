@@ -12,6 +12,13 @@ test('Alter einzelner Zugang wird übernommen und beim Hinzufügen weiterer Räu
 test('Zwei Instanzen ergänzen Räume ohne die zuvor gespeicherten anderen Zugänge zu überschreiben',()=>{
  const h=fixture(),second=new RoomBook({storage:h.storage});h.book.save(session());second.save(session('BBBB2345','fixture-b'));h.book.save(session('CCCC2345','fixture-c'));assert.equal(second.entries().length,3);
 });
+test('Die Startseite speichert eine Ergebnis-ID für einen autorisierten Raum auch während der Revanche',()=>{
+ const h=fixture(),a=session();h.book.save(a);
+ h.book.update(a.code,a.token,{access:'ok',gameStatus:'playing',resultId:'previous-match',result:{players:['Private scorecard']}});
+ const fresh=new RoomBook({storage:h.storage});
+ assert.equal(fresh.get(a.code).summary.resultId,'previous-match');assert.equal(fresh.get(a.code).summary.result,undefined);
+ h.book.update(a.code,a.token,{access:'denied'});assert.equal(fresh.get(a.code).summary.resultId,undefined);
+});
 test('Entfernen gilt nur für den gewählten Raum; ein alter Legacy-Zeiger setzt ihn nicht wieder ein',()=>{
  const h=fixture(),a=session(),b=session('BBBB2345','fixture-b');h.book.save(a,{activate:true});h.book.save(b);assert(h.book.remove(a.code));h.storage.setItem(LEGACY_ROOM_KEY,JSON.stringify(a));
  assert.equal(h.book.get(a.code),null);assert.equal(h.book.get(b.code).token,b.token);assert.equal(h.book.active().code,b.code);h.book.save(a,{activate:true});assert.equal(h.book.entries().length,2);

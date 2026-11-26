@@ -1,44 +1,54 @@
-import {bonusSetupHtml,bonusOptionHtml,bonusStatusHtml,bonusAnnouncement} from './bonus-ui.js';
-import {BONUS_FEATURE,bonusFieldsEnabled,bonusAwards,validBonusState} from './bonus-fields.js';
-import {mineSetupHtml,mineControlsHtml,mineTargetHtml,playMineBlast,mineDamage,mineDamageHtml,MINE_ANIMATION_MS,mineHelpHtml,mineLobbyHtml} from './mine-ui.js';
+import {ABILITIES,variantsEnabled,VARIANTS_FEATURE,HIDDEN_MINES_FEATURE,applyHiddenMineAction,abilityCharges,applyFleetAction,validVariantState} from './variants.js';
+import {setupOptionHTML,setupOptionIcon,variantSetupHTML,variantLobbyHTML,readVariantOptions,fleetSetupHTML,preparationWaitingHTML,cellVariantHTML,cellVariantLabel,discoveryPanelHTML,mixingPanelHTML,variantHelpHTML,abilitiesHTML,objectivesHTML,objectiveLabel,battlePanelHTML,scoreBreakdownHTML,resultComparisonHTML,playVariantEffects,playGameBanner,colorCompletionBanner,shipSunkBanner,GAME_BANNER_MS} from './variant-ui.js';
+import {bonusSetupHtml,bonusOptionHtml,bonusStatusHtml,bonusAnnouncement,bonusHelpHtml,treasureMoveAnnouncement} from './bonus-ui.js';
+import {BONUS_FEATURE,TREASURE_HUNT_FEATURE,bonusFieldsEnabled,bonusAwards,validBonusState,treasureHuntView} from './bonus-fields.js';
+import {mineSetupHtml,mineControlsHtml,mineTargetHtml,playMineBlast,mineDamage,mineLostMark,MINE_ANIMATION_MS,mineHelpHtml,mineLobbyHtml,hiddenMineSetupHtml,hiddenMineStatusHtml,mineEffect} from './mine-ui.js';
 import {THEMES,themeSymbol,themeMark,themeHeadline} from './themes.js';
-import {BOARD,COLORS,LABELS,SHAPES,STARS,FIRST,LATER,COLS,createGame,availableDice,canAct,resolveChoice,validateCells,applyMove,rollGame,score,rankings,findMove,neighbors,minesEnabled,validMineState,canUseMine,applyMineAttack,MINE_FEATURE,mineBlasts,mineBlastTargets,LEAVE_FEATURE,leaveGame,validLeavingState,FORFEIT_SCORE} from './engine.js';
-import {nextLocalPlayer,mayInspect,playerRole,turnDescription,moveFeedback,ownTurnKey} from './view-state.js';
+import {BOARD,COLORS,LABELS,SHAPES,STARS,FIRST,LATER,COLS,createGame,availableDice,canAct,resolveChoice,validateCells,applyMove,rollGame,score,rankings,findMove,neighbors,minesEnabled,validMineState,canUseMine,applyMineAttack,MINE_FEATURE,MINE_COVERAGE_FEATURE,mineCharges,readyMineCharge,mineBlasts,damageBlasts,mineBlastTargets,LEAVE_FEATURE,leaveGame,validLeavingState,randomInt} from './engine.js';
+import {preparationStep,nextLocalPlayer,mayInspect,playerRole,turnDescription,moveFeedback,ownTurnKey,selectMoveColor,ResultNotice,mineInspectionChange,completedFeaturePanels,FeatureCompletionNotice} from './view-state.js';
 import {HUMAN,COMPUTER,COMPUTER_LEVELS,validComputerDifficulty,computerDifficulty,computerLevel,changeComputerDifficulty,createComputerGame,needsComputerTurn,stepComputer} from './computer.js';
-import {BoardView} from './board-view.js';
+import {BoardView,ShotMapView,PlacementView} from './board-view.js';
 import {createPwa,APP_VERSION} from './pwa.js';
 import {DirectDiagnostics} from './direct-diagnostics.js';
 import {DirectSession} from './direct.js';
 import {DirectUi,directStatus} from './direct-ui.js';
 import {DIRECT_KEY} from './direct-game.js';
-import {isHidden,isScoreHidden,scoreBreakdown,columnStatus,colorAnnouncements,colorCompletionText,HIDDEN_FEATURE} from './game-info.js';
+import {gameResultRecord,stampFinishedGame,validFinishTime,isHidden,isScoreHidden,scoreBreakdown,columnStatus,colorAnnouncements,colorCompletionText,HIDDEN_FEATURE} from './game-info.js';
 import {BOARD_CHOICES as BOARDS,BOARD_FEATURE,RANDOM_BOARD_FEATURE,validGameBoard,boardFor,validBoardId} from './boards.js';
 import {REACTIONS,REACTION_FEATURE,REACTION_EXTRA_FEATURE,REACTION_INTERVAL,VersionTapCounter,ReactionOverlay,bindReactionPress,pickReactionMotion} from './reactions.js';
 import {GameNotifications,describePushDelivery} from './notifications.js';
-import {mergeStats,summarizeStats,summarizeOpponent,statsCategory,validStats} from './stats.js';
+import {mergeStats,summarizeStats,summarizeOpponent,statsCategory,validStats,recentResults,storedResult,resultStandings} from './stats.js';
 import {RoomBook,RoomDrafts,MAX_SAVED_ROOMS,savedGamesPreview,filterSavedGames} from './room-book.js';
 import {RoomConnectionState,connectionLabels,directPlayerStatus,homeRoomStatus,roomPollDelay,RoomPollScheduler} from './room-status.js';
-const CLIENT_FEATURES=[HIDDEN_FEATURE,BOARD_FEATURE,REACTION_FEATURE,REACTION_EXTRA_FEATURE,BONUS_FEATURE,RANDOM_BOARD_FEATURE,MINE_FEATURE,LEAVE_FEATURE];
-const versionTaps=new VersionTapCounter(),reactionOverlay=new ReactionOverlay();
+import {animationPreviewHTML,animationScene,mountAnimationPreview} from './animation-preview.js';
+import {animationGameScene} from './animation-game.js';
+import {tutorialHTML,mountTutorial} from './tutorial.js';
+const CLIENT_FEATURES=[HIDDEN_FEATURE,BOARD_FEATURE,REACTION_FEATURE,REACTION_EXTRA_FEATURE,BONUS_FEATURE,RANDOM_BOARD_FEATURE,MINE_FEATURE,LEAVE_FEATURE,VARIANTS_FEATURE,TREASURE_HUNT_FEATURE,HIDDEN_MINES_FEATURE,MINE_COVERAGE_FEATURE];
+const demoId=window.frameElement?.dataset.animationGame;
+const gameDemo=animationScene(demoId)?animationGameScene(demoId):null;
+const onlineDiagnose=document.body.hasAttribute('data-animation-diagnose');
+const diagnosticApp=Boolean(gameDemo)||onlineDiagnose;
+const versionTaps=new VersionTapCounter(),reactionOverlay=new ReactionOverlay(diagnosticApp?{storage:null}:{});
 let reactionSentAt=-Infinity,lastReactionMotion='',reactionSending=false;
-bindReactionPress(document,{onSend:sendPressedEmoji});
+if(!diagnosticApp)bindReactionPress(document,{onSend:sendPressedEmoji});
 const $=s=>document.querySelector(s),app=$('#app'),dialog=$('#dialog');
+let animationPreviewCleanup=null,tutorialCleanup=null;
 const newId=()=>Array.from(crypto.getRandomValues(new Uint8Array(16)),x=>x.toString(16).padStart(2,'0')).join('');
-const roomBook=new RoomBook(),roomDrafts=new RoomDrafts();
+const roomBook=new RoomBook(diagnosticApp?{storage:null}:{}),roomDrafts=new RoomDrafts();
 const KEY='farbfeld.game.v1',ROOMKEY='farbfeld.room.v1',PREFKEY='farbfeld.prefs.v1',HISTORYKEY='farbfeld.history.v1',STATSKEY='farbfeld.stats.v1';
-function read(key,fallback){try{return JSON.parse(localStorage.getItem(key))??fallback;}catch{return fallback;}}
+function read(key,fallback){if(diagnosticApp&&key!==PREFKEY)return fallback;try{return JSON.parse(localStorage.getItem(key))??fallback;}catch{return fallback;}}
 const prefs={patterns:false,haptics:true,theme:'classic',boardId:'classic',computerDifficulty:'medium',reactionsUnlocked:false,...read(PREFKEY,{})};
 if(!THEMES.some(theme=>theme.id===prefs.theme))prefs.theme='classic';
 if(!validBoardId(prefs.boardId))prefs.boardId='classic';
 if(!validComputerDifficulty(prefs.computerDifficulty))prefs.computerDifficulty='medium';
 function applyTheme(){document.documentElement.dataset.theme=prefs.theme;}
 applyTheme();
-let local=read(KEY,null),room=roomBook.active(),roomState=null,screen='home',viewPid=0,inspectPid=null,handover=false,busy=false,selection=[],choice={ci:null,ni:null,color:null,count:null},offlineReady=false,saveFailed=false,networkError='',animateRoll=false,polling=false,roomAnnounced='',roomAccessDenied=false;
+let local=read(KEY,null),room=roomBook.active(),roomState=null,screen='home',viewPid=0,inspectPid=null,handover=false,busy=false,selection=[],choice={ci:null,ni:null,color:null,count:null,ability:null,delta:1,extraCell:null},offlineReady=false,saveFailed=false,networkError='',animateRoll=false,polling=false,roomAnnounced='',roomAccessDenied=false;
 let history=read(HISTORYKEY,[]),toastTimer;
 let statistics=mergeStats(read(STATSKEY,null),history);
 persist(STATSKEY,statistics);
-let colorNoticeGame='',seenColorNotices=new Set(),bonusNoticeGame='',seenBonusNotices=new Set();
-const boardView=new BoardView(),roomConnection=new RoomConnectionState();
+let colorNoticeGame='',seenColorNotices=new Set(),bonusNoticeGame='',seenBonusNotices=new Set(),treasureReadingSeen='';
+const boardView=new BoardView(),shotMapView=new ShotMapView(),placementView=new PlacementView(),roomConnection=new RoomConnectionState();
 let roomPollFailures=0,roomProgressKey='',roomProgressAt=performance.now(),roomEpoch=0,roomIndexChecked=false,roomIndexAttemptAt=-Infinity,savedRoomsMarkup='';
 const roomSnapshots=new Map();
 const roomPoller=new RoomPollScheduler({run:pollRoom,delay:()=>{
@@ -47,20 +57,26 @@ const roomPoller=new RoomPollScheduler({run:pollRoom,delay:()=>{
  return !room||roomAccessDenied?null:roomPollDelay({visible:true,online:true,screen,game:roomState?.game,playerId:room.playerId,failures:roomPollFailures,idleFor:performance.now()-roomProgressAt,busy:false});
 }});
 
-function noteRoomProgress(game){const key=room?.code+':'+(game?[game.gameId,game.round,game.phase,game.active,game.submitted.join(',')].join(':'):'lobby');if(key!==roomProgressKey){roomProgressKey=key;roomProgressAt=performance.now();}}
+function noteRoomProgress(game){const key=room?.code+':'+(game?[game.gameId,game.round,game.phase,game.active,game.submitted.join(','),game.variants?.battleship?.ready.join(','),game.variants?.hiddenMines?.ready.join(',')].join(':'):'lobby');if(key!==roomProgressKey){roomProgressKey=key;roomProgressAt=performance.now();}}
 
-let discardDirectRequest=null,abortRequest=null,pendingLeave=null,selectionNotice=null,choiceObserver=null,choiceFrame=0,computerTimer=0,nextComputerHidden=false,nextComputerBoard='classic',nextComputerDifficulty='medium',nextComputerMines=false,nextComputerBonus=false,nextSoloBonus=false,mineRequest=null,computerNotBefore=0,mineNoticeGame='',mineWasUnlocked=false,mineUnlockedSeen=new Set(),mineReadyUntil=0,mineBlastGame='',seenMineBlasts=new Set(),computerLevelGameId=null,nextSoloBoard='classic';
+let discardDirectRequest=null,abortRequest=null,pendingLeave=null,selectionNotice=null,choiceObserver=null,choiceFrame=0,computerTimer=0,nextComputerHidden=false,nextComputerBoard='classic',nextComputerDifficulty='medium',nextComputerMines=false,nextComputerBonus=false,nextSoloBonus=false,mineRequest=null,computerNotBefore=0,mineNoticeGame='',mineUnlockedSeen=new Set(),mineReadyUntil=0,mineBlastGame='',seenMineBlasts=new Set(),computerLevelGameId=null,nextSoloBoard='classic';
+let nextComputerVariants={},hiddenMineSlot=0,fleetShip=4,fleetVertical=false,battleMapOpen=false,objectivesOpen=false,hiddenMinePanelOpen=false,variantEffectGame='',variantVolleySeen='',variantMixSeen=0;
+let objectiveClaimsSeen=new Set();
+const featureCompletionNotice=new FeatureCompletionNotice();
+const resultComparisons=new Map(),resultSeenKey='farbfeld.results.seen.v1';
+const resultNotice=new ResultNotice(read(resultSeenKey,[]));let resultPending=null,resultDialog=null;
 let dismissedUpdate='',pwa,pwaInfo={status:'checking',message:'Offline-Dateien werden geprüft …'};
-const notifications=new GameNotifications({onChange:()=>refreshNotificationPanel(),onOpen:value=>openNotificationGame(value)});
+const notifications=diagnosticApp?null:new GameNotifications({onChange:()=>refreshNotificationPanel(),onOpen:value=>openNotificationGame(value)});
 const paths={trash:'M3 6h18M8 6V3h8v3M5 6l1 15h12l1-15M10 10v7m4-7v7',chart:'M4 3v18h17M8 16v-5m5 5V6m5 10v-7',computer:'M6 5h12a2 2 0 0 1 2 2v9H4V7a2 2 0 0 1 2-2M2 20h20M9 9h.01M15 9h.01M9 13h6',help:'M9 9a3 3 0 0 1 6 0c0 2-3 2-3 4m0 4h.01 M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0',download:'M12 3v12m-5-5 5 5 5-5M5 16v5h14v-5',solo:'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8M5 21v-2a7 7 0 0 1 14 0v2',users:'M9 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6M3 21v-3a6 6 0 0 1 12 0v3M17 5a3 3 0 0 1 0 6m2 10v-3a6 6 0 0 0-3-5',wifi:'M3 8a15 15 0 0 1 18 0M6 12a10 10 0 0 1 12 0m-9 4a5 5 0 0 1 6 0m-3 4h.01',check:'m5 12 4 4L19 6',shield:'M12 3 3 7v6c0 5 9 9 9 9s9-4 9-9V7l-9-4m-4 9 3 3 5-6',dice:'M7 3h10a4 4 0 0 1 4 4v10a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4M8 8h.01M16 16h.01M16 8h.01M8 16h.01M12 12h.01',arrow:'M5 12h14m-5-5 5 5-5 5',refresh:'M20 7v5h-5m5 0a8 8 0 1 0-2 6',undo:'M9 5 4 10l5 5M4 10h9a6 6 0 0 1 0 12',bulb:'M9 18h6m-6 3h6M8 14a6 6 0 1 1 8 0l-1 3H9l-1-3',settings:'M4 7h16M4 17h16M8 4v6m8 4v6',share:'M12 16V3m-5 5 5-5 5 5M5 13v8h14v-8',clock:'M12 7v5l3 2M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0',close:'m6 6 12 12M18 6 6 18',copy:'M8 8h12v13H8zM16 8V3H3v13h5',edit:'m16 3 5 5-12 12-6 1 1-6L16 3m-2 2 5 5',eye:'M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12m13 0a3 3 0 1 1-6 0 3 3 0 0 1 6 0'};
 const icon=(name,cls='')=>`<svg class="${cls}" viewBox="0 0 24 24" aria-hidden="true"><path d="${paths[name]||paths.dice}"/></svg>`;
+const bellIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 6-3 6-3 8h18c0-2-3-2-3-8M10 20a2 2 0 0 0 4 0"/></svg>';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const logo=()=>'<img class="brand-icon" src="/icon.svg" alt="" aria-hidden="true" width="36" height="36">';
-function persist(key,data){try{localStorage.setItem(key,JSON.stringify(data));return true;}catch{saveFailed=true;toast('Der Gerätespeicher ist voll. Bitte exportiere deinen Spielstand.');return false;}}
+function persist(key,data){if(diagnosticApp)return true;try{localStorage.setItem(key,JSON.stringify(data));return true;}catch{saveFailed=true;toast('Der Gerätespeicher ist voll. Bitte exportiere deinen Spielstand.');return false;}}
 function saveLocal(){persist(KEY,local);}
 function toast(msg){clearTimeout(toastTimer);$('#toast').textContent=msg;$('#toast').classList.add('visible');toastTimer=setTimeout(()=>$('#toast').classList.remove('visible'),4000);}
 function vibrate(){if(prefs.haptics&&navigator.vibrate)navigator.vibrate(12);}
-function resetSelection(){selectionNotice=null;selection=[];choice={ci:null,ni:null,color:null,count:null};}
+function resetSelection(){selectionNotice=null;selection=[];choice={ci:null,ni:null,color:null,count:null,ability:null,delta:1,extraCell:null};}
 const currentGame=()=>screen==='room'?roomState?.game:screen==='direct'?direct.snapshot?.game:local;
 function myPid(g){if(g.mode==='computer')return HUMAN;if(screen==='direct')return direct.pid;return screen==='room'?g.players.findIndex(p=>p.id===room?.playerId):g.mode==='local'&&g.status==='playing'?nextLocalPlayer(g):viewPid;}
 function displayedPid(g){return inspectPid??myPid(g);}
@@ -81,15 +97,32 @@ function selectionMessage(title,detail){selectionNotice={tone:'warning',title,de
 function syncChoicePanel(){
  const shell=$('.app-shell'),card=$('.dice-card.choosing');if(!shell)return;
  const fixed=card&&getComputedStyle(card).position==='fixed';
+ const jump=$('.game-board-jump'),dock=fixed?card.querySelector('.choice-footer'):null;
+ if(jump&&dock!==jump.closest('.choice-footer')){
+  const focused=document.activeElement===jump;
+  if(dock)dock.append(jump);
+  else $('.game-footer')?.before(jump);
+  if(focused)jump.focus({preventScroll:true});
+ }
  shell.style.setProperty('--choice-panel-space',fixed?Math.ceil(card.getBoundingClientRect().height+24)+'px':'0px');
  const side=$('.side-area');if(side){const viewport=window.visualViewport;const bottom=viewport?viewport.offsetTop+viewport.height:window.innerHeight;shell.style.setProperty('--side-area-height',Math.max(100,bottom-side.getBoundingClientRect().top-8)+'px');}
 }
 function scheduleChoicePanel(){cancelAnimationFrame(choiceFrame);choiceFrame=requestAnimationFrame(()=>{syncChoicePanel();boardView.measure(false);});}
 window.addEventListener('resize',scheduleChoicePanel);
-function header(){return `<header class="topbar"><div class="brand"><button class="brand-home" data-action="home" aria-label="Farbfeld Startseite">${logo()}</button><span class="brand-copy"><button class="brand-home brand-title" data-action="home">Farbfeld</button><button class="app-version" data-action="version-tap" aria-label="App-Version ${APP_VERSION}">v${APP_VERSION}</button></span></div><div class="header-actions"><button class="soft-btn" data-action="install" aria-label="App installieren">${icon('download')}<span class="install-label">App installieren</span></button><button class="icon-btn" data-action="share-game" aria-label="Spiel teilen" title="Spiel teilen">${icon('share')}</button><button class="icon-btn" data-action="rules" aria-label="Spielregeln">${icon('help')}</button><button class="icon-btn" data-action="settings" aria-label="Einstellungen">${icon('settings')}</button></div></header>`;}
+function header(){return `<header class="topbar"><div class="brand"><button class="brand-home" data-action="home" aria-label="Farbfeld Startseite">${logo()}</button><span class="brand-copy"><button class="brand-home brand-title" data-action="home">Farbfeld</button><button class="app-version" data-action="version-tap" aria-label="App-Version ${APP_VERSION}">v${APP_VERSION}</button></span></div><div class="header-actions"><button class="soft-btn" data-action="install" aria-label="App installieren">${icon('download')}<span class="install-label">App installieren</span></button><button class="icon-btn" data-action="share-game" aria-label="Spiel teilen" title="Spiel teilen">${icon('share')}</button><button class="icon-btn" data-action="rules" aria-label="Spielanleitung" title="Spielanleitung">${icon('help')}</button><button class="icon-btn" data-action="settings" aria-label="Einstellungen">${icon('settings')}</button></div></header>`;}
+function releaseNotesList(version,field,limit=Infinity){
+ const upcoming=pwaInfo.status==='update'&&version===pwaInfo.availableVersion;
+ const lines=(upcoming?pwaInfo.availableNotes:pwaInfo.installedNotes?.[version])?.[field];
+ if(!Array.isArray(lines))return '';
+ const items=lines.filter(line=>typeof line==='string'&&line.trim()).slice(0,limit);
+ return items.length?'<ul>'+items.map(line=>'<li>'+esc(line)+'</li>').join('')+'</ul>':'';
+}
 function updateNotice(){
- const visible=pwaInfo.status==='update'&&pwaInfo.availableVersion!==dismissedUpdate;
- return '<div id="app-update" class="app-update" role="status" aria-live="polite" '+(visible?'':'hidden')+'>'+(visible?'<span><strong>Farbfeld '+esc(pwaInfo.availableVersion)+' ist bereit.</strong><small>Bestätigte Züge bleiben gespeichert.</small></span><button data-action="reload-app">Jetzt aktualisieren '+icon('refresh')+'</button><button class="update-later" data-action="dismiss-update" aria-label="Update später durchführen">Später</button>':'')+'</div>';
+ const version=pwaInfo.availableVersion,visible=pwaInfo.status==='update'&&version!==dismissedUpdate;
+ const highlights=visible&&screen==='home'?releaseNotesList(version,'highlights',2):'';
+ const content=visible?`<div class="app-update-copy"><strong>Farbfeld ${esc(version)} ist bereit.</strong>${highlights||'<small>Bestätigte Züge bleiben gespeichert.</small>'}</div>
+ <div class="app-update-actions"><button data-action="reload-app">Jetzt aktualisieren ${icon('refresh')}</button>${highlights?'<button class="update-details" data-action="release-details">Details</button>':''}<button class="update-later" data-action="dismiss-update" aria-label="Update später durchführen">Später</button></div>`:'';
+ return `<div id="app-update" class="app-update${highlights?' has-release-highlights':''}" role="status" aria-live="polite" ${visible?'':'hidden'}>${content}</div>`;
 }
 function miniBoard(){const sample=[7,22,37,52,53,54,39,38,23,8,9,10,24,25,36];return `<div class="hero-art" aria-hidden="true"><div class="spark">✳</div><div class="mini-sheet"><div class="mini-head"><span>DEIN NÄCHSTER GUTER ZUG.</span><span>✦</span></div><div class="mini-grid">${BOARD.map((c,i)=>`<div class="mini-cell" style="background:var(--${c})">${sample.includes(i)?'×':STARS.includes(i)?'☆':''}</div>`).join('')}</div><div class="mini-bottom"><span>FARBEN SAMMELN. FREUDE WÜRFELN.</span><span>+5</span></div></div><div class="art-dice"><div class="art-die color">✳</div><div class="art-die">4</div></div></div>`;}
 const savedRoomsView={filter:'all',query:'',page:0};
@@ -102,7 +135,7 @@ function savedGameModeHTML(mode){
  return '<span class="saved-game-mode" data-game-mode="'+(mode==='room'?'online':'offline')+'" title="'+titles[mode]+'">'+(mode==='room'?'Online':'Offline')+'</span>';
 }
 function savedGameMetaHTML(mode,text){return '<p class="room-card-meta">'+savedGameModeHTML(mode)+'<span aria-hidden="true"> · </span><span>'+esc(text)+'</span></p>';}
-function home(){const best=history.filter(h=>h.mode==='solo').reduce((a,h)=>Math.max(a,h.score),-Infinity);return `${savedRoomsHTML()}<div class="hero"><div class="hero-copy"><div class="pill"><i class="dot"></i> KLEINES SPIEL. GROSSE MÖGLICHKEITEN.</div><h1 class="${prefs.theme==='classic'?'':'theme-headline'}">${themeHeadline(prefs.theme)}</h1><p>Wähle deine Würfel. Verbinde die Farben.<br>Und mach aus kleinen Kreuzen große Punkte.</p></div>${miniBoard()}</div><div class="mode-heading"><span class="eyebrow">WIE MÖCHTEST DU SPIELEN?</span><button class="outline-btn stats-entry" data-action="profile" aria-label="Profil und Statistik öffnen">${icon('chart')}Statistik</button></div><div class="mode-grid"><button class="mode-card solo" data-action="solo"><span class="mode-icon">${icon('solo')}</span><h3>Nur du.</h3><p>30 Würfe. Dein Spielfeld.<br>Wie viel holst du raus?</p><span class="arrow">↗</span></button><button class="mode-card computer" data-action="computer"><span class="mode-icon">${icon('computer')}</span><h3>Gegen den Computer.</h3><p>Du gegen einen automatischen Gegner.<br>Ein Handy. Auch offline.</p><span class="arrow">↗</span></button><button class="mode-card" data-action="together"><span class="mode-icon">${icon('users')}</span><h3>Zusammen.</h3><p>2–6 Personen. Ein Handy<br>oder ein Gerät pro Person.</p><span class="arrow">↗</span></button></div>${history.length?`<div class="home-stats"><span><b>${history.length}</b> Partien gespielt</span>${best!==-Infinity?`<span><b>${best}</b> Solo-Bestwert</span>`:''}</div>`:''}<div class="feature-row"><span>${icon('wifi')}${offlineReady?'Offline bereit':pwaInfo.status==='checking'?'Offline vorbereiten':'Offline prüfen'}</span><span>${icon('check')}Automatisch gespeichert</span><span>${icon('shield')}Ohne Werbung</span></div><footer class="footer"><span>Eine persönliche Umsetzung nach „Noch mal!“<br>Spielidee: Inka & Markus Brand · Schmidt Spiele</span><button data-action="about">Über das Spiel ↗</button></footer>`;}
+function home(){const best=history.filter(h=>h.mode==='solo').reduce((a,h)=>Math.max(a,h.score),-Infinity);return `${savedRoomsHTML()}<div class="hero"><div class="hero-copy"><div class="pill"><i class="dot"></i> KLEINES SPIEL. GROSSE MÖGLICHKEITEN.</div><h1 class="${prefs.theme==='classic'?'':'theme-headline'}">${themeHeadline(prefs.theme)}</h1><p>Wähle deine Würfel. Verbinde die Farben.<br>Und mach aus kleinen Kreuzen große Punkte.</p></div>${miniBoard()}</div><div class="mode-heading"><span class="eyebrow">WIE MÖCHTEST DU SPIELEN?</span><button class="outline-btn stats-entry" data-action="profile" aria-label="Profil und Statistik öffnen">${icon('chart')}Statistik</button></div><div class="mode-grid"><button class="mode-card solo" data-action="solo"><span class="mode-icon">${icon('solo')}</span><h3>Nur du.</h3><p>30 Würfe. Dein Spielfeld.<br>Wie viel holst du raus?</p><span class="arrow">↗</span></button><button class="mode-card computer" data-action="computer"><span class="mode-icon">${icon('computer')}</span><h3>Gegen den Computer.</h3><p>Du gegen einen automatischen Gegner.<br>Ein Handy. Auch offline.</p><span class="arrow">↗</span></button><button class="mode-card" data-action="together"><span class="mode-icon">${icon('users')}</span><h3>Zusammen.</h3><p>2–6 Personen. Ein Handy<br>oder ein Gerät pro Person.</p><span class="arrow">↗</span></button></div>${history.length?`<div class="home-stats"><span><b>${history.length}</b> Partien gespielt</span>${best!==-Infinity?`<span><b>${best}</b> Solo-Bestwert</span>`:''}</div>`:''}<div class="feature-row"><span>${icon('wifi')}${offlineReady?'Offline bereit':pwaInfo.status==='checking'?'Offline vorbereiten':'Offline prüfen'}</span><span>${icon('check')}Automatisch gespeichert</span><span>${icon('shield')}Ohne Werbung</span></div><footer class="footer"><span>Eine persönliche Umsetzung nach „Noch mal!“<br>Spielidee: Inka & Markus Brand · Schmidt Spiele</span><nav class="app-footer-links" aria-label="Farbfeld-Website"><a href="/">Website</a><a href="/impressum">Impressum</a><button data-action="about">Über das Spiel</button></nav></footer>`;}
 function roomHomeStatus(entry=room){
  const data=entry?.summary;
  if(data?.access==='missing')return {kind:'unknown',text:'Nicht mehr vorhanden · Zugang entfernen oder neuen Raum erstellen',button:'Öffnen'};
@@ -128,7 +161,7 @@ function savedGameItems(){
   const pid=local.mode==='local'?nextLocalPlayer(local):0;
   items.push({key:'local',kind:'local',mode:'offline',needsAction:!!local.players[pid]&&!local.players[pid].left&&(canAct(local,pid)||local.phase==='roll'&&local.active===pid),searchText:[local.mode==='solo'?'Solo':local.mode==='computer'?'Computer':'Ein Handy',...local.players.map(p=>p.name)].join(' ')});
  }
- if(direct.saved){const g=direct.snapshot.game;items.push({key:'direct',kind:'direct',mode:'offline',needsAction:!!g&&direct.ready&&!direct.pending&&!g.players[direct.pid]?.left&&(canAct(g,direct.pid)||g.status==='playing'&&g.phase==='roll'&&g.active===direct.pid),searchText:[direct.snapshot.roomName||'Direktpartie',...direct.snapshot.members.map(p=>p.name)].join(' ')});}
+ if(direct.saved){const g=direct.snapshot.game;items.push({key:'direct',kind:'direct',mode:'offline',needsAction:direct.ready&&!direct.pending&&homeRoomStatus(g,direct.snapshot.members[direct.pid]?.id).kind==='turn',searchText:[direct.snapshot.roomName||'Direktpartie',...direct.snapshot.members.map(p=>p.name)].join(' ')});}
  return items;
 }
 function localResumeHTML(){
@@ -137,10 +170,71 @@ function localResumeHTML(){
  return '<article class="resume local-resume"><div class="room-resume-info"><strong>'+title+'</strong>'+savedGameMetaHTML('local',detail)+participantsHTML(local.players.map(p=>({name:p.name,host:false})))+'<small>'+(isScoreHidden(local)?'Verdeckter Punktestand':score(local.players[0],local).total+' Punkte')+'</small></div><div class="room-card-actions"><button class="icon-btn room-open" data-action="continue" aria-label="Gespeicherte '+(local.mode==='solo'?'Solo-Partie':local.mode==='computer'?'Computerpartie':'Ein-Handy-Partie')+' öffnen">'+icon('arrow')+'</button></div></article>';
 }
 function savedGameCardHTML(item,manage=false){return item.kind==='room'?roomResumeHTML(item.entry,manage):item.kind==='direct'?directResumeHTML():localResumeHTML();}
+const latestFinished=(game,previous)=>game?.status==='finished'?game:previous;
+const roomResultContext=(code,playerId)=>'room:'+code+':'+playerId;
+const directResultContext=()=> 'direct:'+direct.snapshot?.sessionId+':'+direct.pid;
+const resultTitles={room:'Spielraum',direct:'Direktpartie',local:'Partie an einem Handy',solo:'Solo-Partie',computer:'Gegen den Computer'};
+const resultOutcomes={win:'Sieg',loss:'Niederlage',shared:'Geteilter Sieg',forfeit:'Niederlage · ausgestiegen',solo:'Solo abgeschlossen',unknown:'Endstand'};
+const resultDateFormat=new Intl.DateTimeFormat('de-AT',{dateStyle:'short',timeStyle:'short'});
+function gameNotices(items=savedGameItems()){
+ const sources=new Map();
+ for(const {kind,entry} of items){
+  if(kind!=='room'||entry.summary?.access!=='ok')continue;
+  const context=roomResultContext(entry.code,entry.playerId);
+  const {lastResult}=roomSnapshots.get(entry.code+':'+entry.playerId)||{};
+  for(const id of [entry.summary.resultId,lastResult?.gameId])if(id)sources.set(id,{kind,code:entry.code,context});
+ }
+ if(local?.status==='finished'&&local.gameId)sources.set(local.gameId,{kind:'local',context:'local'});
+ for(const game of [direct.snapshot?.game,direct.snapshot?.lastResult]){
+  if(game?.status==='finished')sources.set(game.gameId,{kind:'direct',context:directResultContext()});
+ }
+ const results=recentResults(history).map(result=>{
+  const source=sources.get(result.id),game={mode:result.mode,gameId:result.id,status:'finished'};
+  const unseen=source?resultNotice.ready(game,source.context):result.completed&&!resultNotice.seenInAnyContext(game);
+  return {...result,...source,game,unseen,heading:result.title||resultTitles[result.mode]};
+ });
+ return {openTurns:items.filter(item=>item.needsAction).length,unseen:results.filter(item=>item.unseen).length,results};
+}
+const openTurnsLabel=count=>count===0?'Kein Zug offen':count===1?'1 Zug offen':count+' Züge offen';
+function gameNoticeButton({unseen}){
+ const label='Ergebnisse'+(unseen?' · '+unseen+' '+(unseen===1?'neues Ergebnis':'neue Ergebnisse'):'');
+ return '<button class="text-btn game-notice-button" data-action="game-notices" aria-label="'+label+'" title="'+label+'">'+bellIcon+(unseen?'<b class="game-notice-badge" aria-hidden="true">'+unseen+'</b>':'')+'</button>';
+}
+function resultTimeHTML(result){
+ const time=new Date(result.finishedAt??result.date);
+ return (result.finishedAt?'':'Erfasst ')+`<time datetime="${time.toISOString()}">${resultDateFormat.format(time)}</time>`;
+}
+function gameNoticeContent({results}){
+ if(!results.length)return '<p>Hier erscheinen die Ergebnisse beendeter Partien.</p>';
+ return '<ul class="game-notice-list" aria-label="Partieergebnisse">'+results.map(item=>{
+  const participants=!item.title&&['room','direct','local'].includes(item.mode)?item.players.map(p=>esc(p.name)).join(', '):'';
+  const ownName=item.mode==='local'?item.players[item.ownPid]?.name:'';
+  return `<li><button class="game-notice-row" data-action="open-notice-result" data-game-id="${esc(item.id)}"><span class="game-notice-meta"><strong>${esc(item.heading)}</strong>${participants?'<small>'+participants+'</small>':''}<small>${resultTimeHTML(item)}${item.unseen?' · Neu':''}</small></span><span class="game-notice-outcome" data-outcome="${item.outcome}"><strong>${resultOutcomes[item.outcome]}</strong>${ownName?'<small>Für '+esc(ownName)+'</small>':''}</span>${icon('arrow')}</button></li>`;
+ }).join('')+'</ul>';
+}
+function showGameNotices(){
+ openModal('Ergebnisse','<div id="game-notice-content">'+gameNoticeContent(gameNotices())+'</div>','game-notices');
+ dialog.scrollTop=0;
+}
 function savedRoomsHTML(){
- const items=savedGameItems();if(!items.length)return '<section id="saved-rooms"></section>';
- const preview=savedGamesPreview(items),otherTurns=items.filter(e=>e.needsAction).length-preview.filter(e=>e.needsAction).length;
- return '<section id="saved-rooms" class="saved-rooms" aria-label="Gespeicherte Partien und Spielräume"><div class="saved-rooms-heading"><h2>Deine Räume <small>'+items.length+'</small></h2><button class="text-btn" data-action="manage-rooms">Alle Räume</button><button class="outline-btn" data-action="room-setup" aria-label="Raum hinzufügen" title="Raum hinzufügen">'+icon('users')+'<span class="saved-room-add-label">Raum hinzufügen</span></button></div><div class="saved-room-list">'+preview.map(item=>savedGameCardHTML(item)).join('')+'</div>'+(otherTurns?'<p class="saved-rooms-other-turns" role="status">Weitere '+otherTurns+' '+(otherTurns===1?'Partie wartet':'Partien warten')+' auf deinen Zug.</p>':'')+(items.length>preview.length?'<button class="outline-btn saved-rooms-more" data-action="manage-rooms">Alle '+items.length+' Partien anzeigen</button>':'')+'</section>';
+ const items=savedGameItems(),notices=gameNotices(items);if(!items.length&&!notices.results.length)return '<section id="saved-rooms"></section>';
+ const preview=savedGamesPreview(items),otherTurns=notices.openTurns-preview.filter(e=>e.needsAction).length;
+ return `<section id="saved-rooms" class="saved-rooms" aria-label="Gespeicherte Partien und Spielräume">
+  <div class="saved-rooms-heading">
+   <div class="saved-rooms-title">
+    <h2>Deine Räume</h2>
+    ${items.length?`<span class="saved-rooms-turns">${openTurnsLabel(notices.openTurns)}</span>`:''}
+   </div>
+   <div class="saved-rooms-actions">
+    ${gameNoticeButton(notices)}
+    ${items.length?'<button class="text-btn" data-action="manage-rooms">Alle Räume</button>':''}
+    <button class="outline-btn" data-action="room-setup" aria-label="Raum hinzufügen" title="Raum hinzufügen">${icon('users')}<span class="saved-room-add-label">Raum hinzufügen</span></button>
+   </div>
+  </div>
+  <div class="saved-room-list">${preview.map(item=>savedGameCardHTML(item)).join('')}</div>
+  ${otherTurns?`<p class="saved-rooms-other-turns" role="status">Weitere ${otherTurns} ${otherTurns===1?'Partie wartet':'Partien warten'} auf deinen Zug.</p>`:''}
+  ${items.length>preview.length?`<button class="outline-btn saved-rooms-more" data-action="manage-rooms">Alle ${items.length} Partien anzeigen</button>`:''}
+ </section>`;
 }
 function roomManagerResultsHTML(){
  const result=filterSavedGames(savedGameItems(),savedRoomsView);savedRoomsView.page=result.page;
@@ -161,7 +255,7 @@ function rememberRoomSnapshot(data,session=room){
  const pid=data.game?.players.findIndex(player=>player.id===session.playerId)??-1;
  roomSnapshots.set(session.code+':'+session.playerId,data);
  const previous=roomBook.get(session.code);if(previous?.token!==session.token)return;
- if(!roomBook.update(session.code,session.token,{access:'ok',roomName:data.roomName||'',memberCount:data.members?.length,participants:data.members?.map(m=>({name:m.name,host:m.id===data.hostId})),gameStatus:data.game?.status||'lobby',round:data.game?.round||0,version:data.version,turn:homeRoomStatus(data.game,session.playerId),...(data.cleanupAt!==undefined?{cleanupAt:data.cleanupAt,lastUsedAt:data.lastUsedAt,cleanupDue:data.cleanupDue}:{})}))toast('Der Raumzugang konnte nicht auf diesem Gerät gespeichert werden.');
+ if(!roomBook.update(session.code,session.token,{access:'ok',roomName:data.roomName||'',memberCount:data.members?.length,participants:data.members?.map(m=>({name:m.name,host:m.id===data.hostId})),gameStatus:data.game?.status||'lobby',resultId:latestFinished(data.game,data.lastResult)?.gameId,round:data.game?.round||0,version:data.version,turn:homeRoomStatus(data.game,session.playerId),...(data.cleanupAt!==undefined?{cleanupAt:data.cleanupAt,lastUsedAt:data.lastUsedAt,cleanupDue:data.cleanupDue}:{})}))toast('Der Raumzugang konnte nicht auf diesem Gerät gespeichert werden.');
  if(room?.code===session.code&&room.token===session.token)room.roomName=data.roomName||'';
 }
 async function openSavedRoom(code){
@@ -175,10 +269,48 @@ async function openSavedRoom(code){
   const data=await api('open',{},session);if(epoch!==roomEpoch)return;
   roomState=data;roomAnnounced=session.token;roomConnection.receive(session.code,data.presence);rememberRoomSnapshot(data,session);noteRoomProgress(data.game);
   const pid=data.game?.players.findIndex(player=>player.id===session.playerId)??-1,draft=roomDrafts.restore(code+':'+session.playerId,data.game,pid);if(draft){choice=draft.choice;selection=draft.cells;}
-  if(data.game)recordResult(data.game);
+  recordRoomResults(data);
   reactionOverlay.receiveRoom(data.reactions||[],session.code+':'+(data.game?.gameId||'')+':'+session.playerId);
  }catch(error){if(epoch!==roomEpoch)return;roomConnection.fail(code);networkError=error.status?error.message:'Der Spielraum ist gerade nicht erreichbar. Bitte prüfe deine Internetverbindung.';if(error.status===403||error.status===404){roomAccessDenied=true;roomState=null;roomBook.update(code,session.token,{access:error.status===404?'missing':'denied'});}toast(networkError);}
  finally{if(epoch===roomEpoch){busy=false;render(true);}}
+}
+function resumeLocalGame(){
+ if(!local)return;
+ screen='game';viewPid=local.mode==='computer'?HUMAN:Math.max(0,nextLocalPlayer(local));inspectPid=null;handover=local.mode==='local'&&local.status==='playing';
+ resetSelection();closeModal();render(true);window.scrollTo(0,0);
+}
+function storedStandingsHTML(result,label){
+ const standings=resultStandings(result).map(p=>{
+  const status=p.left?'Ausgestiegen':p.hidden?'Punktestand verdeckt':p.jokers+' Joker übrig';
+  const own=p.own?(result.mode==='local'?' · Profil':' · Du'):'';
+  return `<li class="${p.own?'own':''}"><span class="result-place" ${p.place===null?'aria-hidden="true"':'aria-label="Platz '+p.place+'"'}>${p.place??'–'}</span><span class="result-player"><strong>${esc(p.name)}</strong><small>${status}${own}</small></span><span class="result-points">${p.hidden?'':`<b>${p.total}</b><small>Punkte</small>`}</span></li>`;
+ }).join('');
+ return `<ol class="result-ranking stored-result-ranking" aria-label="${label}">${standings}</ol>`;
+}
+function showStoredResult(result){
+ openModal('Endstand',`<p class="stored-result-meta"><strong>${esc(result.heading)} · ${resultOutcomes[result.outcome]}</strong><small>${resultTimeHTML(result)}</small></p>${storedStandingsHTML(result,'Endstand')}<button class="text-btn history-back" data-action="game-notices">← Zu den Ergebnissen</button>`,'stored-result');
+ if(resultNotice.claim(result.game,result.context||'history'))persist(resultSeenKey,[...resultNotice.seen]);
+ refreshSavedRooms();
+ dialog.scrollTop=0;
+ const heading=dialog.querySelector('#modal-title');heading.tabIndex=-1;heading.focus({preventScroll:true});
+}
+async function openGameNotice({gameId}){
+ if(screen!=='home'||busy)return;
+ const result=gameNotices().results.find(item=>item.id===gameId);
+ if(!result)return;
+ const {kind,code}=result;
+ if(kind==='room'&&navigator.onLine!==false){
+  await openSavedRoom(code);
+  if(screen!=='room'||room?.code!==code)return;
+ }else if(kind==='direct'&&direct.saved){
+  closeModal();screen='direct';inspectPid=null;handover=false;resetSelection();render(true);window.scrollTo(0,0);
+ }else if(kind==='local'&&local?.gameId===gameId&&local.status==='finished')resumeLocalGame();
+ if(screen!=='home'){
+  const exact=[currentGame(),previousResult()].find(game=>game?.status==='finished'&&game.gameId===gameId&&myPid(game)>=0);
+  if(exact){showResults(exact);return;}
+  screen='home';resetSelection();render();
+ }
+ showStoredResult(result);
 }
 async function pollSavedRooms(force=false){
  if(polling||busy||document.hidden||navigator.onLine===false||screen!=='home'&&!(force&&dialog.open&&dialog.dataset.panel==='rooms'))return;
@@ -187,14 +319,27 @@ async function pollSavedRooms(force=false){
  polling=true;roomIndexAttemptAt=Date.now();roomPoller.stop();const epoch=roomEpoch,activeCode=room?.code;
  try{
   const data=await api('index',{rooms:sessions.map(entry=>({code:entry.code,token:entry.token})),activeCode},null);
-  for(const item of data.rooms||[]){const session=sessions.find(entry=>entry.code===item.code),stored=roomBook.get(item.code);if(!session||stored?.token!==session.token||stored.summary?.version>item.version)continue;roomBook.update(item.code,session.token,item);if(item.result)recordRoomSummaryResult(item.result);}
+  for(const item of data.rooms||[]){
+   const session=sessions.find(entry=>entry.code===item.code),stored=roomBook.get(item.code);
+   if(!session||stored?.token!==session.token||stored.summary?.version>item.version)continue;
+   roomBook.update(item.code,session.token,{...item,resultId:item.result?.id});
+   for(const result of [item.previousResult,item.result])recordRoomSummaryResult(result,item.roomName);
+  }
   if(screen==='home')notifications.seeRooms(data.rooms||[]);
   roomIndexChecked=true;roomPollFailures=0;
   if(screen==='home'&&epoch===roomEpoch){if(data.reactionRoom===activeCode)reactionOverlay.receiveRoom(data.reactions||[],activeCode+':'+(data.reactionGameId||'')+':'+data.reactionPlayerId);refreshSavedRooms();}
  }catch{roomPollFailures++;if(screen==='home')refreshSavedRooms();}
  finally{polling=false;roomPoller.refresh();}
 }
-function refreshSavedRooms(){const container=$('#saved-rooms');if(container&&screen==='home'){const markup=savedRoomsHTML();if(markup!==savedRoomsMarkup){container.outerHTML=markup;savedRoomsMarkup=markup;}}refreshRoomManagerResults();}
+function refreshSavedRooms(){
+ const container=$('#saved-rooms');
+ if(container&&screen==='home'){
+  const markup=savedRoomsHTML();if(markup!==savedRoomsMarkup){container.outerHTML=markup;savedRoomsMarkup=markup;}
+  const content=dialog.open&&dialog.querySelector('#game-notice-content');
+  if(content){const markup=gameNoticeContent(gameNotices());if(content.innerHTML!==markup)content.innerHTML=markup;}
+ }
+ refreshRoomManagerResults();
+}
 function requestForgetRoom(code){
  if(!roomBook.get(code))return;
  openModal('Raum ausblenden?','<p>Nur der gespeicherte Zugang zu diesem Raum wird auf diesem Gerät entfernt. Andere gespeicherte Räume bleiben erhalten. Ohne diesen Zugang kannst du in eine laufende Partie nicht wieder einsteigen.</p><button class="primary" data-action="confirm-forget-room" data-code="'+code+'">Raum auf diesem Gerät entfernen</button><button class="outline-btn" data-action="manage-rooms">Zurück zu den Räumen</button>');
@@ -232,7 +377,7 @@ function cancellationNotice(value){return value?'<div class="cancel-notice" role
 function directLobbyHTML(){
   const members=direct.snapshot?.members||[],host=direct.pid===0,online=direct.online;
   if(!direct.snapshot)return '<section class="lobby direct-lobby"><h1>Direktverbindung vorbereiten.</h1><p>Noch kein lokaler Spielerraum erstellt.</p></section>';
-  return '<section class="lobby direct-lobby">'+cancellationNotice(direct.snapshot?.lastAbort)+'<span class="eyebrow">OFFLINE – MEHRERE HANDYS · 2–6 PERSONEN</span><h1 class="room-lobby-title">'+esc(direct.snapshot.roomName||'Euer direktes Spiel.')+'</h1>'+(host?'<button class="text-btn room-rename" data-action="rename-direct">'+icon('edit')+'Name der Direktpartie ändern</button>':'')+'<p class="direct-status">'+esc(directStatus(direct))+'</p><div class="lobby-players">'+members.map((m,i)=>'<div class="'+(online.includes(i)?'peer-online':'peer-offline')+'"><span class="avatar">'+esc((m.name||'?')[0])+'</span><strong>'+esc(m.name||'Person '+(i+1)+' fehlt noch')+connectionIndicator(i)+'</strong><small>'+((i===0?'Gastgeber':'Mitspieler')+(i===direct.pid?' · Du':''))+' · '+(online.includes(i)?'Verbunden':'Noch nicht verbunden')+'</small>'+(host&&i>0&&!online.includes(i)?'<button class="text-btn" data-action="direct-reconnect-member" data-pid="'+i+'">'+(m.name?'Erneut koppeln':'Einladen')+'</button>':'')+'</div>').join('')+'</div>'+(host&&!direct.ready?'<p class="caption">Nach dem Koppeln: Spielbrett, Minen und Bonusfelder wählen.</p>':'')+boardPicker(direct.snapshot.boardId||'classic','direct',host&&direct.ready&&!direct.pending,direct.manager?.supportsBoards!==false,direct.manager?.supportsRandomBoard!==false)+hiddenOptionHTML(!!direct.snapshot.hiddenScores,host,'direct-hidden',direct.ready)+mineLobbyHtml(direct.snapshot.mines===true,host&&direct.ready,'direct-mines',direct.manager?.supportsMines!==false)+bonusOptionHtml(direct.snapshot.bonusFields===true,host&&direct.ready,'direct-bonus',direct.manager?.supportsBonusFields!==false)+(host?'<div class="direct-lobby-actions"><button class="primary" data-action="direct-start" '+(direct.ready?'':'disabled')+'>Mit '+members.length+' Personen starten</button>'+(members.length<6?'<button class="outline-btn" data-action="direct-invite">Weitere Person einladen</button>':'<p>Alle sechs Plätze sind belegt.</p>')+'</div><p class="caption">Erst alle Mitspielenden koppeln, dann starten. Pro Person einmal Angebot und Antwort austauschen oder einen eigenen Kopplungscode verwenden.</p>':'<p>Der Gastgeber lädt die Gruppe ein und startet die Partie, sobald alle verbunden sind.</p>')+(!direct.ready&&(host||!online.includes(direct.pid))?'<button class="outline-btn" data-action="'+(direct.pairing?'direct-show-pair':'direct-resume')+'">'+(direct.pairing?'QR-Kopplung zeigen':host?'Fehlendes Handy koppeln':'Mit Gastgeber erneut koppeln')+'</button>':!direct.ready?'<p>Dein Handy ist verbunden. Warte, bis die fehlenden Handys gekoppelt sind.</p>':'')+'<div class="info-box">Alle Handys im gleichen WLAN oder Hotspot. Nach der Kopplung braucht die Partie kein Internet. Fehlt eine Verbindung, pausiert die gesamte Gruppe; bestätigte Züge bleiben auf jedem Handy gespeichert. Der Gastgeber hält seine App während der Partie offen.</div><button class="outline-btn" data-action="direct-disconnect">Verbindungen schließen · Spielstand behalten</button><button class="outline-btn danger-btn" data-action="direct-discard">'+(direct.snapshot?.game?.status==='playing'?'Direktpartie verlassen':'Direktzugang entfernen')+'</button></section>';
+  return '<section class="lobby direct-lobby">'+cancellationNotice(direct.snapshot?.lastAbort)+'<span class="eyebrow">OFFLINE – MEHRERE HANDYS · 2–6 PERSONEN</span><div class="room-lobby-heading"><h1 class="room-lobby-title">'+esc(direct.snapshot.roomName||'Euer direktes Spiel.')+'</h1>'+previousResultButton()+'</div>'+(host?'<button class="text-btn room-rename" data-action="rename-direct">'+icon('edit')+'Name der Direktpartie ändern</button>':'')+'<p class="direct-status">'+esc(directStatus(direct))+'</p><div class="lobby-players">'+members.map((m,i)=>'<div class="'+(online.includes(i)?'peer-online':'peer-offline')+'"><span class="avatar">'+esc((m.name||'?')[0])+'</span><strong>'+esc(m.name||'Person '+(i+1)+' fehlt noch')+connectionIndicator(i)+'</strong><small>'+((i===0?'Gastgeber':'Mitspieler')+(i===direct.pid?' · Du':''))+' · '+(online.includes(i)?'Verbunden':'Noch nicht verbunden')+'</small>'+(host&&i>0&&!online.includes(i)?'<button class="text-btn" data-action="direct-reconnect-member" data-pid="'+i+'">'+(m.name?'Erneut koppeln':'Einladen')+'</button>':'')+'</div>').join('')+'</div>'+(host&&!direct.ready?'<p class="caption">Nach dem Koppeln: Spielbrett, Luftangriff und Schatzsuche wählen.</p>':'')+boardPicker(direct.snapshot.boardId||'classic','direct',host&&direct.ready&&!direct.pending,direct.manager?.supportsBoards!==false,direct.manager?.supportsRandomBoard!==false)+hiddenOptionHTML(!!direct.snapshot.hiddenScores,host,'direct-hidden',direct.ready)+mineLobbyHtml(direct.snapshot.mines===true,host&&direct.ready,'direct-mines',direct.manager?.supportsMines!==false,[],direct.manager?.supportsMineCoverage===true)+bonusOptionHtml(direct.snapshot.bonusFields===true,host&&direct.ready,'direct-bonus',direct.ready&&direct.manager?.supportsTreasureHunt===true,[],direct.ready)+variantLobbyHTML(direct.snapshot.variants,{host,enabled:direct.ready&&!direct.pending,supported:direct.manager?.supportsVariants===true,hiddenMinesSupported:direct.manager?.supportsHiddenMines===true,players:members.length,paired:direct.ready,context:'direct'})+(host?'<div class="direct-lobby-actions"><button class="primary" data-action="direct-start" '+(direct.ready?'':'disabled')+'>Mit '+members.length+' Personen starten</button>'+(members.length<6?'<button class="outline-btn" data-action="direct-invite">Weitere Person einladen</button>':'<p>Alle sechs Plätze sind belegt.</p>')+'</div><p class="caption">Erst alle Mitspielenden koppeln, dann starten. Pro Person einmal Angebot und Antwort austauschen oder einen eigenen Kopplungscode verwenden.</p>':'<p>Der Gastgeber lädt die Gruppe ein und startet die Partie, sobald alle verbunden sind.</p>')+(!direct.ready&&(host||!online.includes(direct.pid))?'<button class="outline-btn" data-action="'+(direct.pairing?'direct-show-pair':'direct-resume')+'">'+(direct.pairing?'QR-Kopplung zeigen':host?'Fehlendes Handy koppeln':'Mit Gastgeber erneut koppeln')+'</button>':!direct.ready?'<p>Dein Handy ist verbunden. Warte, bis die fehlenden Handys gekoppelt sind.</p>':'')+'<div class="info-box">Alle Handys im gleichen WLAN oder Hotspot. Nach der Kopplung braucht die Partie kein Internet. Fehlt eine Verbindung, pausiert die gesamte Gruppe; bestätigte Züge bleiben auf jedem Handy gespeichert. Der Gastgeber hält seine App während der Partie offen.</div><button class="outline-btn" data-action="direct-disconnect">Verbindungen schließen · Spielstand behalten</button><button class="outline-btn danger-btn" data-action="direct-discard">'+(direct.snapshot?.game?.status==='playing'?'Direktpartie verlassen':'Direktzugang entfernen')+'</button></section>';
 }
 function directConnectionHTML(){
  const waiting=direct.pid!==0&&direct.online.includes(direct.pid)&&!direct.ready;
@@ -240,13 +385,13 @@ function directConnectionHTML(){
  return '<div class="direct-connection is-paused" role="status"><span><strong><i class="dot" aria-hidden="true"></i>'+esc(directStatus(direct))+'</strong><small>'+(waiting?'Dein Handy ist verbunden. Der Gastgeber koppelt die fehlenden Handys.':'Bestätigte Züge bleiben gespeichert.')+'</small></span>'+(waiting?'':'<button data-action="'+(direct.pairing?'direct-show-pair':'direct-resume')+'">'+(direct.pairing?'QR zeigen':'Neu koppeln')+'</button>')+'</div>';
 }
 function markSymbol(){return themeMark(prefs.theme);}
-function hiddenSetup(checked=false){return '<label class="hidden-choice"><input type="checkbox" id="hidden-scores" '+(checked?'checked':'')+'><span><strong>Verdeckter Punktestand</strong><small>Nur dein Blatt sichtbar · alle Punkte erst am Spielende.</small></span></label>';}
-function hiddenOptionHTML(enabled,host,action,available=true){return '<div class="hidden-option"><div><strong>'+(enabled?'Verdeckter Punktestand':'Offener Punktestand')+'</strong><p>'+(enabled?'Nur dein Blatt ist sichtbar. Gegnerblätter und alle Punkte erst am Spielende.':'Ihr könnt Blätter und Punkte während der Partie ansehen.')+'</p></div>'+(host?'<button class="toggle '+(enabled?'on':'')+'" role="switch" aria-label="Verdeckter Punktestand" aria-checked="'+enabled+'" data-action="'+action+'" '+(available?'':'disabled')+'></button>':'')+'</div>';}
+function hiddenSetup(checked=false){return setupOptionHTML({id:'hidden-scores',type:'hidden',title:'Verdeckter Punktestand',description:'Nur dein Blatt sichtbar · alle Punkte erst am Spielende.',checked,className:'hidden-choice'});}
+function hiddenOptionHTML(enabled,host,action,available=true){return '<div class="hidden-option"><span class="setup-icon" aria-hidden="true">'+setupOptionIcon('hidden')+'</span><div class="setup-copy"><strong>'+(enabled?'Verdeckter Punktestand':'Offener Punktestand')+'</strong><p>'+(enabled?'Nur dein Blatt ist sichtbar. Gegnerblätter und alle Punkte erst am Spielende.':'Ihr könnt Blätter und Punkte während der Partie ansehen.')+'</p></div>'+(host?'<button class="toggle '+(enabled?'on':'')+'" role="switch" aria-label="Verdeckter Punktestand" aria-checked="'+enabled+'" data-action="'+action+'" '+(available?'':'disabled')+'></button>':'')+'</div>';}
 function scoreCardsHTML(g){
  const own=myPid(g);
  return '<p class="score-help">'+(isScoreHidden(g)?'Verdeckte Partie: Alle Punktestände und Aufschlüsselungen werden erst am Spielende aufgedeckt.':'Alle bestätigten Punkte. Neue Spalten und Farben werden nach dem gemeinsamen Wurf gewertet.')+'</p>'+g.players.map((player,pid)=>{
   const s=scoreBreakdown(g,pid,own);if(s?.left)return '<section class="score-card"><h3>'+esc(s.name)+'</h3><b>−10 Punkte</b><p>Partie freiwillig verlassen.</p></section>';if(!s)return '<section class="score-card hidden-score"><h3>'+esc(player.name)+(pid===own&&player.name!=='Du'?' · Du':'')+'</h3><b>Verdeckt</b><p>'+(pid===own?'Dein Punktestand wird am Spielende aufgedeckt.':'Spielblatt und Punkte werden am Spielende aufgedeckt.')+'</p></section>';
-  return '<section class="score-card"><div class="score-card-head"><h3>'+esc(s.name)+(pid===own&&s.name!=='Du'?' · Du':'')+'</h3><b>'+s.total+' <small>Punkte</small></b></div><div class="result-details"><div>Spalten<b>+'+s.columns+'</b></div><div>Farben<b>+'+s.colors+'</b></div><div>Joker<b>+'+s.jokers+'</b></div><div>Offene Sterne<b>−'+s.penalty+'</b></div>'+(s.bonus!==undefined?'<div class="bonus-score">Bonusfelder<b>+'+s.bonus+'</b></div>':'')+(s.mineCost?'<div class="mine-cost">Minen-Einsatz<b>−'+s.mineCost+'</b></div>':'')+'</div><p class="score-formula">'+s.columns+' + '+s.colors+' + '+s.jokers+(s.bonus!==undefined?' + '+s.bonus:'')+' − '+s.penalty+(s.mineCost?' − '+s.mineCost:'')+' = <strong>'+s.total+'</strong> · '+s.stars+' offene Sterne</p><details><summary>Spalten und Farben im Detail</summary><div class="score-columns">'+s.columnDetails.map(c=>'<span class="'+(c.points!==null?'earned':'')+'">'+c.column+'<b>'+(c.points===null?'–':'+'+c.points)+'</b></span>').join('')+'</div><div class="score-colors">'+s.colorDetails.map(c=>'<span><i class="color-dot" data-color="'+c.color+'"></i>'+LABELS[c.color]+': <b>'+(c.points===null?'offen':'+'+c.points)+'</b></span>').join('')+'</div></details></section>';
+  return '<section class="score-card"><div class="score-card-head"><h3>'+esc(s.name)+(pid===own&&s.name!=='Du'?' · Du':'')+'</h3><b>'+s.total+' <small>Punkte</small></b></div>'+scoreBreakdownHTML(s)+'<p class="score-formula">'+s.columns+' + '+s.colors+' + '+s.jokers+(s.bonus!==undefined?' + '+s.bonus:'')+(s.shipBonus!==undefined?' + '+s.shipBonus:'')+(s.objectiveBonus!==undefined?' + '+s.objectiveBonus:'')+' − '+s.penalty+(s.mineCost?' − '+s.mineCost:'')+' = <strong>'+s.total+'</strong> · '+s.stars+' offene Sterne</p><details><summary>Spalten und Farben im Detail</summary><div class="score-columns">'+s.columnDetails.map(c=>'<span class="'+(c.points!==null?'earned':'')+'">'+c.column+'<b>'+(c.points===null?'–':'+'+c.points)+'</b></span>').join('')+'</div><div class="score-colors">'+s.colorDetails.map(c=>'<span><i class="color-dot" data-color="'+c.color+'"></i>'+LABELS[c.color]+': <b>'+(c.points===null?'offen':'+'+c.points)+'</b></span>').join('')+'</div></details></section>';
  }).join('');
 }
 function reactionMenu(){
@@ -273,7 +418,7 @@ async function sendEmoji(emoji,{scale=1}={}){
  else reactionOverlay.receive({id,emoji,scale,motion,name:g.players[own].name});
  reactionSentAt=Date.now();lastReactionMotion=motion;closeModal();toast('Reaktion gesendet.');
 }
-function scores(){const g=currentGame();if(!g||handover)return;openModal('Punkte im Überblick.','<div class="score-content">'+scoreCardsHTML(g)+'</div>','scores');}
+function scores(){const g=currentGame();if(!g||handover&&g.status!=='finished')return;if(g.status==='finished'){showResults(g);return;}openModal('Punkte im Überblick.','<div class="score-content">'+scoreCardsHTML(g)+'</div>','scores');}
 function completionsHTML(g){
  const events=colorAnnouncements(g,myPid(g));if(!events.length)return '';
  return '<div class="color-notices" role="status" aria-label="Abgeschlossene Farben">'+events.map(e=>'<span class="completion-item"><span class="status-icon" aria-hidden="true"><i class="color-dot" data-color="'+e.color+'"></i></span><span class="completion-copy">'+esc(colorCompletionText(e,{withPoints:false}))+'</span>'+(e.points!==undefined?'<b class="status-score" aria-label="'+e.points+' Punkte">+'+e.points+'</b>':'')+'</span>').join('')+'</div>';
@@ -283,40 +428,62 @@ function announceColors(g){
  const events=colorAnnouncements(g,myPid(g));
  if(colorNoticeGame!==id){colorNoticeGame=id;seenColorNotices=new Set(events.map(e=>e.id));return;}
  const fresh=events.filter(e=>!seenColorNotices.has(e.id));events.forEach(e=>seenColorNotices.add(e.id));
- if(fresh.length)toast(fresh.map(e=>colorCompletionText(e)+'.').join(' '));
+ return colorCompletionBanner(fresh);
 }
 function announceBonusFields(g){
  const id=g?.gameId||'';if(!id)return;
- const awards=bonusAwards(g),key=award=>award.slot+':'+award.round;
- if(bonusNoticeGame!==id){bonusNoticeGame=id;seenBonusNotices=new Set(awards.map(key));return;}
+ const awards=bonusAwards(g),key=award=>award.slot+':'+award.round,own=myPid(g),hunt=treasureHuntView(g,own),readingKey=hunt?.reading?own+':'+hunt.reading.round+':'+hunt.reading.cells.join(','):'';
+ if(bonusNoticeGame!==id){bonusNoticeGame=id;seenBonusNotices=new Set(awards.map(key));treasureReadingSeen=readingKey;return;}
  const fresh=awards.filter(award=>!seenBonusNotices.has(key(award)));awards.forEach(award=>seenBonusNotices.add(key(award)));
- if(fresh.length)toast(fresh.map(award=>'Bonusfeld · '+bonusAnnouncement(g,award)).join(' '));
+ const freshReading=readingKey&&readingKey!==treasureReadingSeen;treasureReadingSeen=readingKey;
+ if(fresh.length){
+  const chain=hunt?.chainPoints&&fresh.some(award=>award.winners.includes(own));
+  const title=chain?'Schatzkette vollendet':fresh.length===1?'Schatz entdeckt':fresh.length+' Schätze entdeckt';
+  const detail=fresh.map(award=>bonusAnnouncement(g,award)).join(' · ')+(chain&&!isScoreHidden(g)?' · +'+hunt.chainPoints+' Kettenbonus':'');
+  return {type:'bonus',title,detail};
+ }
+ if(freshReading&&hunt.reading.found){
+  const found=hunt.reading.found;
+  return {type:'bonus',title:found===1?'Schatz gefunden':found+' Schätze gefunden',detail:'Wertung am Wurfende'};
+ }
+ if(freshReading){const message=treasureMoveAnnouncement(g,own);if(message)toast(message);}
 }
 function announceMineReady(g){
- const id=g?.gameId||'',own=myPid(g),unlocked=minesEnabled(g)&&g.mines.unlocked[own];
- if(mineNoticeGame!==id){mineNoticeGame=id;mineUnlockedSeen=new Set(minesEnabled(g)?g.mines.unlocked.flatMap((ready,i)=>ready?[i]:[]):[]);mineReadyUntil=0;return;}
- if(unlocked&&!mineUnlockedSeen.has(own)&&!g.mines.used[own]&&!g.players[own].left){mineUnlockedSeen.add(own);mineReadyUntil=performance.now()+5000;toast('Mine bereit! Eine andere Person hat eine Farbe abgeschlossen. Deine Mine ist jetzt freigeschaltet.');}
+ const id=g?.gameId||'',own=myPid(g);
+ if(mineNoticeGame!==id){
+  mineNoticeGame=id;mineUnlockedSeen=new Set(g.players.flatMap((_,pid)=>mineCharges(g,pid).filter(charge=>charge.unlocked).map(charge=>pid+':'+charge.reason)));
+  mineReadyUntil=0;return;
+ }
+ if(g.status!=='playing'||handover||g.players[own]?.left)return;
+ const fresh=mineCharges(g,own).filter(charge=>charge.unlocked&&!charge.used&&!mineUnlockedSeen.has(own+':'+charge.reason));
+ if(!fresh.length)return;
+ fresh.forEach(charge=>mineUnlockedSeen.add(own+':'+charge.reason));
+ mineReadyUntil=performance.now()+5000;
+ toast(fresh.length===2?'Zwei Luftangriffe bereit · Farbabschluss und zwei Drittel.':fresh[0].reason==='coverage'?'Luftangriff bereit! Ein Gegner hat zwei Drittel seines Bretts gefüllt.':'Luftangriff bereit! Eine andere Person hat eine Farbe abgeschlossen.');
 }
 
-function boardHTML(g,pid){
-  const damage=mineDamage(g,pid,myPid(g)),damaged=new Set(damage?.cells||[]);
-  const p=g.players[pid],can=writable(g,pid),feedback=can?currentMoveFeedback(g,pid):null,pointsHidden=isScoreHidden(g),layout=boardFor(g),BOARD=layout.cells,STARS=layout.stars;
+function boardHTML(g,pid,damage){
+  const damaged=new Set(damage?.cells||[]);
+  const p=g.players[pid],can=writable(g,pid),feedback=can?currentMoveFeedback(g,pid):null,pointsHidden=isScoreHidden(g),layout=boardFor(g,pid),BOARD=layout.cells,STARS=layout.stars;
   const res=choice.ci!==null&&choice.ni!==null?resolveChoice(g,pid,{...choice}):null;
-  const color=res&&!res.error?res.color:null;
-  return `<div class="board-card ${can?'':'board-readonly'}">
+  const color=res&&!res.error?res.color:null,extraStage=can&&choice.ability==='extra'&&res&&!res.error&&selection.length===res.count;
+  return `<div id="game-board" class="board-card ${can?'':'board-readonly'}" role="region" aria-label="Spielfeld" tabindex="-1">
     <div class="section-line"><span class="eyebrow">${pid===myPid(g)?'DEIN SPIELFELD':g.mode==='computer'?'COMPUTER-SPIELFELD':esc(p.name.toUpperCase())+'S SPIELFELD'}<small class="board-name">${layout.name}</small></span>
       <div class="board-tools" role="group" aria-label="Spielfeld vergrößern oder verkleinern">
         <button data-action="zoom-out" aria-label="Spielfeld verkleinern">−</button><output id="board-zoom-value" aria-label="Spielfeld-Zoom">${boardView.percent}%</output><button data-action="zoom-in" aria-label="Spielfeld vergrößern">+</button><button class="fit-board" data-action="board-fit" aria-label="Ganzes Spielfeld einpassen">↔ <span>Einpassen</span></button>${prefs.reactionsUnlocked&&g.players.length>1?'<button class="reaction-launch" data-action="reaction-menu" aria-label="Emoji senden" title="Emoji senden">☺</button>':''}
       </div>
     </div>
-    ${mineDamageHtml(damage)}<div class="board-scroll" id="board-scroll" aria-label="Spielfeld – seitlich wischen, mit zwei Fingern zoomen">
-      <div class="board" data-player-board="${pid}" role="group" aria-label="Spielfeld mit 15 Spalten und 7 Zeilen" ${can?'aria-describedby="move-feedback"':''}>
-        ${[...COLS].map((c,i)=>`<div class="col-label ${i===7?'center':''} ${columnStatus(g,pid,i).complete?'completed':columnStatus(g,pid,i).pending?'pending-column':''}" title="${columnStatus(g,pid,i).complete?'Spalte '+c+' abgeschlossen'+(pointsHidden?' · Punkte verdeckt':' · '+columnStatus(g,pid,i).points+' Punkte'):columnStatus(g,pid,i).pending?'Spalte vollständig · Wertung nach allen Zügen':'Spalte '+c}" ${i===7?'aria-label="Spalte H, Startspalte"':''}><span class="col-letter">${c}</span>${i===7?'<span class="start-arrow" aria-hidden="true">↓</span>':''}</div>`).join('')}
-        ${BOARD.map((c,i)=>{const marked=p.marks[i],sel=selection.includes(i)&&can,isStar=STARS.includes(i);
-          const playable=can&&!marked&&(!color||color===c)&&(i%15===7||neighbors(i).some(j=>p.marks[j]||selection.includes(j)));
-          return `<button class="cell ${marked?'marked':''} ${sel?'selected':''} ${sel&&feedback?.invalid?'selection-invalid':''} ${playable?'playable':''} ${color&&c!==color&&!marked?'muted':''} ${p.lastMove.includes(i)&&marked?'last':''} ${damaged.has(i)?'mine-damaged'+(marked?' mine-recovered':''):''}" data-color="${c}" data-action="cell" data-i="${i}" style="--cell:var(--${c})" aria-label="${COLS[i%15]}${Math.floor(i/15)+1}, ${LABELS[c]}${isStar?', Stern':''}${marked?', angekreuzt':''}${damaged.has(i)?marked?', nach Mine wieder gefüllt':', Minen-Schaden, Kreuz entfernt':''}" aria-pressed="${sel}" ${sel&&feedback?.invalid?'aria-invalid="true"':''} ${!can||marked?'disabled':''}>${isStar?'<span class="star">☆</span>':prefs.patterns?`<span class="pattern">${SHAPES[c]}</span>`:''}${damaged.has(i)&&!marked?'<span class="mine-ghost" aria-hidden="true">×</span>':''}${marked?'<span class="cell-stamp" aria-hidden="true">'+markSymbol()+'</span>':''}</button>`;
+    <div class="board-scroll" id="board-scroll" aria-label="Spielfeld – seitlich wischen, mit zwei Fingern zoomen">
+      <div class="board numbered-board" data-player-board="${pid}" role="group" aria-label="Spielfeld mit 15 Spalten und 7 Zeilen" ${can?'aria-describedby="move-feedback"':''}>
+        <span class="board-axis-corner" aria-hidden="true"></span>
+        ${[...COLS].map((c,i)=>`<div style="grid-column:${i+2};grid-row:1" class="col-label ${i===7?'center':''} ${columnStatus(g,pid,i).complete?'completed':columnStatus(g,pid,i).pending?'pending-column':''}" title="${columnStatus(g,pid,i).complete?'Spalte '+c+' abgeschlossen'+(pointsHidden?' · Punkte verdeckt':' · '+columnStatus(g,pid,i).points+' Punkte'):columnStatus(g,pid,i).pending?'Spalte vollständig · Wertung nach allen Zügen':'Spalte '+c}" ${i===7?'aria-label="Spalte H, Startspalte"':''}><span class="col-letter">${c}</span>${i===7?'<span class="start-arrow" aria-hidden="true">↓</span>':''}</div>`).join('')}
+        ${Array.from({length:7},(_,r)=>`<span class="row-label" style="grid-column:1;grid-row:${r+2}" aria-label="Zeile ${r+1}">${r+1}</span>`).join('')}
+        ${BOARD.map((c,i)=>{const marked=p.marks[i],sel=(selection.includes(i)||choice.extraCell===i)&&can,isStar=STARS.includes(i);
+          const extraCandidate=extraStage&&!marked&&!selection.includes(i)&&selection.some(j=>neighbors(j).includes(i));
+          const playable=extraCandidate||can&&!marked&&(!color||color===c)&&(i%15===7||neighbors(i).some(j=>p.marks[j]||selection.includes(j)));
+          return `<button class="cell ${marked?'marked':''} ${sel?'selected':''} ${extraCandidate?'extra-candidate':''} ${choice.extraCell===i&&can?'extra-selected':''} ${sel&&feedback?.invalid?'selection-invalid':''} ${playable?'playable':''} ${color&&c!==color&&!marked&&!extraCandidate?'muted':''} ${p.lastMove.includes(i)&&marked?'last':''} ${damaged.has(i)?'mine-damaged'+(marked?' mine-recovered':''):''}" data-color="${c}" data-action="cell" data-i="${i}" style="--cell:var(--${c});grid-column:${i%15+2};grid-row:${Math.floor(i/15)+2}" aria-label="${COLS[i%15]}${Math.floor(i/15)+1}, ${LABELS[c]}${isStar?', Stern':''}${esc(cellVariantLabel(g,pid,i,myPid(g)))}${marked?', angekreuzt':''}${damaged.has(i)?marked?', nach Angriff wieder angekreuzt':', '+esc(damage.label)+', Kreuz entfernt':''}" aria-pressed="${sel}" ${sel&&feedback?.invalid?'aria-invalid="true"':''} ${!can||marked?'disabled':''}>${isStar?'<span class="star">☆</span>':prefs.patterns?`<span class="pattern">${SHAPES[c]}</span>`:''}${damaged.has(i)&&!marked?'<span class="mine-ghost" aria-hidden="true">'+mineLostMark+'</span>':''}${cellVariantHTML(g,pid,i,myPid(g))}${marked?'<span class="cell-stamp" aria-hidden="true">'+markSymbol()+'</span>':''}</button>`;
         }).join('')}
-        ${FIRST.map((n,c)=>{const status=columnStatus(g,pid,c);return `<div class="col-score ${status.complete?'complete':status.pending?'pending-column':''}" aria-label="Spalte ${COLS[c]}: ${status.complete?(pointsHidden?'abgeschlossen, Punkte verdeckt':status.points+' Punkte erhalten'):status.pending?'vollständig, Wertung nach allen Zügen':'noch offen'}"><span class="high ${g.columnClaims[c]!==null&&!status.first?'claimed':''} ${status.complete&&status.first?'earned':''}">${n}</span><span class="${status.later?'earned':''}">${LATER[c]}</span></div>`;}).join('')}
+        ${FIRST.map((n,c)=>{const status=columnStatus(g,pid,c);return `<div style="grid-column:${c+2};grid-row:9" class="col-score ${status.complete?'complete':status.pending?'pending-column':''}" aria-label="Spalte ${COLS[c]}: ${status.complete?(pointsHidden?'abgeschlossen, Punkte verdeckt':status.points+' Punkte erhalten'):status.pending?'vollständig, Wertung nach allen Zügen':'noch offen'}"><span class="high ${g.columnClaims[c]!==null&&!status.first?'claimed':''} ${status.complete&&status.first?'earned':''}">${n}</span><span class="${status.later?'earned':''}">${LATER[c]}</span></div>`;}).join('')}
       </div>
     </div>
     <div class="board-hint"><span>Zwei Finger: nur das Spielfeld zoomen · ↔ Einpassen</span><em>Start in H · ☆ = −2 offen</em></div>
@@ -345,21 +512,84 @@ if(screen==='direct'&&g.phase==='choose'&&!canAct(g,pid))return '';
 if(g.mode==='computer'&&needsComputerTurn(g))return `<div class="dice-card computer-thinking" role="status"><span class="eyebrow">COMPUTER AM ZUG</span><h2>${g.phase==='roll'?'Der Computer würfelt.':'Der Computer wählt.'}</h2><p class="caption">${g.phase==='roll'?'Der nächste gemeinsame Wurf wird gewürfelt.':'Er setzt seine Kreuze automatisch. Danach bist du wieder dran.'}</p><span class="computer-dots" aria-hidden="true">● ● ●</span><p class="caption">Du kannst sein Spielfeld oben über „Computer“ ansehen.</p></div>`;
 if(g.phase==='roll')return `<div class="dice-card"><span class="eyebrow">${g.mode==='solo'?'DEIN NÄCHSTER ZUG':g.mode==='computer'&&g.active===HUMAN?'DU WÜRFELST':esc(g.players[g.active].name.toUpperCase())+' WÜRFELT'}</span><h2>${g.mode==='solo'?'Ein guter Wurf?':'Die nächste Runde.'}</h2><p class="caption">${mine?'Einmal würfeln. Eine Farbe und eine Zahl wählen. Deine Möglichkeiten entdecken.':'Warte, bis '+esc(g.players[g.active].name)+' gewürfelt hat.'}</p><div class="dice-row" aria-hidden="true"><div class="die color" style="--cell:var(--g)">✳</div><div class="die">?</div></div><button class="primary" data-action="roll" ${!mine||busy?'disabled':''}>${icon('dice')}${busy?'Würfelt …':'Würfeln'}</button><div class="joker-track" aria-label="${p.jokers} Joker übrig">${Array.from({length:8},(_,i)=>`<span class="${i>=p.jokers?'used':''}">!</span>`).join('')}</div></div>`;
 const d=availableDice(g,pid),cval=g.dice.colors[choice.ci],nval=g.dice.numbers[choice.ni];
-const affordJokers=Number(cval==='*')+Number(nval==='?')<=p.jokers,feedback=can?currentMoveFeedback(g,pid):null,valid=can&&feedback?.valid;
+const affordJokers=Number(cval==='*'&&choice.ability!=='color')+Number(nval==='?')<=p.jokers,feedback=can?currentMoveFeedback(g,pid):null,valid=can&&feedback?.valid;
 const submitted=g.submitted.includes(pid),waiting=g.players.filter((x,i)=>!g.submitted.includes(i));
 const colors=g.dice.colors.map((c,i)=>{const available=d.colors.some(x=>x.index===i);return `<button class="die color ${choice.ci===i&&can?'is-selected':''} ${available?'':'removed'}" style="--cell:${c==='*'?'#eee9dc':`var(--${c})`}" data-action="color-die" data-i="${i}" aria-label="${c==='*'?'Farbjoker':LABELS[c]}${available?'':', von aktiver Person gewählt'}" aria-pressed="${choice.ci===i}" ${!can||!available?'disabled':''}>${c==='*'?'✳':SHAPES[c]}</button>`;}).join('');
 const numbers=g.dice.numbers.map((n,i)=>{const available=d.numbers.some(x=>x.index===i);return `<button class="die ${choice.ni===i&&can?'is-selected':''} ${available?'':'removed'}" data-action="number-die" data-i="${i}" aria-label="${n==='?'?'Zahlenjoker':n+' Felder'}${available?'':', von aktiver Person gewählt'}" aria-pressed="${choice.ni===i}" ${!can||!available?'disabled':''}>${n}</button>`;}).join('');
-const colorJoker=can&&affordJokers&&cval==='*'?`<div class="joker-picks" aria-label="Farbjoker wählen">${COLORS.map(c=>`<button data-action="joker-color" data-c="${c}" class="${choice.color===c?'chosen':''}" style="--cell:var(--${c})" aria-label="${LABELS[c]}">${SHAPES[c]}</button>`).join('')}</div>`:'';
+const colorJoker=can&&affordJokers&&(cval==='*'||choice.ability==='color')?`<div class="joker-picks" aria-label="${choice.ability==='color'?'Freie Farbe wählen':'Farbjoker wählen'}">${COLORS.map(c=>`<button data-action="joker-color" data-c="${c}" class="${choice.color===c?'chosen':''}" style="--cell:var(--${c})" aria-label="${LABELS[c]}">${SHAPES[c]}</button>`).join('')}</div>`:'';
 const numberJoker=can&&affordJokers&&nval==='?'?`<div class="joker-picks" aria-label="Zahlenjoker wählen">${[1,2,3,4,5].map(n=>`<button data-action="joker-number" data-n="${n}" class="${choice.count===n?'chosen':''}" aria-label="${n} Felder">${n}</button>`).join('')}</div>`:'';
 return `<div class="dice-card choosing ${!can?'waiting':''} ${animateRoll?'roll-animation':''}">
  <div class="choice-heading"><span class="eyebrow">${can?'1. WÜRFEL WÄHLEN · 2. FELDER ANTIPPEN':submitted?'DEIN ZUG IST GESPEICHERT':'GEMEINSAMER WURF'}</span><h2>${can?'Du hast die Wahl.':submitted?'Gut gemacht.':'Noch einen Moment.'}</h2><p class="caption">${can?'Kombiniere eine Farbe mit einer Zahl.':submitted?'Warten auf '+waiting.map(p=>esc(p.name)).join(', ')+'.':esc(g.players[g.active].name)+' wählt zuerst eine Kombination.'}</p></div>
- <div class="choice-options"><div class="dice-groups"><div class="dice-set"><div class="dice-label">Eine Farbe</div><div class="dice-row">${colors}</div>${colorJoker}</div><div class="dice-set"><div class="dice-label">Eine Zahl</div><div class="dice-row">${numbers}</div>${numberJoker}</div></div></div>
- <div class="choice-controls">${feedbackHTML(feedback)}${can?`<div class="actions"><button class="outline-btn ${feedback?.noMove?'pass-recommended':''}" data-action="pass" ${busy?'disabled':''}>Passen</button><button class="primary" data-action="confirm" aria-describedby="move-feedback" ${!valid||busy?'disabled':''}>${icon('check')}${busy?'Speichert …':'Bestätigen'}</button></div><div class="minor-actions"><button class="text-btn" data-action="clear" ${!selection.length?'disabled':''}>${icon('undo')}Auswahl löschen</button><button class="text-btn" data-action="hint" ${feedback?.noMove?'disabled':''}>${icon('bulb')}Tipp</button></div>`:''}<div class="joker-track" aria-label="${p.jokers} Joker übrig">${Array.from({length:8},(_,i)=>`<span class="${i>=p.jokers?'used':''}">!</span>`).join('')}</div>${g.mode!=='solo'?`<div class="turn-note">${g.round<=3?'In den ersten 3 Würfen dürfen alle aus allen Würfeln wählen.':g.chosen?'Die beiden herausgenommenen Würfel sind für die anderen gesperrt.':'Passt die aktive Person, bleiben alle Würfel für die anderen verfügbar.'}</div>`:''}</div></div>`;
+ <div class="choice-options"><div class="dice-groups"><div class="dice-set"><div class="dice-label">Eine Farbe</div><div class="dice-row">${colors}</div>${choice.ability==='color'?'':colorJoker}</div><div class="dice-set"><div class="dice-label">Eine Zahl</div><div class="dice-row">${numbers}</div>${numberJoker}</div></div>${choice.ability==='color'?'<div class="ability-color-choice">'+colorJoker+'</div>':''}${abilitiesHTML(g,pid,choice,can)}</div>
+ <div class="choice-controls">${feedbackHTML(feedback)}${can?`<div class="actions"><button class="outline-btn ${feedback?.noMove?'pass-recommended':''}" data-action="pass" ${busy?'disabled':''}>Passen</button><button class="primary" data-action="confirm" aria-describedby="move-feedback" ${!valid||busy?'disabled':''}>${icon('check')}${busy?'Speichert …':'Bestätigen'}</button></div>`:''}
+ <div class="choice-footer">${can?`<div class="minor-actions"><button class="text-btn" data-action="clear" ${!selection.length?'disabled':''}>${icon('undo')}Auswahl löschen</button><button class="text-btn" data-action="hint" ${feedback?.noMove?'disabled':''}>${icon('bulb')}Tipp</button></div>`:''}</div>
+ <div class="joker-track" aria-label="${p.jokers} Joker übrig">${Array.from({length:8},(_,i)=>`<span class="${i>=p.jokers?'used':''}">!</span>`).join('')}</div>${g.mode!=='solo'?`<div class="turn-note">${g.round<=3?'In den ersten 3 Würfen dürfen alle aus allen Würfeln wählen.':g.chosen?'Die beiden herausgenommenen Würfel sind für die anderen gesperrt.':'Passt die aktive Person, bleiben alle Würfel für die anderen verfügbar.'}</div>`:''}</div></div>`;
 }
-function resultHTML(g){const ranks=rankings(g),solo=g.mode==='solo',p=g.players[displayedPid(g)],s=score(p,g),top=ranks[0],winners=ranks.filter(p=>!p.left&&p.total===top.total&&p.jokers===top.jokers);const label=s.total>=33?'Stark gespielt!':s.total>=21?'Das kann sich sehen lassen.':s.total>=9?'Jedes Kreuz zählt.':s.total>=0?'Da geht noch was.':'Die nächste Runde wird besser.';return `<section class="finish-panel"><span class="eyebrow">${g.finishReason==='last-player'?'LETZTE PERSON GEWINNT':'PARTIE GESCHAFFT'} · ${g.round} ${g.round===1?'WURF':'WÜRFE'}</span><h2>${solo?label:g.mode==='computer'&&winners.length===1&&winners[0].index===HUMAN?'Du gewinnst!':winners.map(p=>esc(p.name)).join(' & ')+(winners.length>1?' gewinnen!':' gewinnt!')}</h2>${solo?`<div class="big-score">${s.total}</div><p>Punkte auf deinem Farbfeld</p>`:ranks.map((p,i)=>`<div class="result-row ${winners.includes(p)?'winner':''}"><span>${i+1}. ${esc(p.name)}${winners.includes(p)?' ✦':''}</span><span>${p.left?'Ausgestiegen · −10 Punkte':p.total+' Punkte · '+p.jokers+' !'}</span></div>`).join('')}${s.left?'<p class="info-box">Partie freiwillig verlassen · −10 Punkte im Verlauf.</p>':`<div class="result-details"><div>Spalten<b>+${s.columns}</b></div><div>Farben<b>+${s.colors}</b></div><div>Joker<b>+${s.jokers}</b></div><div>Offene Sterne<b>−${s.penalty}</b></div>${s.bonus!==undefined?'<div class="bonus-score">Bonusfelder<b>+'+s.bonus+'</b></div>':''}${s.mineCost?'<div class="mine-cost">Minen-Einsatz<b>−'+s.mineCost+'</b></div>':''}</div>`}<button class="primary" data-action="share-result">${icon('share')}Ergebnis teilen</button></section>`;}
+const resultComparisonKey=g=>resultNotice.key(g,resultContext())+':'+myPid(g);
+const comparedResultPid=g=>resultComparisons.get(resultComparisonKey(g))??g.players.findIndex((_,i)=>i!==myPid(g));
+function resultHTML(g,{modal=false,pid=displayedPid(g),previous=false}={}){
+ const ranks=rankings(g),solo=g.mode==='solo',p=g.players[pid]||g.players[0],s=score(p,g),top=ranks[0],winners=ranks.filter(p=>!p.left&&p.total===top.total&&p.jokers===top.jokers);
+ const label=s.total>=33?'Stark gespielt!':s.total>=21?'Das kann sich sehen lassen.':s.total>=9?'Jedes Kreuz zählt.':s.total>=0?'Da geht noch was.':'Die nächste Runde wird besser.';
+ const title=solo?label:g.mode==='computer'&&winners.length===1&&winners[0].index===HUMAN?'Du gewinnst!':winners.length>2?'Gemeinsamer Sieg!':winners.map(p=>esc(p.name)).join(' & ')+(winners.length>1?' gewinnen!':' gewinnt!');
+ const note=g.finishReason==='last-player'?'Die letzte aktive Person gewinnt.':winners.length>1&&!solo?'Gleichstand · gemeinsamer Sieg.':!solo&&ranks[1]?.total===top.total?'Bei Punktegleichstand entscheiden die übrigen Joker.':'';
+ return '<section class="finish-panel match-result" aria-label="Endergebnis"><div class="result-hero"><span class="result-trophy" aria-hidden="true">'+setupOptionIcon('result')+'</span><div class="result-heading"><p class="eyebrow">PARTIE BEENDET · '+g.round+' '+(g.round===1?'WURF':'WÜRFE')+'</p><'+(modal?'h3':'h2')+' class="result-title">'+title+'</'+(modal?'h3':'h2')+'>'+(note?'<p class="result-note">'+note+'</p>':'')+'</div><div class="result-total"><b>'+s.total+'</b><span>Punkte · '+esc(p.name)+'</span></div></div><div class="result-content">'+(!solo?'<div class="result-ranking-block"><h3>Endstand</h3><ol class="result-ranking">'+ranks.map((q,i)=>'<li class="'+(winners.includes(q)?'winner':'')+'"><span class="result-place">'+(i+1)+'</span><span class="result-player"><strong>'+esc(q.name)+'</strong><small>'+(q.left?'Ausgestiegen':winners.includes(q)?(winners.length>1?'Geteilter Sieg':'Sieger'):q.jokers+' Joker übrig')+'</small></span><span class="result-points"><b>'+q.total+'</b><small>Punkte</small></span></li>').join('')+'</ol></div>':'')+'<div class="result-parts"><h3>'+((p.name||'').trim().toLocaleLowerCase('de')==='du'?'Deine Punkte im Detail':'Punkte von '+esc(p.name))+'</h3>'+(s.left?'<p class="info-box">Partie freiwillig verlassen · −10 Punkte im Verlauf.</p>':scoreBreakdownHTML(s))+'</div></div>'+resultComparisonHTML(g,myPid(g),comparedResultPid(g))+'<div class="result-actions"><button class="primary" data-action="'+(modal?'close-modal':'result-open')+'">'+(previous?'Schließen':modal?'Zum Spielbrett':'Ergebnis öffnen')+'</button><button class="outline-btn" data-action="share-result">'+icon('share')+'Ergebnis teilen</button>'+(!solo?'<button class="text-btn" data-action="result-details">Alle Punkte vergleichen</button>':'')+'</div></section>';
+}
+function resultContext(){return screen==='room'?roomResultContext(room?.code,room?.playerId):screen==='direct'?directResultContext():'local';}
+function previousResult(){
+ const game=screen==='room'?roomState?.lastResult:screen==='direct'?direct.snapshot?.lastResult:null;
+ return game?.status==='finished'&&myPid(game)>=0?game:null;
+}
+function previousResultButton(){
+ return previousResult()?'<button type="button" class="icon-btn previous-result" data-action="previous-result" aria-label="Letztes Ergebnis ansehen" title="Letztes Ergebnis ansehen">'+setupOptionIcon('result')+'</button>':'';
+}
+function claimResult(g){
+ const context=resultContext();
+ if(resultNotice.claim(g,context)&&g.gameId)persist(resultSeenKey,[...resultNotice.seen]);
+}
+function showResults(g=currentGame()){
+ if(!g||g.status!=='finished')return;
+ if(resultPending)clearTimeout(resultPending.timer);resultPending=null;
+ const previous=g.gameId!==currentGame()?.gameId;
+ resultDialog={game:g,context:resultContext()};
+ openModal(previous?'Ergebnis der vorherigen Partie.':'Partie beendet.',resultHTML(g,{modal:true,pid:myPid(g),previous}),'finished');
+ claimResult(g);dialog.scrollTop=0;const title=dialog.querySelector('#modal-title');title.tabIndex=-1;title.focus({preventScroll:true});
+}
+const resultPanelOpen=()=>dialog.open&&['finished','result-scores'].includes(dialog.dataset.panel);
+const resultForAction=(button,g)=>resultPanelOpen()&&dialog.contains(button)?resultDialog?.game:g;
+function scheduleResultPresentation(delay=0){
+ const context=resultContext(),visible=['game','room','direct'].includes(screen),g=visible?resultNotice.next(currentGame(),previousResult(),context):null;
+ if(!g||busy){if(resultPending)clearTimeout(resultPending.timer);resultPending=null;return;}
+ const key=resultNotice.key(g,context);if(resultPending?.key===key)return;
+ if(resultPending)clearTimeout(resultPending.timer);resultPending=null;
+ const blocked=()=>document.hidden||busy||dialog.open&&(dialog.dataset.panel!=='scores'||g.gameId!==currentGame()?.gameId);
+ if(blocked())return;
+ const task={key,timer:0};resultPending=task;
+ task.timer=setTimeout(()=>{
+  if(resultPending!==task)return;resultPending=null;
+  if(!['game','room','direct'].includes(screen)||resultContext()!==context||blocked())return;
+  const latest=resultNotice.next(currentGame(),previousResult(),context);
+  if(latest&&resultNotice.key(latest,context)===key)showResults(latest);
+ },Math.max(120,delay));
+}
+
 function gameHTML(g){
+  const setupOwn=myPid(g),setup=preparationStep(g,setupOwn);
+  if(setup){
+   const headerAction=previousResultButton();
+   const connection=screen==='direct'?directConnectionHTML():screen==='room'&&networkError?'<p class="connection-banner">'+esc(networkError)+'</p>':'';
+   if(setup==='waiting')return connection+preparationWaitingHTML(g,setupOwn,headerAction);
+   if(g.mode==='local'&&handover)return '<section class="handover" aria-label="Handy weitergeben"><button class="text-btn" data-action="home">← Zur Startseite</button><span class="eyebrow">GEHEIME VORBEREITUNG</span><h1>Weiter mit '+esc(g.players[setupOwn].name)+'.</h1><p>Gib das Handy weiter, damit die nächste Person ihre Felder geheim wählen kann.</p><button class="primary" data-action="handover">'+(setup==='fleet'?'Eigene Flotte aufstellen':'Eigene Minen auslegen')+'</button></section>';
+   const available=!busy&&(screen!=='direct'||direct.ready&&!direct.pending)&&(screen!=='room'||navigator.onLine!==false);
+   if(setup==='mines'){
+    hiddenMineSlot=Math.min(hiddenMineSlot,g.variants.hiddenMines.positions[setupOwn].length-1);
+    return connection+hiddenMineSetupHtml(g,hiddenMineSlot,setupOwn,{available,headerAction});
+   }
+   const ship=g.variants.battleship.fleets[setupOwn]?.[fleetShip];fleetVertical=ship?.length>1&&ship[1]-ship[0]===15;
+   return connection+fleetSetupHTML(g,{selected:fleetShip,vertical:fleetVertical,own:setupOwn,available,headerAction});
+  }
   const pid=displayedPid(g),p=g.players[pid]??g.players[0],s=score(p,g),own=myPid(g),pointsHidden=isScoreHidden(g);
   const passing=handover&&g.mode==='local'&&g.status==='playing';
+  const damage=passing?null:mineDamage(g,pid,own);
   const turn=turnDescription(g,own);
   const confirmed=g.status==='playing'&&['room','direct'].includes(g.mode)&&g.phase==='choose'&&!g.players[own]?.left&&g.submitted.includes(own);
   const turnTitle=confirmed?'Dein Zug ✓':turn?.title;
@@ -370,7 +600,7 @@ function gameHTML(g){
   const controlLabel=networked?'room-control-label':g.mode==='computer'?'computer-control-label':'';
   const subtitle=g.mode==='computer'?'Computer · '+computerLevel(g).label+' · offline':g.mode==='solo'?'Solo · Ein Wurf nach dem anderen.':screen==='room'?`Raum ${esc(room.code)} · ${g.players.length} Personen`:screen==='direct'?g.players.length+' Handys · WLAN/Hotspot':`Ein Handy · ${g.players.length} Personen`;
   const stats=`<div class="score-strip"><button class="stat score-stat" data-action="scores" aria-label="Punkteaufschlüsselung öffnen"><div><label>Punkte</label><small>${g.players.length>1?esc(p.name):'aktueller Stand'}</small></div><b>${pointsHidden?'•••':s.total}</b></button><div class="stat"><div><label>Joker</label><small>noch übrig</small></div><b>${s.jokers}<small>/8</small></b></div><div class="stat"><div><label>Sterne</label><small>noch offen</small></div><b>${s.stars}</b></div></div>`;
-  return `<div class="game-chrome ${networked?'room-game-chrome':''}"><div class="game-top ${networked?'room-game-top':g.mode==='computer'?'computer-game-top':''}">${headingRow?'<div class="'+headingRow+'">':''}<button class="icon-btn back" data-action="home" aria-label="Zur Startseite">‹</button><div class="game-heading"><h1 ${networked?'class="room-game-title"':''}>${screen==='room'&&roomState?.hostId===room.playerId?'<button data-action="rename-room" aria-label="Raumnamen ändern: '+esc(title)+'" title="Raumnamen ändern" '+(busy?'disabled':'')+'><span>'+esc(title)+'</span>'+icon('edit')+'</button>':screen==='direct'&&direct.pid===0?'<button data-action="rename-direct" aria-label="Name der Direktpartie ändern: '+esc(title)+'" title="Name der Direktpartie ändern"><span>'+esc(title)+'</span>'+icon('edit')+'</button>':g.mode==='computer'&&g.status==='playing'?'<button class="computer-title" data-action="computer-level" aria-label="Computer-Stärke ändern, aktuell '+computerLevel(g).label+'" title="Computer-Stärke ändern"><span>'+esc(title)+'</span>'+icon('settings')+'</button>':esc(title)}</h1><button class="game-version" data-action="version-tap" aria-label="App-Version ${APP_VERSION}">v${APP_VERSION}</button><p>${subtitle}</p></div>${headingRow?'</div>':''}<span class="landscape-score">${pointsHidden?'Punktestand verdeckt':s.total+' P · Farben +'+s.colors} · ${s.jokers} ! · ${s.stars} ☆</span><div class="round-badge"><span>WURF<br>${g.mode==='solo'?'VON 30':'AKTUELL'}</span><b>${g.round.toString().padStart(2,'0')}</b></div><button class="icon-btn score-open" data-action="scores" aria-label="Punkteübersicht öffnen" title="Punkteübersicht" ${passing?'disabled':''}>Σ${controlLabel?'<span class="'+controlLabel+'">Punkte</span>':''}</button><button class="icon-btn game-share" data-action="${screen==='room'?'share-room':'share-game'}" aria-label="Spiel teilen" title="Spiel teilen">${icon('share')}</button>${g.status==='playing'&&(!g.players[myPid(g)]?.left||screen==='direct')?'<button class="icon-btn abort-game-btn" data-action="abort-game" aria-label="Partie verlassen" title="Partie verlassen">×'+(controlLabel?'<span class="'+controlLabel+'">Beenden</span>':'')+'</button>':''}</div>
+  return `<div class="game-chrome ${networked?'room-game-chrome':''}"><div class="game-top ${networked?'room-game-top':g.mode==='computer'?'computer-game-top':''}">${headingRow?'<div class="'+headingRow+'">':''}<button class="icon-btn back" data-action="home" aria-label="Zur Startseite">‹</button><div class="game-heading"><h1 ${networked?'class="room-game-title"':''}>${screen==='room'&&roomState?.hostId===room.playerId?'<button data-action="rename-room" aria-label="Raumnamen ändern: '+esc(title)+'" title="Raumnamen ändern" '+(busy?'disabled':'')+'><span>'+esc(title)+'</span>'+icon('edit')+'</button>':screen==='direct'&&direct.pid===0?'<button data-action="rename-direct" aria-label="Name der Direktpartie ändern: '+esc(title)+'" title="Name der Direktpartie ändern"><span>'+esc(title)+'</span>'+icon('edit')+'</button>':g.mode==='computer'&&g.status==='playing'?'<button class="computer-title" data-action="computer-level" aria-label="Computer-Stärke ändern, aktuell '+computerLevel(g).label+'" title="Computer-Stärke ändern"><span>'+esc(title)+'</span>'+icon('settings')+'</button>':esc(title)}</h1><button class="game-version" data-action="version-tap" aria-label="App-Version ${APP_VERSION}">v${APP_VERSION}</button><p>${subtitle}</p>${previousResultButton()}</div>${headingRow?'</div>':''}<span class="landscape-score">${pointsHidden?'Punktestand verdeckt':s.total+' P · Farben +'+s.colors} · ${s.jokers} ! · ${s.stars} ☆</span><div class="round-badge"><span>WURF<br>${g.mode==='solo'?'VON 30':'AKTUELL'}</span><b>${g.round.toString().padStart(2,'0')}</b></div><button class="icon-btn score-open" data-action="scores" aria-label="Punkteübersicht öffnen" title="Punkteübersicht" ${passing?'disabled':''}>Σ${controlLabel?'<span class="'+controlLabel+'">Punkte</span>':''}</button><button class="icon-btn game-share" data-action="${screen==='room'?'share-room':'share-game'}" aria-label="Spiel teilen" title="Spiel teilen">${icon('share')}</button>${g.status==='playing'&&(!g.players[myPid(g)]?.left||screen==='direct')?'<button class="icon-btn abort-game-btn" data-action="abort-game" aria-label="Partie verlassen" title="Partie verlassen">×'+(controlLabel?'<span class="'+controlLabel+'">Beenden</span>':'')+'</button>':''}</div>
   ${screen==='direct'?directConnectionHTML():''}
   ${g.mode==='solo'?`<div class="progress-track"><i style="width:${(g.round-1+(g.status==='finished'?1:0))/30*100}%"></i></div>`:`<div class="players" aria-label="Spieler und Zugstatus">${g.players.map((q,i)=>{
     const locked=!mayInspect(g,i,own),role=playerRole(g,i),concealed=pointsHidden||isHidden(g,i,passing?-1:own);
@@ -380,42 +610,89 @@ function gameHTML(g){
   ${turn&&!passing&&g.mode!=='solo'?`<div class="turn-status ${confirmed?'turn-saved':''}" role="status" aria-label="${esc(turn.title+'. '+turn.detail)}">${confirmed?'':'<i class="dot" aria-hidden="true"></i>'}<strong>${esc(turnTitle)}</strong><span>${esc(turnDetail)}</span></div>`:''}
   </div>${inspectPid!==null?`<div class="inspection-note">Du siehst ${g.mode==='computer'?'das Computer-Spielfeld':esc(p.name)+'s Spielfeld'}. <button class="text-btn" data-action="my-board">Zu meinem Spielfeld →</button></div>`:''}
   <div class="color-notices-wide">${completionsHTML(g)}</div>${saveFailed?'<div class="connection-banner save-error">Automatisches Speichern ist nicht möglich. Exportiere deinen Spielstand in den Einstellungen.</div>':''}
-  ${mineControlsHtml(g,{own:myPid(g),available:!busy&&!handover&&(screen!=='direct'||direct.ready&&!direct.pending),highlight:performance.now()<mineReadyUntil})}${bonusStatusHtml(g)}
+  ${g.status==='finished'?resultHTML(g):''}
+  <div class="game-features" role="group" aria-label="Spielelemente">${mineControlsHtml(g,{own,damage:damage?.airstrike,available:!busy&&!handover&&(screen!=='direct'||direct.ready&&!direct.pending),highlight:performance.now()<mineReadyUntil})}${hiddenMineStatusHtml(g,own,{open:hiddenMinePanelOpen,damage:damage?.hidden})}${bonusStatusHtml(g,{own})}${battlePanelHTML(g,{open:battleMapOpen,own})}${discoveryPanelHTML(g,own)}${passing&&pointsHidden?'':objectivesHTML(g,own,{open:objectivesOpen})}${mixingPanelHTML(g)}</div>
   ${screen==='room'&&networkError?`<div class="connection-banner">${esc(networkError)}</div>`:''}
   ${passing?`<section class="handover" aria-label="Handy weitergeben"><span class="eyebrow">HANDY WEITERGEBEN</span><h2>${p.name.trim().toLocaleLowerCase('de')==='du'?'Du bist dran.':'Weiter mit '+esc(p.name)+'.'}</h2><p>${g.phase==='roll'?'Du würfelst als Nächstes.':'Du wählst jetzt deine Würfel und Felder.'}</p><button class="primary" data-action="handover">Spiel übernehmen ${icon('arrow')}</button></section>`:
-  `<div class="game-layout"><div class="play-area">${directRollPreviewHTML(g,pid)}${g.status==='finished'?resultHTML(g):stats}${boardHTML(g,pid)}</div><aside class="side-area"><div class="side-completions">${completionsHTML(g)}</div>${diceHTML(g,pid)}${g.mode==='computer'?computerMoveHTML(g):''}<div class="side-note"><b>Ein kleiner Gedanke für deinen nächsten Zug.</b><br>Offene Sterne kosten je 2 Punkte. Eine vollständige Randspalte bringt dir bis zu 5.</div>${screen==='room'&&roomState?.hostId===room?.playerId&&g.phase==='choose'&&g.status==='playing'?`<div data-host-skip="${!!roomState?.canSkip}">${roomState?.canSkip?'<button class="text-btn" data-action="host-skip" style="width:100%">Fehlende Person überspringen …</button>':''}</div>`:''}</aside></div>`}
-  <div class="game-footer"><span class="status-dot" style="justify-content:center"><i class="dot"></i>${screen==='direct'?esc(directStatus(direct)):screen==='room'?networkError?'Verbindung zum Spielraum unterbrochen':roomConnection.fresh(room.code)?'Mit Spielraum synchronisiert · Internet erforderlich':'Verbindung wird geprüft':saveFailed?'Speichern eingeschränkt':offlineReady?'Automatisch gespeichert · Offline bereit':'Automatisch gespeichert · Offline-Status in Einstellungen'} · v${APP_VERSION}</span></div>`;
+  `<div class="game-layout"><div class="play-area">${directRollPreviewHTML(g,pid)}${g.status==='finished'?'':stats}${boardHTML(g,pid,damage)}</div><aside class="side-area"><div class="side-completions">${completionsHTML(g)}</div>${diceHTML(g,pid)}${g.mode==='computer'?computerMoveHTML(g):''}<div class="side-note"><b>Ein kleiner Gedanke für deinen nächsten Zug.</b><br>Offene Sterne kosten je 2 Punkte. Eine vollständige Randspalte bringt dir bis zu 5.</div>${screen==='room'&&roomState?.hostId===room?.playerId&&g.phase==='choose'&&g.status==='playing'?`<div data-host-skip="${!!roomState?.canSkip}">${roomState?.canSkip?'<button class="text-btn" data-action="host-skip" style="width:100%">Fehlende Person überspringen …</button>':''}</div>`:''}</aside></div>`}
+  ${passing?'':`<button type="button" class="game-board-jump" data-action="go-to-board" aria-controls="game-board" aria-label="Zum Spielfeld" title="Zum Spielfeld">${setupOptionIcon('columns')}<span class="game-board-jump-label">Zum Spielfeld</span></button>`}
+  <div class="game-footer"><span class="status-dot" style="justify-content:center"><i class="dot"></i>${gameDemo?'Beispielpartie':screen==='direct'?esc(directStatus(direct)):screen==='room'?networkError?'Verbindung zum Spielraum unterbrochen':roomConnection.fresh(room.code)?'Mit Spielraum synchronisiert · Internet erforderlich':'Verbindung wird geprüft':saveFailed?'Speichern eingeschränkt':offlineReady?'Automatisch gespeichert · Offline bereit':'Automatisch gespeichert · Offline-Status in Einstellungen'} · v${APP_VERSION}</span></div>`;
 }
-function lobbyHTML(){if(!roomState)return `<div class="lobby"><span class="eyebrow">SPIELRAUM ${esc(room?.code)}</span><h1>${roomAccessDenied?'Raumzugang beendet.':networkError?'Verbindung unterbrochen.':'Einen Moment …'}</h1><p>${esc(networkError||'Dein Spielraum wird geladen.')}</p><button class="primary" data-action="${roomAccessDenied?'room-setup':'reconnect'}">${roomAccessDenied?'Mit Raumcode beitreten':'Erneut verbinden'}</button><button class="text-btn" data-action="forget-room">Raum auf diesem Gerät verlassen</button></div>`;const host=roomState.hostId===room.playerId;return `<section class="lobby">${cancellationNotice(roomState.lastAbort)}<span class="pill"><i class="dot"></i> EUER GEMEINSAMER SPIELRAUM</span><h1 class="room-lobby-title">${roomState.roomName?esc(roomState.roomName):'Gute Gesellschaft.<br>Gute Würfe.'}</h1>${host?'<button class="text-btn room-rename" data-action="rename-room" '+(busy?'disabled':'')+'>'+icon('edit')+'Raumnamen ändern</button>':''}<p>Teile diesen Code mit deinen Mitspielenden.</p><button class="room-code" data-action="copy-code" aria-label="Raumcode kopieren">${esc(room.code)}</button><p>Zum Kopieren antippen · Internet erforderlich · ${roomState.members.length}/6 Personen</p><p class="room-members-help">Wiederverwendbar · Bereinigung nach 14 Tagen ohne Öffnen oder Aktion. Die Besetzung lässt sich vor dem Start und zwischen zwei Partien ändern.</p><div class="people">${roomState.members.map(m=>`<div class="person"><span class="avatar">${esc(m.name[0].toUpperCase())}</span>${esc(m.name)}${connectionIndicator(roomState.members.indexOf(m))}<small>${m.id===roomState.hostId?'Gastgeber':m.id===room.playerId?'Du':'Mit dabei'}</small>${host&&m.id!==roomState.hostId?'<button class="text-btn room-member-remove" data-action="remove-room-member" data-member-id="'+esc(m.id)+'" aria-label="'+esc(m.name)+' aus dem Raum entfernen" '+(busy?'disabled':'')+'>Entfernen</button>':''}</div>`).join('')}${roomState.members.length<2?'<div class="empty">Noch wartet dein nächster Lieblingsgegner.</div>':''}</div>${roomBoardNotice(host)}${boardPicker(roomState.boardId||'classic','room',host&&!busy,roomState.supportsBoards!==false,roomState.supportsRandomBoard!==false,roomState.randomUpdateNeeded||[])}${hiddenOptionHTML(!!roomState.hiddenScores,host,'room-hidden')}${mineLobbyHtml(roomState.mines===true,host&&!busy,'room-mines',roomState.supportsMines!==false,roomState.mineUpdateNeeded||[])}${bonusOptionHtml(roomState.bonusFields===true,host&&!busy,'room-bonus',roomState.supportsBonusFields!==false,roomState.bonusUpdateNeeded||[])}${networkError?`<div class="connection-banner">${esc(networkError)}</div>`:''}${host?`<button class="primary" data-action="start-room" ${busy||roomState.members.length<2?'disabled':''}>${icon('dice')}Partie starten</button>`:`<p>Die Partie startet, sobald der Gastgeber bereit ist.</p>`}<div class="lobby-actions"><button class="outline-btn" data-action="share-room">${icon('share')}Einladen</button><button class="outline-btn" data-action="forget-room">Raum ausblenden</button></div><div class="info-box">Teile den Farbfeld-Link und diesen Raumcode. Farbfeld benötigt keinen Account.</div></section>`;}
+function lobbyHTML(){if(!roomState)return `<div class="lobby"><span class="eyebrow">SPIELRAUM ${esc(room?.code)}</span><h1>${roomAccessDenied?'Raumzugang beendet.':networkError?'Verbindung unterbrochen.':'Einen Moment …'}</h1><p>${esc(networkError||'Dein Spielraum wird geladen.')}</p><button class="primary" data-action="${roomAccessDenied?'room-setup':'reconnect'}">${roomAccessDenied?'Mit Raumcode beitreten':'Erneut verbinden'}</button><button class="text-btn" data-action="forget-room">Raum auf diesem Gerät verlassen</button></div>`;const host=roomState.hostId===room.playerId;return `<section class="lobby">${cancellationNotice(roomState.lastAbort)}<span class="pill"><i class="dot"></i> EUER GEMEINSAMER SPIELRAUM</span><div class="room-lobby-heading"><h1 class="room-lobby-title">${roomState.roomName?esc(roomState.roomName):'Gute Gesellschaft.<br>Gute Würfe.'}</h1>${previousResultButton()}</div>${host?'<button class="text-btn room-rename" data-action="rename-room" '+(busy?'disabled':'')+'>'+icon('edit')+'Raumnamen ändern</button>':''}<p>Teile diesen Code mit deinen Mitspielenden.</p><button class="room-code" data-action="copy-code" aria-label="Raumcode kopieren">${esc(room.code)}</button><p>Zum Kopieren antippen · Internet erforderlich · ${roomState.members.length}/6 Personen</p><p class="room-members-help">Wiederverwendbar · Bereinigung nach 14 Tagen ohne Öffnen oder Aktion. Die Besetzung lässt sich vor dem Start und zwischen zwei Partien ändern.</p><div class="people">${roomState.members.map(m=>`<div class="person"><span class="avatar">${esc(m.name[0].toUpperCase())}</span>${esc(m.name)}${connectionIndicator(roomState.members.indexOf(m))}<small>${m.id===roomState.hostId?'Gastgeber':m.id===room.playerId?'Du':'Mit dabei'}</small>${host&&m.id!==roomState.hostId?'<button class="text-btn room-member-remove" data-action="remove-room-member" data-member-id="'+esc(m.id)+'" aria-label="'+esc(m.name)+' aus dem Raum entfernen" '+(busy?'disabled':'')+'>Entfernen</button>':''}</div>`).join('')}${roomState.members.length<2?'<div class="empty">Noch wartet dein nächster Lieblingsgegner.</div>':''}</div>${roomBoardNotice(host)}${boardPicker(roomState.boardId||'classic','room',host&&!busy,roomState.supportsBoards!==false,roomState.supportsRandomBoard!==false,roomState.randomUpdateNeeded||[])}${hiddenOptionHTML(!!roomState.hiddenScores,host,'room-hidden')}${mineLobbyHtml(roomState.mines===true,host&&!busy,'room-mines',roomState.supportsMines!==false,roomState.mineUpdateNeeded||[],roomState.supportsMineCoverage===true)}${bonusOptionHtml(roomState.bonusFields===true,host&&!busy,'room-bonus',roomState.supportsTreasureHunt===true,roomState.treasureUpdateNeeded||[])}${variantLobbyHTML(roomState.variants,{host,enabled:!busy,supported:roomState.supportsVariants===true,hiddenMinesSupported:roomState.supportsHiddenMines===true,missingHiddenMines:roomState.hiddenMineUpdateNeeded||[],players:roomState.members.length,missing:roomState.variantUpdateNeeded||[],context:'room'})}${networkError?`<div class="connection-banner">${esc(networkError)}</div>`:''}${host?`<button class="primary" data-action="start-room" ${busy||roomState.members.length<2?'disabled':''}>${icon('dice')}Partie starten</button>`:`<p>Die Partie startet, sobald der Gastgeber bereit ist.</p>`}<div class="lobby-actions"><button class="outline-btn" data-action="share-room">${icon('share')}Einladen</button><button class="outline-btn" data-action="forget-room">Raum ausblenden</button></div><div class="info-box">Teile den Farbfeld-Link und diesen Raumcode. Farbfeld benötigt keinen Account.</div></section>`;}
 function roomBoardNotice(host){
  const missing=roomState.boardUpdateNeeded||[];
  if(roomState.supportsBoards===false)return '<div class="room-board-notice needs-update" role="status"><strong>Spielbrett-Unterstützung noch nicht bestätigt.</strong><p>'+(missing.length?'<b>'+esc(missing.join(', '))+'</b>: Bitte diesen Raum auf dem jeweiligen Handy':'Bitte den Raum auf allen Handys')+' öffnen und kurz im Vordergrund lassen. Auch ältere Räume prüfen die Unterstützung automatisch neu.</p><p>Falls nötig: Einstellungen → Auf Updates prüfen → Aktualisieren. Zusätzliche Bretter benötigen mindestens Version 1.6.0.</p><button class="outline-btn" data-action="refresh-room" '+(busy?'disabled':'')+'>'+icon('refresh')+'Raum neu prüfen</button></div>';
  return '<p class="board-help">'+(host?'Wähle Spielbrett und Zusatzregeln vor jeder Partie. Danach „Partie starten“ antippen.':'Der Gastgeber wählt Spielbrett und Zusatzregeln vor jeder Partie.')+'</p>';
 }
+function observeVariantEvents(g){
+ if(!variantsEnabled(g)||!['game','room','direct'].includes(screen)||handover)return {};
+ const key=resultContext()+':'+(g.gameId||'local'),v=g.variants,volley=v.battleship?.lastVolley,mix=v.mixing?.lastRound||0;
+ const own=myPid(g);
+ const claims=(v.objectives?.tasks??[]).flatMap(task=>task.claims.flatMap((round,pid)=>round===null?[]:[{id:task.id+':'+pid+':'+round,pid,task}]));
+ if(variantEffectGame!==key){variantEffectGame=key;variantVolleySeen=volley?.id||'';variantMixSeen=mix;objectiveClaimsSeen=new Set(claims.map(claim=>claim.id));return {};}
+ const fresh={volley:volley&&volley.id!==variantVolleySeen?volley:null,mix:mix!==variantMixSeen,objectives:claims.filter(claim=>claim.pid===own&&!objectiveClaimsSeen.has(claim.id)).map(claim=>claim.task)};
+ variantVolleySeen=volley?.id||'';variantMixSeen=mix;objectiveClaimsSeen=new Set(claims.map(claim=>claim.id));
+ if(fresh.volley?.by===own&&!completedFeaturePanels(g,own).battle)battleMapOpen=true;
+ return fresh;
+}
 function render(center=false){
   if(!room||!['home','room'].includes(screen))reactionOverlay.receiveRoom([],'');
   const previous=boardView.snapshot(),oldFocus=document.activeElement?.dataset?.action,oldI=document.activeElement?.dataset?.i;
-  const g=currentGame();if(g)observeLeave(g);const freshMines=g?observeMineBlasts(g):[];
+  const g=currentGame(),bonusPanelKey=g?resultContext()+':'+(g.gameId||'local')+':'+myPid(g):'',oldBonusPanel=$('.bonus-panel');
+  let keepBonusOpen=oldBonusPanel?.dataset.stateKey===bonusPanelKey&&oldBonusPanel.querySelector('details')?.open;
+  if(g)observeLeave(g);const freshMines=g?observeMineBlasts(g):[],freshVariants=g?observeVariantEvents(g):{};
+  const completed=g&&['game','room','direct'].includes(screen)?featureCompletionNotice.observe(g,myPid(g),resultContext()):new Set();
+  if(completed.has('battle'))battleMapOpen=false;
+  if(completed.has('objectives'))objectivesOpen=false;
+  if(completed.has('hiddenMines'))hiddenMinePanelOpen=false;
+  if(completed.has('bonus'))keepBonusOpen=false;
   const awaiting=g&&['room','direct'].includes(screen)&&g.status==='playing'&&g.phase==='choose'&&inspectPid===null&&g.submitted.includes(myPid(g));
-  if(g){if(inspectPid!==null&&!mayInspect(g,inspectPid,myPid(g)))inspectPid=null;announceColors(g);announceBonusFields(g);announceMineReady(g);}
-  app.innerHTML=`<div class="app-shell ${awaiting?'awaiting-game':''} ${g&&screen!=='home'?'game-screen':''} ${g?.mode==='computer'?'computer-game':''} ${g?.players.length>1?'compact-game':''} ${g?.phase==='choose'&&screen!=='home'&&!handover&&inspectPid===null?'choosing-game':''}">${header()}${updateNotice()}${screen==='home'?home():g?gameHTML(g):screen==='direct'?directLobbyHTML():lobbyHTML()}</div>`;
+  let colorBanner,treasureBanner;
+  if(g){if(inspectPid!==null&&!mayInspect(g,inspectPid,myPid(g)))inspectPid=null;colorBanner=announceColors(g);treasureBanner=announceBonusFields(g);announceMineReady(g);}
+  app.innerHTML=`<div class="app-shell ${awaiting?'awaiting-game':''} ${g&&screen!=='home'?'game-screen':''} ${g?.status==='finished'&&screen!=='home'?'finished-game':''} ${g?.mode==='computer'?'computer-game':''} ${g?.variants?'variants-game':''} ${g?.players.length>1?'compact-game':''} ${g?.phase==='choose'&&screen!=='home'&&!handover&&inspectPid===null?'choosing-game':''}">${header()}${updateNotice()}${screen==='home'?home():g?gameHTML(g):screen==='direct'?directLobbyHTML():lobbyHTML()}</div>`;
   if(screen==='home')savedRoomsMarkup=savedRoomsHTML();
+  const bonusPanel=$('.bonus-panel');if(bonusPanel){bonusPanel.dataset.stateKey=bonusPanelKey;const details=bonusPanel.querySelector('details');if(details&&keepBonusOpen)details.open=true;}
   const players=$('.players'),taking=players?.querySelector('.viewed.is-turn')||players?.querySelector('.is-turn');
   if(players&&taking){const strip=players.getBoundingClientRect(),chip=taking.getBoundingClientRect();if(chip.left<strip.left||chip.right>strip.right)players.scrollLeft+=chip.left-strip.left;}
   syncChoicePanel();
   boardView.attach($('#board-scroll'),$('#board-scroll .board'),{center,previous});
+  shotMapView.attach($('#battle-map .battle-scroll'),$('#battle-map .battle-target-grid'),{key:g?resultContext()+':'+(g.gameId||'local')+':'+myPid(g):''});
+  const preparation=$('.placement-setup');
+  placementView.attach($('.placement-scroll'),$('.placement-grid'),{key:g?resultContext()+':'+(g.gameId||'local')+':'+myPid(g)+':'+(preparation?.classList.contains('fleet-setup')?'fleet':preparation?'mines':'none'):''});
   choiceObserver?.disconnect();
   if(typeof ResizeObserver!=='undefined'){choiceObserver??=new ResizeObserver(scheduleChoicePanel);const card=$('.dice-card.choosing');if(card)choiceObserver.observe(card);}
   if(oldFocus==='cell'&&oldI!==undefined){const el=app.querySelector(`[data-action="cell"][data-i="${oldI}"]`);if(el&&!el.disabled)el.focus({preventScroll:true});}
   animateRoll=false;
+  if(resultPanelOpen()&&(screen==='home'||roomAccessDenied&&screen==='room'||resultDialog?.context!==resultContext()))closeModal();
   if(dialog.open&&dialog.dataset.panel==='scores'){if(g){const content=dialog.querySelector('.score-content'),expanded=[...content.querySelectorAll('details')].map(e=>e.open),top=dialog.scrollTop;content.innerHTML=scoreCardsHTML(g);content.querySelectorAll('details').forEach((e,i)=>e.open=!!expanded[i]);dialog.scrollTop=top;}else closeModal();}
-  if(dialog.open&&dialog.dataset.panel==='mine-target'){const confirm=dialog.querySelector('[data-action="mine-confirm"]');if(confirm)confirm.disabled=busy||screen==='direct'&&!!direct.pending||!Number.isInteger(mineRequest?.target);}
-  if(freshMines.length)playMineBlast({...freshMines.at(-1),ownPid:myPid(g)});
+  if(dialog.open&&dialog.dataset.panel==='mine-target'){
+   const pending=busy||screen==='direct'&&!!direct.pending,confirm=dialog.querySelector('[data-action="mine-confirm"]');
+   if(confirm){confirm.disabled=pending||!Number.isInteger(mineRequest?.target);confirm.setAttribute('aria-busy',String(pending));if(pending){confirm.dataset.readyLabel??=confirm.innerHTML;confirm.textContent='Wird bestätigt …';}else if(confirm.dataset.readyLabel){confirm.innerHTML=confirm.dataset.readyLabel;delete confirm.dataset.readyLabel;}}
+   dialog.querySelectorAll('.mine-cell,.mine-coordinates select').forEach(el=>el.disabled=pending);
+   const cancel=dialog.querySelector('.mine-target-actions [data-action="close-modal"]');if(cancel)cancel.textContent=pending?'Schließen':'Abbrechen';
+  }
+  const gameView=g&&['game','room','direct'].includes(screen);
+  const messages=gameView&&colorBanner?[colorBanner]:[];
+  if(gameView&&!handover){
+   if(treasureBanner)messages.push(treasureBanner);
+   const shipBanner=shipSunkBanner(g,freshVariants.volley,myPid(g));
+   if(shipBanner)messages.push(shipBanner);
+   const tasks=freshVariants.objectives??[];
+   if(tasks.length)messages.push({type:'objectives',title:tasks.length===1?'Öffentlicher Auftrag erfüllt':tasks.length+' öffentliche Aufträge erfüllt',detail:tasks.map(objectiveLabel).join(' · ')});
+  }else $('body > .game-event-banner')?.remove();
+  // A move can also hit a ship. Reveal any visible blast last so the shot
+  // map cannot move the viewport away from the explosion.
+  const variantDelay=g?playVariantEffects(g,{...freshVariants,own:myPid(g),root:app}):0;if(variantDelay)computerNotBefore=Math.max(computerNotBefore,performance.now()+variantDelay);
+  if(freshMines.length){const blast=mineEffect(freshMines,{own:myPid(g),concealed:isScoreHidden(g)});playMineBlast({...blast,ownPid:myPid(g),concealed:isScoreHidden(g),attacker:g.players[blast.by]?.name||'',root:app,messages});}
+  else if(messages.length)playGameBanner(messages);
+  if(freshVariants.mix)toast('Farben neu gemischt · bestätigte Felder bleiben erhalten.');
   scheduleComputer();
+  scheduleResultPresentation(Math.max(variantDelay,freshMines.length||messages.length?GAME_BANNER_MS:0));
   syncNotificationContext();
   roomPoller.refresh();
 }
 function syncNotificationContext(){
+ if(!notifications)return;
  const directMode=screen==='direct'||screen==='home'&&direct.ready;
  const game=directMode?direct.snapshot?.game:['room','home'].includes(screen)?roomState?.game:null;
  const pid=directMode?direct.pid:game?.players.findIndex(player=>player.id===room?.playerId);
@@ -459,15 +736,15 @@ async function notificationAction(action){
 function computerMoveHTML(g){
  if(isHidden(g,COMPUTER,HUMAN))return '';
  const move=g.log.findLast(entry=>entry.player==='Computer');if(!move)return '';
- return '<div class="computer-last-move"><strong>Letzter Computerzug · Wurf '+move.round+'</strong><span>'+(move.pass?'Gepasst · keine Joker verbraucht':move.count+' '+(move.count===1?'Feld':'Felder')+' in '+LABELS[move.color])+'</span></div>';
+ return '<div class="computer-last-move"><strong>Letzter Computerzug · Wurf '+move.round+'</strong><span>'+(move.pass?'Gepasst · keine Joker verbraucht':move.count+' '+(move.count===1?'Feld':'Felder')+' in '+LABELS[move.color]+(move.extra!==undefined?' + Zusatzfeld':''))+'</span></div>';
 }
 function scheduleComputer(){
  clearTimeout(computerTimer);
- if(screen!=='game'||dialog.open||document.hidden||!needsComputerTurn(local))return;
+ if(gameDemo||screen!=='game'||dialog.open||document.hidden||!needsComputerTurn(local))return;
  const expected=local;
  computerTimer=setTimeout(()=>{
   if(screen!=='game'||dialog.open||document.hidden||local!==expected||!needsComputerTurn(local))return;
-  local=stepComputer(local);viewPid=HUMAN;handover=false;resetSelection();saveLocal();recordResult(local);render();
+  local=stampFinishedGame(stepComputer(local));viewPid=HUMAN;handover=false;resetSelection();saveLocal();recordResult(local);render();
  },Math.max(700,computerNotBefore-performance.now()));
 }
 function difficultyPicker(value){return '<div class="computer-difficulty"><label for="computer-difficulty">Computer-Stärke</label><select id="computer-difficulty" class="outline-btn">'+COMPUTER_LEVELS.map(level=>'<option value="'+level.id+'" '+(level.id===value?'selected':'')+'>'+level.label+'</option>').join('')+'</select><p class="caption" id="computer-difficulty-help">'+COMPUTER_LEVELS.find(level=>level.id===value).description+'</p></div>';}
@@ -475,41 +752,74 @@ function openComputerLevel(){if(currentGame()?.mode!=='computer'||local.status!=
 function applyComputerLevel(){if(currentGame()?.mode!=='computer'||local.gameId!==computerLevelGameId||local.status!=='playing'){closeModal();return;}const level=$('#computer-difficulty')?.value;if(!validComputerDifficulty(level))return;local=changeComputerDifficulty(local,level);prefs.computerDifficulty=level;persist(PREFKEY,prefs);saveLocal();closeModal();render();toast('Computer spielt jetzt '+computerLevel(local).label+'.');}
 function setupComputer(){
  nextComputerHidden=false;nextComputerDifficulty=local?.mode==='computer'?computerDifficulty(local):prefs.computerDifficulty;
- openModal('Du gegen den Computer.',`<p>Du beginnst. Ihr spielt mit demselben Wurf auf eigenen Blättern. Ein Handy, auch offline.</p>${difficultyPicker(nextComputerDifficulty)}${boardPicker(prefs.boardId)}${hiddenSetup(local?.mode==='computer'&&!!local.hiddenScores)}${mineSetupHtml(minesEnabled(local))}${bonusSetupHtml(local?.mode==='computer'&&bonusFieldsEnabled(local))}<button class="primary" data-action="start-computer">${icon('computer')}Gegen Computer starten</button>`,'computer-setup');
+ openModal('Du gegen den Computer.',`<p>Du beginnst. Ihr spielt mit demselben Wurf auf eigenen Blättern. Ein Handy, auch offline.</p>${difficultyPicker(nextComputerDifficulty)}${boardPicker(prefs.boardId)}${hiddenSetup(local?.mode==='computer'&&!!local.hiddenScores)}${mineSetupHtml(minesEnabled(local))}${bonusSetupHtml(local?.mode==='computer'&&bonusFieldsEnabled(local),{treasureHunt:true})}${variantSetupHTML(local)}<button class="primary" data-action="start-computer">${icon('computer')}Gegen Computer starten</button>`,'computer-setup');
 }
 function startComputer(force=false){
- if(!force){nextComputerHidden=!!$('#hidden-scores')?.checked;nextComputerBoard=readBoardChoice();nextComputerDifficulty=$('#computer-difficulty')?.value||'medium';nextComputerMines=$('#mine-enabled')?.checked===true;nextComputerBonus=$('#bonus-fields')?.checked===true;}
+ if(!force){nextComputerHidden=!!$('#hidden-scores')?.checked;nextComputerBoard=readBoardChoice();nextComputerDifficulty=$('#computer-difficulty')?.value||'medium';nextComputerMines=$('#mine-enabled')?.checked===true;nextComputerBonus=$('#bonus-fields')?.checked===true;nextComputerVariants=readVariantOptions(document);}
  if(!force&&!confirmNew('computer'))return;
- rememberBoard(nextComputerBoard);prefs.computerDifficulty=nextComputerDifficulty;persist(PREFKEY,prefs);local=createComputerGame(nextComputerHidden,nextComputerBoard,nextComputerDifficulty,nextComputerMines,nextComputerBonus);local.gameId=newId();screen='game';viewPid=HUMAN;inspectPid=null;handover=false;resetSelection();saveLocal();closeModal();render(true);window.scrollTo(0,0);
+ rememberBoard(nextComputerBoard);prefs.computerDifficulty=nextComputerDifficulty;persist(PREFKEY,prefs);local=createComputerGame(nextComputerHidden,nextComputerBoard,nextComputerDifficulty,nextComputerMines,nextComputerBonus,nextComputerVariants);hiddenMineSlot=0;fleetShip=4;fleetVertical=local.variants?.battleship?.fleets[0][4][1]-local.variants?.battleship?.fleets[0][4][0]===15;battleMapOpen=false;objectivesOpen=false;hiddenMinePanelOpen=false;local.gameId=newId();screen='game';viewPid=HUMAN;inspectPid=null;handover=false;resetSelection();saveLocal();closeModal();render(true);window.scrollTo(0,0);
+}
+async function editFleet(fleet){
+ const g=currentGame(),own=g&&myPid(g);if(preparationStep(g,own)!=='fleet'||busy||handover||screen==='direct'&&(!direct.ready||direct.pending))return;
+ if(screen==='room'){if(await roomAction('fleet',{fleet})&&fleet.kind==='ready')window.scrollTo(0,0);return;}
+ if(screen==='direct'){directAction('fleet',{fleet});return;}
+ const next=applyFleetAction(g,own,fleet,randomInt);if(!persist(KEY,next))return;local=next;
+ if(fleet.kind==='ready')advanceLocalPreparation(next,own);
+ render();
+}
+async function editHiddenMine(placement){
+ const g=currentGame(),own=g&&myPid(g);if(preparationStep(g,own)!=='mines'||busy||handover||screen==='direct'&&(!direct.ready||direct.pending))return;
+ if(screen==='room'){if(await roomAction('hidden-mine',{placement})&&placement.kind==='ready')window.scrollTo(0,0);return;}
+ if(screen==='direct'){directAction('hidden-mine',{placement});return;}
+ const next=applyHiddenMineAction(g,own,placement,randomInt);if(!persist(KEY,next))return;local=next;
+ if(placement.kind==='ready')advanceLocalPreparation(next,own);
+ render();
+}
+function advanceLocalPreparation(game,own){
+ resetSelection();inspectPid=null;viewPid=nextLocalPlayer(game);hiddenMineSlot=0;
+ handover=game.mode==='local'&&viewPid!==own;
+ window.scrollTo(0,0);
 }
 function openMineTarget(){
- const g=currentGame(),own=g&&myPid(g);if(!g||!canUseMine(g,own)||busy||handover||screen==='direct'&&(!direct.ready||direct.pending)){toast('Die Mine ist während deiner eigenen Auswahl nach einem fremden Farbabschluss verfügbar.');return;}
- mineRequest={gameId:g.gameId,turn:g.turn,target:null};openModal('Minenangriff.',mineTargetHtml(g,null,own),'mine-target');
+ const g=currentGame(),own=g&&myPid(g);if(!g||!canUseMine(g,own)||busy||handover||screen==='direct'&&(!direct.ready||direct.pending)){toast('Setze einen freigeschalteten Luftangriff während deiner eigenen Auswahl ein.');return;}
+ const charge=readyMineCharge(g,own);
+ mineRequest={gameId:g.gameId,turn:g.turn,target:null,charge};openModal('Luftangriff einsetzen.',mineTargetHtml(g,null,own,charge),'mine-target');
 }
 function selectMineTarget(target){
- const g=currentGame(),own=g&&myPid(g);if(!mineRequest||!g||g.gameId!==mineRequest.gameId||g.turn!==mineRequest.turn||!canUseMine(g,own)||!Number.isInteger(target)||target<0||target>=105)return;
- mineRequest.target=target;const scroll=dialog.scrollTop;openModal('Minenangriff.',mineTargetHtml(g,target,own),'mine-target');dialog.scrollTop=scroll;
+ const g=currentGame(),own=g&&myPid(g);if(busy||screen==='direct'&&direct.pending||!mineRequest||!g||g.gameId!==mineRequest.gameId||g.turn!==mineRequest.turn||!canUseMine(g,own)||!Number.isInteger(target)||target<0||target>=105)return;
+ const focus=document.activeElement,focusId=focus?.id,fromMap=focus?.dataset?.action==='mine-target',scroll=dialog.scrollTop,mapScroll=dialog.querySelector('.mine-map-scroll')?.scrollLeft||0,rulesOpen=dialog.querySelector('.mine-rule-details')?.open;
+ mineRequest.target=target;openModal('Luftangriff einsetzen.',mineTargetHtml(g,target,own,mineRequest.charge),'mine-target');dialog.scrollTop=scroll;
+ const map=dialog.querySelector('.mine-map-scroll'),selected=dialog.querySelector('[data-action="mine-target"][data-i="'+target+'"]');if(map){map.scrollLeft=mapScroll;if(!fromMap&&selected)map.scrollLeft=Math.max(0,selected.offsetLeft-map.offsetLeft-map.clientWidth/2+selected.clientWidth/2);}
+ if(rulesOpen)dialog.querySelector('.mine-rule-details').open=true;
+ const nextFocus=fromMap?selected:['mine-column','mine-row'].includes(focusId)?dialog.querySelector('#'+focusId):null;nextFocus?.focus({preventScroll:true});
 }
 async function confirmMine(){
  const g=currentGame(),own=g&&myPid(g);if(busy||screen==='direct'&&direct.pending)return;
  if(!mineRequest||!g||g.gameId!==mineRequest.gameId||g.turn!==mineRequest.turn||!canUseMine(g,own)){mineRequest=null;closeModal();toast('Die Spielsituation hat sich geändert. Bitte das Ziel neu wählen.');return;}
- const target=mineRequest.target;if(!Number.isInteger(target))return;
- if(screen==='room'){await roomAction('mine',{target,gameId:g.gameId,round:g.round});return;}
- if(screen==='direct'){directAction('mine',{target});return;}
- const next=applyMineAttack(g,own,target);if(!persist(KEY,next))return;local=next;render();toast('Mine eingesetzt · fünf Punkte Einsatz. Dein normaler Zug bleibt erhalten.');
+ const {target,charge}=mineRequest;if(!Number.isInteger(target))return;
+ if(screen==='room'){await roomAction('mine',{target,charge,gameId:g.gameId,round:g.round});return;}
+ if(screen==='direct'){directAction('mine',{target,charge});return;}
+ const next=applyMineAttack(g,own,target,randomInt,charge);if(!persist(KEY,next))return;local=next;render();
 }
 function observeMineBlasts(g){
- const id=g?.gameId||'',blasts=mineBlasts(g),key=b=>b.by+':'+b.turn;
+ const id=g?.gameId||'',blasts=damageBlasts(g),key=b=>b.id||b.by+':'+b.turn;
  if(mineBlastGame!==id){mineBlastGame=id;seenMineBlasts=new Set(blasts.map(key));return [];}
  const fresh=blasts.filter(b=>!seenMineBlasts.has(key(b)));blasts.forEach(b=>seenMineBlasts.add(key(b)));if(!fresh.length||!['game','room','direct'].includes(screen))return [];
- const own=myPid(g),ownAttack=fresh.findLast(b=>b.by===own);
- if(ownAttack){const target=mineBlastTargets(ownAttack).find(t=>t.cells.length)||mineBlastTargets(ownAttack)[0];if(target&&!isHidden(g,target.pid,own))inspectPid=target.pid;if(mineRequest?.gameId===id){mineRequest=null;if(dialog.dataset.panel==='mine-target')closeModal();}}
- else if(fresh.some(b=>mineBlastTargets(b).some(t=>t.pid===own&&t.cells.length)))inspectPid=null;
+ const own=myPid(g),ownAttack=fresh.findLast(b=>b.kind!=='hidden'&&b.by===own),inspection=mineInspectionChange(g,fresh,own);
+ if(inspection!==undefined)inspectPid=inspection;
+ if(ownAttack&&mineRequest?.gameId===id){mineRequest=null;if(dialog.dataset.panel==='mine-target')closeModal();}
  computerNotBefore=performance.now()+MINE_ANIMATION_MS;return fresh;
 }
 
-function openModal(title,content,panel=''){dialog.dataset.panel=panel;dialog.innerHTML=`<div class="modal"><div class="modal-head"><div><h2>${title}</h2><button class="modal-version" data-action="version-tap">Farbfeld v${APP_VERSION}</button></div><button class="icon-btn" data-action="close-modal" aria-label="Schließen">×</button></div>${content}</div>`;if(!dialog.open)dialog.showModal();}
+function clearAnimationPreview(){animationPreviewCleanup?.();animationPreviewCleanup=null;}
+function closeTutorialClip(){tutorialCleanup?.();tutorialCleanup=null;}
+function openModal(title,content,panel=''){clearAnimationPreview();closeTutorialClip();dialog.dataset.panel=panel;dialog.setAttribute('aria-labelledby','modal-title');dialog.innerHTML=`<div class="modal"><div class="modal-head"><div><h2 id="modal-title">${title}</h2><button class="modal-version" data-action="version-tap">Farbfeld v${APP_VERSION}</button></div><button class="icon-btn" data-action="close-modal" aria-label="Schließen">×</button></div>${content}</div>`;if(!dialog.open)dialog.showModal();}
 function closeModal(){directUi?.stop();dialog.close();}
+function showTutorial(topic){
+ openModal('Spielanleitung',tutorialHTML(topic),'tutorial');
+ tutorialCleanup=mountTutorial(dialog);
+ dialog.scrollTop=0;
+}
 function requestDiscardDirect(localOnly=false){
   const g=direct.snapshot?.game;if(g?.status==='playing'&&!localOnly){if(g.players[direct.pid]?.left){openModal('Partie läuft weiter.', '<p>Du bist bereits ausgestiegen. '+(direct.pid===0?'Dieses Handy verbindet die anderen. Wenn du es verwirfst, können sie hier nicht weiterspielen.':'Die anderen spielen weiter.')+'</p><button class="outline-btn danger-btn" data-action="discard-direct-local">Auf diesem Gerät verwerfen</button><button class="primary" data-action="close-modal">Zurück zur Partie</button>');return;}screen='direct';requestLeaveGame();return;}
   directUi.cancelUi();
@@ -535,7 +845,7 @@ async function confirmLeaveGame(){
  pendingLeave={...request};
  if(request.mode==='room'){if(!await roomAction('leave',{gameId:g.gameId}))pendingLeave=null;return;}
  if(request.mode==='direct'){try{direct.act('leave');}catch(error){pendingLeave=null;toast(error.message);}return;}
- const next=leaveGame(g,request.pid);if(!persist(KEY,next)){pendingLeave=null;return;}recordResult(next,request.pid);if(next.status==='finished'&&next.mode==='local')recordResult(next);local=next;render();
+ const next=stampFinishedGame(leaveGame(g,request.pid));if(!persist(KEY,next)){pendingLeave=null;return;}recordResult(next,request.pid);if(next.status==='finished'&&next.mode==='local')recordResult(next);local=next;render();
 }
 function observeLeave(g){
  if(!pendingLeave||g.gameId!==pendingLeave.gameId||!g.players[pendingLeave.pid]?.left)return;
@@ -578,10 +888,10 @@ function boardPicker(selected='classic',context='start',enabled=true,customAllow
 
 function setupSolo(){openModal('Dein nächstes Farbfeld.', '<p>30 Würfe auf deinem gewählten Spielbrett.</p>'+boardPicker(prefs.boardId)+bonusSetupHtml(local?.mode==='solo'&&bonusFieldsEnabled(local))+'<button class="primary" data-action="start-solo">Solo starten</button>','solo-setup');}
 function startSolo(force=false){if(!force){nextSoloBoard=readBoardChoice();nextSoloBonus=$('#bonus-fields')?.checked===true;}if(!force&&!confirmNew('solo'))return;rememberBoard(nextSoloBoard);local=createGame(['Du'],'solo',[],{boardId:nextSoloBoard,bonusFields:nextSoloBonus});local.gameId=newId();screen='game';viewPid=0;inspectPid=null;handover=false;resetSelection();saveLocal();closeModal();render(true);window.scrollTo(0,0);}
-function setupLocal(){const previous=local?.mode==='local'&&local.status==='finished'?local.players.map(p=>p.name):[],count=previous.length||2;openModal('Alle an einem Handy.',`<p>Ihr spielt reihum mit demselben Wurf. Nach jedem Zug gebt ihr das Handy weiter. Funktioniert auch offline.</p><form data-form="local"><label for="player-count">Wie viele seid ihr?</label><select id="player-count" class="outline-btn" style="width:100%">${[2,3,4,5,6].map(n=>`<option value="${n}" ${n===count?'selected':''}>${n} Personen</option>`).join('')}</select><div id="name-fields">${localNames(count,previous)}</div>${boardPicker(prefs.boardId)}${hiddenSetup(!!previous.length&&!!local.hiddenScores)}${mineSetupHtml(!!previous.length&&minesEnabled(local))}${bonusSetupHtml(!!previous.length&&bonusFieldsEnabled(local))}<button class="primary" type="submit">${icon('dice')}Gemeinsam starten</button></form>`);}
+function setupLocal(){const previous=local?.mode==='local'&&local.status==='finished'?local.players.map(p=>p.name):[],count=previous.length||2;openModal('Alle an einem Handy.',`<p>Ihr spielt reihum mit demselben Wurf. Nach jedem Zug gebt ihr das Handy weiter. Funktioniert auch offline.</p><form data-form="local"><label for="player-count">Wie viele seid ihr?</label><select id="player-count" class="outline-btn" style="width:100%">${[2,3,4,5,6].map(n=>`<option value="${n}" ${n===count?'selected':''}>${n} Personen</option>`).join('')}</select><div id="name-fields">${localNames(count,previous)}</div>${boardPicker(prefs.boardId)}${hiddenSetup(!!previous.length&&!!local.hiddenScores)}${mineSetupHtml(!!previous.length&&minesEnabled(local))}${bonusSetupHtml(!!previous.length&&bonusFieldsEnabled(local),{treasureHunt:true})}${variantSetupHTML(previous.length?local:null,{players:count})}<button class="primary" type="submit">${icon('dice')}Gemeinsam starten</button></form>`);}
 function localNames(count,names=[]){return Array.from({length:count},(_,i)=>`<label for="name-${i}">Person ${i+1}</label><input id="name-${i}" name="name-${i}" maxlength="24" value="${esc(names[i]||(i===0?'Du':'Person '+(i+1)))}" required autocomplete="off">`).join('');}
 function together(){openModal('Am besten gemeinsam.',`<p>Wählt, wie ihr euer Farbfeld teilen möchtet.</p><button class="mode-option" data-action="room-setup"><span>⌘</span><span><strong>Internet – Spielraum</strong><small>2–6 Personen · Server synchronisiert die Partie</small></span><span class="option-arrow">→</span></button><button class="mode-option" data-action="direct-entry"><span>⌁</span><span><strong>Offline – mehrere Handys</strong><small>2–6 Personen · WLAN/Hotspot · jedes Handy einmal koppeln</small></span><span class="option-arrow">→</span></button><button class="mode-option" data-action="local-setup"><span>☏</span><span><strong>Ein Handy weitergeben</strong><small>2–6 Personen · komplett offline spielbar</small></span><span class="option-arrow">→</span></button><div class="info-box">Beim Direktmodus spielt jede Person am eigenen Handy. Internet wird nur für die optionale Raumcode-Kopplung gebraucht. Bluetooth ist dafür nicht nötig.</div>`);}
-function roomSetup(){openModal('Internet – Spielraum',`<p>Mehrere Räume, mehrere Partien parallel. Deine Raumzugänge bleiben auf diesem Gerät gespeichert.</p><p class="caption">Der Gastgeber wählt Spielbrett, Minen und Bonusfelder vor dem Start im Raum.</p><button class="text-btn" data-action="manage-rooms">Gespeicherte Räume öffnen</button><label for="room-name">Dein Name</label><input id="room-name" maxlength="24" placeholder="z. B. Robin" value="${esc(prefs.name||'')}" autocomplete="given-name"><label for="room-title-create">Name des Spielraums (optional)</label><input id="room-title-create" maxlength="48" placeholder="z. B. Sonntagsrunde" autocomplete="off"><p class="input-help">Nur beim Erstellen · bis zu 48 Zeichen. Beigetreten wird weiterhin mit dem Raumcode.</p><button class="primary" data-action="create-room" ${busy?'disabled':''}>${icon('users')}Spielraum erstellen</button><div style="text-align:center;font-size:10px;color:#8e977f;margin-top:18px">ODER EINEM SPIEL BEITRETEN</div><label for="room-code">Raumcode</label><input id="room-code" class="code-input" maxlength="8" placeholder="8 Zeichen" value="${esc(new URL(location.href).searchParams.get('room')||room?.code||'')}" autocomplete="off"><button class="outline-btn" data-action="join-room" ${busy?'disabled':''}>Beitreten ${icon('arrow')}</button><div class="info-box">Teile den Farbfeld-Link und den Raumcode. Farbfeld benötigt keinen Account. Für diesen Spielraum brauchen alle Internet.</div>`);}
+function roomSetup(){openModal('Internet – Spielraum',`<p>Mehrere Räume, mehrere Partien parallel. Deine Raumzugänge bleiben auf diesem Gerät gespeichert.</p><p class="caption">Der Gastgeber wählt Spielbrett, Luftangriff, Schatzsuche und Varianten vor dem Start im Raum.</p><button class="text-btn" data-action="manage-rooms">Gespeicherte Räume öffnen</button><label for="room-name">Dein Name</label><input id="room-name" maxlength="24" placeholder="z. B. Robin" value="${esc(prefs.name||'')}" autocomplete="given-name"><label for="room-title-create">Name des Spielraums (optional)</label><input id="room-title-create" maxlength="48" placeholder="z. B. Sonntagsrunde" autocomplete="off"><p class="input-help">Nur beim Erstellen · bis zu 48 Zeichen. Beigetreten wird weiterhin mit dem Raumcode.</p><button class="primary" data-action="create-room" ${busy?'disabled':''}>${icon('users')}Spielraum erstellen</button><div style="text-align:center;font-size:10px;color:#8e977f;margin-top:18px">ODER EINEM SPIEL BEITRETEN</div><label for="room-code">Raumcode</label><input id="room-code" class="code-input" maxlength="8" placeholder="8 Zeichen" value="${esc(new URL(location.href).searchParams.get('room')||room?.code||'')}" autocomplete="off"><button class="outline-btn" data-action="join-room" ${busy?'disabled':''}>Beitreten ${icon('arrow')}</button><div class="info-box">Teile den Farbfeld-Link und den Raumcode. Farbfeld benötigt keinen Account. Für diesen Spielraum brauchen alle Internet.</div>`);}
 function renameRoom(){
  if(screen!=='room'||!roomState||roomState.hostId!==room.playerId)return;
  openModal('Euer Raumname.', '<form data-form="room-title"><p>Alle im Raum sehen denselben Namen. Der Raumcode <strong>'+esc(room.code)+'</strong> und die laufende Partie bleiben erhalten.</p><label for="room-title">Name des Spielraums</label><input id="room-title" maxlength="48" value="'+esc(roomState.roomName||'')+'" placeholder="z. B. Sonntagsrunde" autocomplete="off"><p class="input-help">Bis zu 48 Zeichen. Leer lassen, um den Standardnamen zu verwenden.</p><button class="primary" type="submit">Namen speichern</button><button class="outline-btn" type="button" data-action="close-modal">Abbrechen</button></form>','room-title');
@@ -590,12 +900,144 @@ function renameRoom(){
 function rememberRoomName(data){rememberRoomSnapshot(data);}
 function rules(){openModal('Einfach losspielen.',`<p>Nach den Grundregeln von „Noch mal!“ – im eigenen Farbfeld-Design.</p><div class="rule"><span class="rule-number">1</span><div><h3>Wähle Farbe + Zahl.</h3><p>Würfle einmal. Kombiniere einen Farbwürfel mit einem Zahlenwürfel. Du kreuzt genau diese Anzahl Kästchen in dieser Farbe an.</p></div></div><div class="rule"><span class="rule-number">2</span><div><h3>In der Mitte geht’s los.</h3><p>Deine ersten Kreuze berühren Spalte H. Danach grenzt jeder neue, in sich verbundene Bereich an bestehende Kreuze – oder startet erneut in H. Nur waagrecht und senkrecht zählt.</p></div></div><div class="rule"><span class="rule-number">3</span><div><h3>Gut verbunden.</h3><p>Alle neuen Kreuze eines Zuges müssen untereinander zusammenhängen. Die Zahl lässt sich nicht auf getrennte Gruppen aufteilen. Maximal 5 Kästchen pro Zug.</p></div></div><div class="rule"><span class="rule-number">4</span><div><h3>Joker bewusst einsetzen.</h3><p>✳ steht für eine beliebige Farbe; ? für 1 bis 5 Felder. Jeder gewählte Jokerwürfel kostet einen deiner 8 Joker. Zwei Jokerwürfel kosten zwei. Übrige Joker zählen je +1.</p></div></div><div class="rule"><span class="rule-number">5</span><div><h3>Volle Spalten. Volle Farben.</h3><p>Eine vollständige Spalte bringt den Wert darunter: die erste Person den oberen, spätere den unteren. Sind mehrere im selben Wurf zuerst fertig, erhalten alle den oberen Wert. Alle 21 Kästchen einer Farbe bringen zuerst +5, später +3. Jeder offene Stern kostet −2.</p></div></div><div class="rule"><span class="rule-number">6</span><div><h3>Solo, Computer oder gemeinsam.</h3><p>Solo: 2 Farb- und 2 Zahlenwürfel, genau 30 Würfe. Gemeinsam: 3 + 3 Würfel. Ab dem 4. Wurf sind die 2 gewählten Würfel der aktiven Person für die anderen gesperrt; die übrigen sind mehrfach nutzbar. Passt die aktive Person, bleiben alle verfügbar. Nach dem Wurf mit der zweiten vollständigen Farbe einer Person endet das Spiel. Gegen den Computer gelten dieselben Mehrspielerregeln; er führt seine Züge automatisch aus.</p></div></div><div class="info-box">Passen ist jederzeit erlaubt und kostet keine Joker. Bei Punktegleichstand gewinnt, wer mehr Joker übrig hat. Bleibt auch das gleich, teilen sich diese Personen den Sieg.</div><div class="source-links">Spielidee: Inka & Markus Brand · Verlag: Schmidt Spiele. Diese persönliche Umsetzung ist keine offizielle Verlags-App.<a href="https://www.schmidtspiele.de/files/Produkte/4/49327%20-%20Noch%20mal!/49327_Noch_Mal_DE.pdf" target="_blank" rel="noopener">Original-Spielanleitung als PDF ↗</a><a href="https://www.schmidtspiele.de/details/produkt/noch-mal-.html" target="_blank" rel="noopener">Das Originalspiel beim Verlag ↗</a><a href="/game/vendor/qrcode-LICENSE.txt" target="_blank" rel="noopener">QR-Generator · MIT-Lizenz ↗</a><a href="/game/vendor/jsqr-LICENSE.txt" target="_blank" rel="noopener">QR-Scanner · Apache-2.0-Lizenz ↗</a></div>`);}
 function themeOptions(){return '<section class="theme-settings"><h3>Dein Design</h3><p>Nur auf diesem Gerät · auch offline gespeichert</p><div class="theme-options" role="group" aria-label="Design auswählen">'+THEMES.map(theme=>'<button class="theme-option" data-action="set-theme" data-theme="'+theme.id+'" aria-pressed="'+(prefs.theme===theme.id)+'" aria-label="'+theme.name+' · '+theme.detail+'" title="'+theme.detail+'"><span class="theme-sample '+theme.id+'" aria-hidden="true">'+themeSymbol(theme)+'</span><strong>'+theme.name+'</strong><span class="theme-check" aria-hidden="true">'+(prefs.theme===theme.id?'✓':'')+'</span></button>').join('')+'</div></section>';}
-function settings(){
+function showAnimationPreview(sceneId){
+ openModal('Animationen testen',animationPreviewHTML(sceneId),'animation-preview');
+ if(onlineDiagnose)dialog.querySelector('[data-action="animation-back"]').hidden=true;
+ animationPreviewCleanup=mountAnimationPreview(dialog.querySelector('.animation-preview'),{mark:markSymbol(),patterns:prefs.patterns});
+ dialog.scrollTop=0;
+ dialog.querySelector('#animation-preview-choice').focus({preventScroll:true});
+}
+function showAnimationGame(sceneId){
+ const scene=animationScene(sceneId);if(!scene)return;
+ openModal('Spielansicht',`<div class="animation-game-layout">
+  <div class="animation-game-stage">
+   <iframe class="animation-game-frame" title="${esc(scene.label)}" src="${onlineDiagnose?'/diagnose':'/play'}" data-animation-game="${esc(scene.id)}"></iframe>
+   <div class="animation-review-stage" hidden></div>
+  </div>
+  <aside class="animation-review" aria-labelledby="animation-review-title">
+   <header>
+    <h2 id="animation-review-title">Ablauf prüfen</h2><p>${esc(scene.label)}</p>
+    <div class="animation-game-controls" role="group" aria-label="Spielvorschau">
+     <button type="button" class="primary" data-review-play title="Szene an der aktuellen Scrollposition starten" disabled>Abspielen</button>
+     <button type="button" class="outline-btn" data-review-back>Zur Auswahl</button>
+    </div>
+    <div class="animation-review-view" hidden>
+     <span data-review-caption role="status"></span><button type="button" class="outline-btn" data-review-live>Zur Spielansicht</button>
+    </div>
+   </header>
+   <section class="animation-review-body" aria-labelledby="animation-timeline-title">
+    <h3 id="animation-timeline-title">Zeitleiste</h3>
+    <p class="animation-review-context" role="status">Die Zeitleiste erscheint nach dem Abspielen.</p>
+    <div class="animation-review-events"></div>
+   </section>
+  </aside>
+ </div>`,'animation-game');
+ const workspace=dialog.querySelector('.animation-game-layout');
+ const frame=workspace.querySelector('.animation-game-frame');
+ const back=()=>showAnimationPreview(scene.id);
+ const message=event=>{if(event.origin===location.origin&&event.source===frame.contentWindow&&event.data?.type==='farbfeld-animation-back')back();};
+ const cancel=event=>{event.preventDefault();back();};
+ workspace.querySelector('[data-review-back]').addEventListener('click',back);
+ dialog.addEventListener('cancel',cancel);
+ window.addEventListener('message',message);
+ animationPreviewCleanup=()=>{dialog.removeEventListener('cancel',cancel);window.removeEventListener('message',message);workspace.remove();};
+}
+function startAnimationGame(createAnimationReview){
+ const frame=window.frameElement;
+ const workspace=frame?.closest('.animation-game-layout');
+ if(!workspace)return;
+ const play=workspace.querySelector('[data-review-play]');
+ const exit=()=>window.parent.postMessage({type:'farbfeld-animation-back'},location.origin);
+ const review=createAnimationReview({frame,workspace,scene:animationScene(demoId),version:APP_VERSION,gameDialog:dialog,replay:playScene,escape:esc});
+ let run=0;
+ function rememberView(){
+  return {left:window.scrollX,top:window.scrollY,pid:inspectPid,
+   boardLeft:$('#board-scroll')?.scrollLeft??0,boardScale:boardView.scale,
+   battleOpen:$('#battle-map')?.open,shotLeft:shotMapView.scroll?.scrollLeft??0,shotScale:shotMapView.scale,
+   objectivesOpen:$('#objectives-panel')?.open,hiddenMineOpen:$('#hidden-mine-panel')?.open,bonusOpen:$('.bonus-panel details')?.open};
+ }
+ function reset(view){
+  if(dialog.open)closeModal();
+  clearTimeout(toastTimer);$('#toast').classList.remove('visible');$('#toast').textContent='';
+  document.body.querySelector(':scope > .game-event-banner')?.remove();
+  inspectPid=view?.pid??null;handover=false;battleMapOpen=!!view?.battleOpen;objectivesOpen=!!view?.objectivesOpen;hiddenMinePanelOpen=!!view?.hiddenMineOpen;mineRequest=null;
+  resetSelection();
+  if(gameDemo.draft){
+   const {ci,ni,cells}=gameDemo.draft;
+   choice={...choice,ci,ni};selection=[...cells];
+  }
+  local={...gameDemo.before,gameId:'animation-demo-'+ ++run};
+  render(true);
+  if(view){
+   if(view.bonusOpen&&$('.bonus-panel details'))$('.bonus-panel details').open=true;
+   boardView.zoom(view.boardScale);if(boardView.scroll)boardView.scroll.scrollLeft=view.boardLeft;
+   if(view.battleOpen){shotMapView.zoom(view.shotScale);if(shotMapView.scroll)shotMapView.scroll.scrollLeft=view.shotLeft;}
+   window.scrollTo({left:view.left,top:view.top,behavior:'instant'});
+  }
+ }
+ function focusStart(){
+  const start=app.querySelector(gameDemo.start==='dice'?'.dice-card':'#board-scroll');
+  start?.scrollIntoView({block:'center',behavior:'instant'});
+ }
+ screen='game';reset();
+ requestAnimationFrame(()=>{focusStart();play.disabled=false;});
+ document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!dialog.open)exit();});
+ play.addEventListener('click',()=>playScene(rememberView()));
+ async function playScene(view,moment){
+  if(play.disabled)return;
+  play.disabled=true;
+  play.textContent='Läuft …';
+  review.startPlayback(Boolean(moment));
+  let cutoff;
+  try{
+   reset(view);
+   const stop=new Promise(resolve=>{if(moment)cutoff=setTimeout(()=>resolve(false),moment.moment);});
+   const wait=ms=>Promise.race([stop,new Promise(resolve=>setTimeout(()=>resolve(true),ms))]);
+   if(!moment)review.begin(view,{width:Math.round(visualViewport?.width??innerWidth),height:Math.round(visualViewport?.height??innerHeight),theme:THEMES.find(theme=>theme.id===prefs.theme)?.name??'Klassisch',reduced:matchMedia('(prefers-reduced-motion: reduce)').matches});
+   if(!await wait(300))return;
+   const aiming=Number.isInteger(gameDemo.target),id=local.gameId;
+   if(aiming){
+    openMineTarget();selectMineTarget(gameDemo.target);
+    if(!await wait(900))return;
+   }
+   if(gameDemo.reaction)reactionOverlay.receive({id,emoji:'laugh',motion:'fly',scale:1.2,name:'Computer'});
+   for(const [index,step] of gameDemo.steps.entries()){
+    if(index>0&&!await wait(1500))return;
+    if(!moment)review.mark('action',aiming?'Luftangriff bestätigt':gameDemo.roll?'Würfel geworfen':index===0?'Spielzug bestätigt':'Wurf gewertet');
+    local={...step,gameId:id};
+    resetSelection();animateRoll=gameDemo.roll===true;
+    render(!aiming&&!gameDemo.roll);
+   }
+   await wait($('body > .game-event-banner')?GAME_BANNER_MS+250:4100);
+  }catch{toast('Diese Szene konnte nicht abgespielt werden.');}
+  finally{
+   clearTimeout(cutoff);
+   if(moment)review.showMoment(moment);
+   else review.end();
+   play.textContent='Neu aufzeichnen';
+   play.disabled=false;
+   review.finishPlayback();
+  }
+ }
+}
+function settingsReleaseNotes(open){
+ const available=pwaInfo.status==='update'?pwaInfo.availableVersion:null;
+ const versions=available?[available,APP_VERSION]:Object.keys(pwaInfo.installedNotes||{});
+ const content=versions.map(version=>{
+  const notes=releaseNotesList(version,'details');
+  if(!notes)return '';
+  const label=version===available?' · Update verfügbar':version===APP_VERSION?' · Installiert':'';
+  return '<section><h3>Farbfeld '+esc(version)+label+'</h3>'+notes+'</section>';
+ }).join('');
+ return content?`<details id="settings-release-notes" class="settings-section release-notes"${open?' open':''}><summary>Versionshinweise</summary><div>${content}</div></details>`:'';
+}
+function settings(diagnosticsOpen=dialog.dataset.panel==='settings'&&dialog.querySelector('#settings-diagnostics')?.open,releaseNotesOpen=dialog.dataset.panel==='settings'&&dialog.querySelector('#settings-release-notes')?.open){
   openModal('Ganz dein Spiel.',`${currentGame()?.mode==='computer'&&local.status==='playing'?'<div class="settings-row"><span>Computer-Stärke<small>'+computerLevel(local).label+'</small></span><button class="text-btn" data-action="computer-level">Ändern →</button></div>':''}${themeOptions()}<div class="settings-row"><span>Farbmuster anzeigen<br><small style="color:#8d967f">Zusätzliche Symbole auf den Kästchen</small></span><button class="toggle ${prefs.patterns?'on':''}" role="switch" aria-label="Farbmuster anzeigen" aria-checked="${prefs.patterns}" data-action="toggle-patterns"></button></div><div class="settings-row"><span>Vibration beim Antippen</span><button class="toggle ${prefs.haptics?'on':''}" role="switch" aria-label="Vibration" aria-checked="${prefs.haptics}" data-action="toggle-haptics"></button></div>
   <div class="settings-row"><span>Profil & Statistik<small>Mit anderen · Computer · Solo</small></span><button class="text-btn" data-action="profile">Ansehen →</button></div><div class="settings-row notification-entry"><span>Benachrichtigungen<small>Dein Zug · Spielende · Revanche · ${notifications.state.enabled&&notifications.permission==='granted'?'Aktiviert':'Ausgeschaltet'}</small></span><button class="text-btn" data-action="notification-settings">Einrichten →</button></div>
   <div class="settings-row"><span>App-Version</span><button class="version-value" data-action="version-tap">${APP_VERSION}</button></div><div class="install-status ${offlineReady?'ready':'pending'}"><strong>${pwaInfo.recovery?'Neue App-Adresse öffnen':pwaInfo.status==='error'?'Update nicht möglich':offlineReady?'Offline bereit ✓':pwaInfo.status==='checking'?'Offline wird vorbereitet …':pwaInfo.status==='update'?'Neue Version bereit':'Offline prüfen'}</strong><p>${esc(pwaInfo.message)}</p></div><button class="outline-btn" data-action="offline-check">Auf Updates prüfen</button><p class="update-help">Mit Internet prüfen, dann gegebenenfalls „Aktualisieren“ wählen. Die App bleibt installiert und deine bestätigten Züge bleiben gespeichert. Offline nutzt du die zuletzt geladene Version.</p>
   ${pwaInfo.status==='update'?'<button class="primary" data-action="reload-app">Aktualisieren</button>':''}
-  <details class="settings-section"><summary>Installation & Spielstände</summary><div><button class="outline-btn" data-action="install">${icon('download')}Auf dem Handy installieren</button><button class="outline-btn" data-action="export">${icon('download')}Lokale Spielstände exportieren</button><button class="outline-btn" data-action="import">Spielstände importieren</button><input type="file" id="import-file" accept=".json,application/json" hidden><div class="info-box">Solo, Computer und „Ein Handy“ speichern auf diesem Gerät und sind im Export enthalten. Direktpartien speichern bestätigte Stände auf beiden Handys; sie werden über „Direktpartie fortsetzen“ wieder geöffnet. Für Internet-Spielräume liegt der gemeinsame Stand auf dem Server. Exportdateien enthalten keine Raum-Zugangsschlüssel.</div></div></details><details class="settings-section"><summary>Hilfe & Diagnose${directDiagnostics.state()?.enabled?' · Aufzeichnung läuft':''}</summary><div><div class="settings-row"><span>Offline-Testprotokoll<small>Für Tests mit zwei Handys · lokal und freiwillig</small></span><button class="text-btn" data-action="direct-diagnostics">Öffnen →</button></div><button class="outline-btn" data-action="direct-check">Offline-Verbindung prüfen</button><button class="text-btn" data-action="app-recovery">Hilfe beim App-Umzug</button></div></details>`,'settings');
+  ${settingsReleaseNotes(releaseNotesOpen)}
+  <details class="settings-section"><summary>Installation & Spielstände</summary><div><button class="outline-btn" data-action="install">${icon('download')}Auf dem Handy installieren</button><button class="outline-btn" data-action="export">${icon('download')}Lokale Spielstände exportieren</button><button class="outline-btn" data-action="import">Spielstände importieren</button><input type="file" id="import-file" accept=".json,application/json" hidden><div class="info-box">Solo, Computer und „Ein Handy“ speichern auf diesem Gerät und sind im Export enthalten. Direktpartien speichern bestätigte Stände auf beiden Handys; sie werden über „Direktpartie fortsetzen“ wieder geöffnet. Für Internet-Spielräume liegt der gemeinsame Stand auf dem Server. Exportdateien enthalten keine Raum-Zugangsschlüssel.</div></div></details><details id="settings-diagnostics" class="settings-section"${diagnosticsOpen?' open':''}><summary>Hilfe & Diagnose${directDiagnostics.state()?.enabled?' · Aufzeichnung läuft':''}</summary><div><button class="outline-btn" data-action="animation-preview">Animationen testen</button><div class="settings-row"><span>Offline-Testprotokoll<small>Für Tests mit zwei Handys · lokal und freiwillig</small></span><button class="text-btn" data-action="direct-diagnostics">Öffnen →</button></div><button class="outline-btn" data-action="direct-check">Offline-Verbindung prüfen</button><button class="text-btn" data-action="app-recovery">Hilfe beim App-Umzug</button></div></details>`,'settings');
 }
 const PROFILE_MODES=[{id:'people',label:'Mit anderen',icon:'users'},{id:'computer',label:'Computer',icon:'computer'},{id:'solo',label:'Solo',icon:'solo'}];
 function profile(category='people'){
@@ -618,21 +1060,66 @@ function opponentProfile(name,category='people'){
  dialog.scrollTop=0;
 }
 
-function resultHistory(category){
- const mode=PROFILE_MODES.find(item=>item.id===category),entries=mode?history.filter(game=>statsCategory(game.mode)===category):history;
- openModal(mode?'Ergebnisse · '+mode.label:'Deine Ergebnisse.',(mode?'<button class="text-btn history-back" data-action="profile-mode" data-category="'+category+'">← Zur Statistik</button>':'')+(entries.length?entries.map(h=>`<div class="history-card"><div><strong>${h.forfeit?'Ausgestiegen · '+esc(h.players[h.ownPid]?.name||''):h.mode==='solo'?'Solo':h.mode==='computer'?'Gegen den Computer':h.mode==='local'?'An einem Handy':h.mode==='direct'?'Direkt – mehrere Handys':'Im Spielraum'}</strong><p>${new Date(h.date).toLocaleDateString('de-AT')} · ${h.rounds} Würfe · ${boardFor(h.boardId).name}</p></div><b>${h.score}</b></div>`).join(''):'<p>Noch keine abgeschlossene Partie.</p>'));
- dialog.scrollTop=0;
+const historyResultTitle=result=>result.title||({local:'An einem Handy',direct:'Direktpartie',room:'Im Spielraum'}[result.mode]??resultTitles[result.mode]??'Partie');
+const historyOutcomeLabel=outcome=>outcome==='unknown'?'Ausgang unbekannt':resultOutcomes[outcome];
+function resultHistory(category,returnTo,scrollTop=0){
+ const mode=PROFILE_MODES.find(item=>item.id===category);
+ const entries=history.filter(game=>game&&(!mode||statsCategory(game.mode)===category));
+ const rows=entries.map(entry=>{
+  const result=storedResult(entry),outcome=result?.outcome??'unknown';
+  const standings=result?resultStandings(result):[],own=standings.find(p=>p.own);
+  const place=outcome==='solo'||outcome==='unknown'?null:own?.place;
+  const opponents=own?standings.filter(p=>!p.own).map(p=>p.name).join(', '):'';
+  const versus=opponents?(result.mode==='local'?own.name+' gegen ':'Gegen ')+opponents:'';
+  const meta=[Number.isFinite(Date.parse(entry.date))?new Date(entry.date).toLocaleDateString('de-AT'):'',Number.isInteger(entry.rounds)?entry.rounds+' Würfe':'',boardFor(entry.boardId).name].filter(Boolean).join(' · ');
+  const content=`<span class="history-match"><strong>${esc(historyResultTitle(result??entry))}</strong><span class="history-status"><span class="history-outcome" data-outcome="${outcome}">${historyOutcomeLabel(outcome)}</span>${place?`<small>Platz ${place} von ${standings.length}</small>`:''}</span>${versus&&result?.mode!=='computer'?`<small class="history-opponents">${esc(versus)}</small>`:''}<small class="history-meta">${meta}</small></span><span class="history-points"><b>${Number.isFinite(entry.score)?result?.score??entry.score:'–'}</b><small>Punkte</small></span>`;
+  return result?`<button type="button" class="history-card" data-action="history-result" data-category="${mode?.id??''}" data-game-id="${esc(result.id)}">${content}${icon('arrow')}</button>`:`<div class="history-card">${content}</div>`;
+ }).join('');
+ const back=mode?`<button class="text-btn history-back" data-action="profile-mode" data-category="${mode.id}">← Zur Statistik</button>`:'';
+ openModal(mode?'Ergebnisse · '+mode.label:'Deine Ergebnisse.',back+(rows||'<p>Noch keine abgeschlossene Partie.</p>'),'result-history');
+ dialog.scrollTop=scrollTop;
+ if(returnTo)[...dialog.querySelectorAll('[data-action="history-result"]')].find(button=>button.dataset.gameId===returnTo)?.focus({preventScroll:true});
 }
-function recordResult(g,requestedPid=null){
+function showHistoryResult(id,category){
+ const result=storedResult(history.find(game=>game?.id===id));
+ if(!result)return;
+ const title=result.forfeit&&!result.completed?'Stand beim Ausstieg':'Endstand';
+ const back=`<button class="text-btn history-back" data-action="history" data-category="${esc(category??'')}" data-game-id="${esc(id)}" data-scroll-top="${dialog.scrollTop}">← Zu den Ergebnissen</button>`;
+ openModal(title,`<p class="stored-result-meta"><strong>${esc(historyResultTitle(result))} · ${historyOutcomeLabel(result.outcome)}</strong><small>${resultTimeHTML(result)}</small></p>${storedStandingsHTML(result,title)}${back}`,'stored-result');
+ dialog.scrollTop=0;
+ const heading=dialog.querySelector('#modal-title');heading.tabIndex=-1;heading.focus({preventScroll:true});
+}
+function storeResultRecord(entry){
+ const index=history.findIndex(item=>item.id===entry.id);
+ if(index>=0){
+  const saved=history[index];
+  const reveal=entry.completed===true&&(saved.completed===false||saved.forfeit===true&&saved.completed!==true);
+  const finish=validFinishTime(entry.finishedAt)&&!validFinishTime(saved.finishedAt);
+  const title=!saved.title&&entry.title;
+  if(!reveal&&!finish&&!title)return;
+  history[index]={...(reveal?entry:saved),date:finish?entry.date:saved.date,...(finish?{finishedAt:entry.finishedAt}:{}),...(saved.title||title?{title:saved.title||title}:{})};
+ }else{
+  history.unshift(entry);
+  if(history.length>100)history=history.sort((a,b)=>(Date.parse(b.date)||0)-(Date.parse(a.date)||0)).slice(0,100);
+  statistics=mergeStats(statistics,[entry]);persist(STATSKEY,statistics);
+ }
+ persist(HISTORYKEY,history);
+}
+function recordResult(g,requestedPid=null,title){
  const pid=requestedPid??(g.mode==='direct'?direct.pid:g.mode==='room'?g.players.findIndex(p=>p.id===room?.playerId):g.mode==='local'&&g.players[0].left?g.players.findIndex(p=>!p.left):0);if(pid<0||!g.players[pid])return;
  const forfeit=!!g.players[pid].left;if(g.status!=='finished'&&!forfeit)return;
- const base=g.gameId||room?.code+'-'+g.log[0]?.round+'-'+g.turn,id=forfeit&&g.mode==='local'?base+':left:'+pid:base;if(history.some(h=>h.id===id))return;
- const players=g.players.map((p,i)=>forfeit&&g.hiddenScores&&g.status!=='finished'&&i!==pid?{name:p.name,hidden:true,...(p.left?{left:true}:{})}:{name:p.name,total:score(p,g).total,jokers:p.jokers,...(p.left?{left:true}:{})});
- history.unshift({id,date:new Date().toISOString(),mode:g.mode,players,score:forfeit?FORFEIT_SCORE:score(g.players[pid],g).total,ownPid:pid,rounds:g.round,boardId:boardFor(g).id,...(forfeit?{forfeit:true}:{})});statistics=mergeStats(statistics,[history[0]]);persist(STATSKEY,statistics);history=history.slice(0,100);persist(HISTORYKEY,history);
+ const base=g.gameId||room?.code+'-'+g.log[0]?.round+'-'+g.turn,id=forfeit&&g.mode==='local'?base+':left:'+pid:base;
+ const existing=history.find(item=>item.id===id);
+ if(existing&&(existing.completed===true||g.status!=='finished')&&(!title||existing.title)&&(!g.finishedAt||existing.finishedAt))return;
+ storeResultRecord(gameResultRecord(g,pid,{id,title}));
 }
-function recordRoomSummaryResult(result){
- if(!result||typeof result.id!=='string'||history.some(item=>item.id===result.id)||result.mode!=='room'||!Array.isArray(result.players)||!Number.isInteger(result.ownPid)||!result.players[result.ownPid])return;
- history.unshift(result);statistics=mergeStats(statistics,[result]);persist(STATSKEY,statistics);history=history.slice(0,100);persist(HISTORYKEY,history);
+function recordRoomSummaryResult(result,roomName){
+ if(!result||typeof result.id!=='string'||result.mode!=='room'||!Array.isArray(result.players)||!Number.isInteger(result.ownPid)||!result.players[result.ownPid])return;
+ storeResultRecord({...result,completed:true,title:typeof roomName==='string'?roomName.slice(0,48):''});
+}
+function recordRoomResults(data){
+ if(data.lastResult)recordResult(data.lastResult,null,data.roomName);
+ if(data.game)recordResult(data.game,null,data.roomName);
 }
 async function roomRequest(url,options){
  const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),12000);
@@ -641,14 +1128,32 @@ async function roomRequest(url,options){
  finally{clearTimeout(timeout);}
 }
 async function api(action,extra={},session=room){
- const {res,data}=await roomRequest('/api/rooms',{method:'POST',headers:{'Content-Type':'application/json',...(session?.token?{'X-Player-Token':session.token}:{})},body:JSON.stringify({action,code:session?.code,version:session?.code===room?.code?roomState?.version:undefined,features:CLIENT_FEATURES,...extra})});
+ const {res,data}=await roomRequest('/api/rooms',{method:'POST',headers:{'Content-Type':'application/json',...(session?.token?{'X-Player-Token':session.token}:{})},body:JSON.stringify({action,code:session?.code,version:session?.code===room?.code?roomState?.version:undefined,features:CLIENT_FEATURES,...(session?.code===room?.code&&roomState?.game&&['roll','move','fleet','hidden-mine','mine','leave','skip'].includes(action)?{gameId:roomState.game.gameId,round:roomState.game.round}:{}),...extra})});
  if(!res.ok)throw Object.assign(Error(data.error||'Verbindung fehlgeschlagen.'),{status:res.status});return data;
+}
+async function readRoomState(session){
+ const {res,data}=await roomRequest('/api/rooms?code='+encodeURIComponent(session.code),{headers:{'X-Player-Token':session.token,'X-Farbfeld-Features':CLIENT_FEATURES.join(',')},cache:'no-store'});
+ if(!res.ok)throw Object.assign(Error(data.error||'Spielraum nicht erreichbar.'),{status:res.status});
+ return data;
+}
+async function sendRoomAction(action,extra){
+ const before=roomState,session=room,epoch=roomEpoch;
+ try{return await api(action,extra,session);}
+ catch(error){
+  if(error.status!==409||!['fleet','hidden-mine'].includes(action)||!before?.game)throw error;
+  const fresh=await readRoomState(session),step=action==='fleet'?'fleet':'mines',pid=before.game.players.findIndex(p=>p.id===session.playerId);
+  if(epoch!==roomEpoch||fresh.version<=before.version||fresh.game?.gameId!==before.game.gameId||preparationStep(before.game,pid)!==step||preparationStep(fresh.game,pid)!==step)throw error;
+  const ownPlacement=g=>step==='fleet'?g.variants.battleship.fleets[pid]:g.variants.hiddenMines.positions[pid];
+  // Retry once only when a different participant changed the room revision.
+  if(JSON.stringify(ownPlacement(before.game))!==JSON.stringify(ownPlacement(fresh.game)))throw error;
+  return api(action,{...extra,version:fresh.version,gameId:fresh.game.gameId,round:fresh.game.round},session);
+ }
 }
 async function roomAction(action,extra={}){
   if(busy)return false;busy=true;render();let success=false;
-  try{const next=await api(action,extra);networkError='';roomConnection.acknowledge(room.code);roomPollFailures=0;roomState=next;noteRoomProgress(next.game);rememberRoomName(next);reactionOverlay.receiveRoom([],room.code+':'+(next.game?.gameId||'')+':'+room.playerId);if(!['rename','mine'].includes(action)){resetSelection();inspectPid=null;}if(roomState.game)recordResult(roomState.game);success=true;}
+  try{const next=await sendRoomAction(action,extra);networkError='';roomConnection.acknowledge(room.code);roomPollFailures=0;roomState=next;noteRoomProgress(next.game);rememberRoomName(next);reactionOverlay.receiveRoom([],room.code+':'+(next.game?.gameId||'')+':'+room.playerId);if(!['rename','mine'].includes(action)){resetSelection();inspectPid=null;}recordRoomResults(next);success=true;}
   catch(error){toast(error.message);}
-  finally{busy=false;if(!success)await pollRoom();render(action!=='rename');}
+  finally{busy=false;if(!success)await pollRoom();render(action!=='rename'&&action!=='mine');}
   return success;
 }
 async function pollRoom(){
@@ -660,7 +1165,8 @@ async function pollRoom(){
  try{
   let data;
   if(roomAnnounced!==session.token){data=await api('open',{},session);if(!current())return;roomAnnounced=session.token;announced=true;}
-  else{const response=await roomRequest('/api/rooms?code='+encodeURIComponent(session.code),{headers:{'X-Player-Token':session.token,'X-Farbfeld-Features':CLIENT_FEATURES.join(',')},cache:'no-store'});if(!current())return;if(!response.res.ok)throw Object.assign(Error(response.data.error||'Spielraum nicht erreichbar.'),{status:response.res.status});data=response.data;}
+  else data=await readRoomState(session);
+  if(!current()||data.version<roomState?.version)return;
   roomConnection.receive(session.code,data.presence);roomPollFailures=0;noteRoomProgress(data.game);rememberRoomSnapshot(data,session);
   if(['home','room'].includes(screen))reactionOverlay.receiveRoom(data.reactions||[],session.code+':'+(data.game?.gameId||'')+':'+session.playerId);
   const changed=announced||data.version!==roomState?.version,hadError=!!networkError;
@@ -669,7 +1175,7 @@ async function pollRoom(){
    const newTurn=roomState?.game?.round!==data.game?.round||roomState?.game?.gameId!==data.game?.gameId;
    roomState=data;
    if(newTurn){resetSelection();inspectPid=null;}
-   if(data.game)recordResult(data.game);
+   recordRoomResults(data);
    render(newTurn);
   }else{
    roomState.canSkip=data.canSkip;roomState.skipAvailableAt=data.skipAvailableAt;
@@ -684,7 +1190,7 @@ async function pollRoom(){
  }finally{polling=false;roomPoller.refresh();}
 }
 
-async function submitMove(pass=false){const g=currentGame();if(!g)return;const pid=myPid(g);if(busy||!writable(g,pid))return;const move=pass?{pass:true}:{...choice,cells:selection};if(screen==='direct'){directAction('move',{move});return;}if(screen==='room'){await roomAction('move',{move});return;}try{const next=applyMove(g,pid,move);local=next;resetSelection();inspectPid=null;recordResult(local);if(local.status==='playing'){viewPid=local.mode==='computer'?HUMAN:nextLocalPlayer(local);handover=local.mode==='local';}saveLocal();vibrate();render(true);}catch(e){toast(e.message);}}
+async function submitMove(pass=false){const g=currentGame();if(!g)return;const pid=myPid(g);if(busy||!writable(g,pid))return;const move=pass?{pass:true}:{...choice,cells:selection};if(screen==='direct'){directAction('move',{move});return;}if(screen==='room'){await roomAction('move',{move});return;}try{const next=stampFinishedGame(applyMove(g,pid,move));local=next;resetSelection();inspectPid=null;recordResult(local);if(local.status==='playing'){viewPid=local.mode==='computer'?HUMAN:nextLocalPlayer(local);handover=local.mode==='local';}saveLocal();vibrate();render(true);}catch(e){toast(e.message);}}
 function appRecovery(){openModal('Zur aktuellen App wechseln.',`<p>Die alte Adresse mit „rubybread8193“ leitet jetzt zu „endruuu“ weiter. Android kann eine dort installierte alte PWA nicht über diese Weiterleitung aktualisieren.</p><div class="rule"><span class="rule-number">1</span><div><h3>Alte App sichern.</h3><p>Die alte App ohne Internet öffnen. Unter Einstellungen → Lokale Spielstände exportieren die Sicherung herunterladen. Sie enthält Solo, Computer, Ein-Handy-Partien, Ergebnisliste und Design.</p></div></div><div class="rule"><span class="rule-number">2</span><div><h3>Aktuelle Adresse in Chrome öffnen.</h3><p>Mit Internet die aktuelle Adresse öffnen und „Offline bereit“ abwarten. Dann im Chrome-Menü ⋮ „App installieren“ wählen.</p></div></div><div class="rule"><span class="rule-number">3</span><div><h3>Sicherung übernehmen.</h3><p>In der neuen App unten „Spielstände importieren“ wählen. Die alte Installation erst nach erfolgreicher Übernahme entfernen.</p></div></div><a class="primary recovery-link" href="https://farbfeld-andrew.endruuu.chatgpt.site/play" target="_blank" rel="noopener">Aktuelle Adresse öffnen ↗</a><button class="outline-btn" data-action="import">Spielstände importieren</button><input type="file" id="import-file" accept=".json,application/json" hidden><div class="info-box">Alte Direktpartien und Raumzugänge sind nicht im lokalen Export enthalten. Sie lassen sich über diese Datei nicht auf eine andere Webadresse übertragen. Die alte App behält ihre gespeicherten Daten; ein automatischer Zugriff von der neuen Adresse ist nicht möglich.</div>`,'recovery');}
 function installationModal(){
   const info=pwaInfo,status=info.status==='ready'?'Offline bereit ✓':info.status==='checking'?'Offline wird vorbereitet …':info.status==='update'?'Neue Version verfügbar':'Offline noch nicht bereit';
@@ -707,27 +1213,38 @@ function exportData(){
  const url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));const a=document.createElement('a');
  a.href=url;a.download=date+'_Farbfeld_Spielstand.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);toast('Dein Spielstand wird heruntergeladen.');
 }
-function validGame(g){return g===null||g&&validLeavingState(g)&&validMineState(g)&&validBonusState(g)&&validGameBoard(g)&&g.schema===1&&['solo','local','computer'].includes(g.mode)&&Array.isArray(g.players)&&(g.mode!=='computer'||g.players.length===2&&(g.computerDifficulty===undefined||validComputerDifficulty(g.computerDifficulty)))&&g.players.length>=1&&g.players.length<=6&&Number.isInteger(g.round)&&g.round>=1&&g.round<=100000&&['roll','choose','finished'].includes(g.phase)&&g.players.every(p=>typeof p.name==='string'&&p.name.length<=24&&p.marks?.length===105&&p.marks.every(x=>typeof x==='boolean')&&Number.isInteger(p.jokers)&&p.jokers>=0&&p.jokers<=8&&p.columns?.length===15&&p.columns.every(x=>x===null||Number.isInteger(x)&&x>=0&&x<=5)&&COLORS.every(c=>p.colors?.[c]===null||[3,5].includes(p.colors?.[c])))&&Array.isArray(g.columnClaims)&&g.columnClaims.length===15&&g.colorClaims&&Array.isArray(g.submitted)&&g.submitted.every(i=>Number.isInteger(i)&&i>=0&&i<g.players.length)&&Number.isInteger(g.active)&&g.active>=0&&g.active<g.players.length&&Array.isArray(g.log)&&(g.phase!=='choose'||g.dice&&Array.isArray(g.dice.colors)&&g.dice.colors.every(c=>[...COLORS,'*'].includes(c))&&Array.isArray(g.dice.numbers)&&g.dice.numbers.every(n=>[1,2,3,4,5,'?'].includes(n)));}
+function validGame(g){return g===null||g&&validVariantState(g)&&validLeavingState(g)&&validMineState(g)&&validBonusState(g)&&validGameBoard(g)&&g.schema===1&&['solo','local','computer'].includes(g.mode)&&Array.isArray(g.players)&&(g.mode!=='computer'||g.players.length===2&&(g.computerDifficulty===undefined||validComputerDifficulty(g.computerDifficulty)))&&g.players.length>=1&&g.players.length<=6&&Number.isInteger(g.round)&&g.round>=1&&g.round<=100000&&['roll','choose','finished'].includes(g.phase)&&g.players.every(p=>typeof p.name==='string'&&p.name.length<=24&&p.marks?.length===105&&p.marks.every(x=>typeof x==='boolean')&&Number.isInteger(p.jokers)&&p.jokers>=0&&p.jokers<=8&&p.columns?.length===15&&p.columns.every(x=>x===null||Number.isInteger(x)&&x>=0&&x<=5)&&COLORS.every(c=>p.colors?.[c]===null||[3,5].includes(p.colors?.[c])))&&Array.isArray(g.columnClaims)&&g.columnClaims.length===15&&g.colorClaims&&Array.isArray(g.submitted)&&g.submitted.every(i=>Number.isInteger(i)&&i>=0&&i<g.players.length)&&Number.isInteger(g.active)&&g.active>=0&&g.active<g.players.length&&Array.isArray(g.log)&&(g.phase!=='choose'||g.dice&&Array.isArray(g.dice.colors)&&g.dice.colors.every(c=>[...COLORS,'*'].includes(c))&&Array.isArray(g.dice.numbers)&&g.dice.numbers.every(n=>[1,2,3,4,5,'?'].includes(n)));}
 if(!validGame(local)){local=null;try{localStorage.removeItem(KEY);}catch{}toast('Ein beschädigter Spielstand konnte nicht geladen werden.');}
 
-let directUi,directRevision='';
-let diagnosticStorage;try{diagnosticStorage=localStorage;}catch{}
+let directUi,directRevision='',directPreparation=null;
+let diagnosticStorage=null;if(!diagnosticApp)try{diagnosticStorage=localStorage;}catch{}
 const directDiagnostics=new DirectDiagnostics({version:APP_VERSION,storage:diagnosticStorage});
 document.addEventListener('visibilitychange',()=>directDiagnostics.lifecycle(document.hidden?'background':'foreground'));
 window.addEventListener('pagehide',()=>directDiagnostics.lifecycle('pagehide'));
+function recordDirectResults(){
+ const snapshot=direct.snapshot;
+ if(snapshot?.lastResult)recordResult(snapshot.lastResult,null,snapshot.roomName);
+ if(snapshot?.game)recordResult(snapshot.game,null,snapshot.roomName);
+}
 const direct=new DirectSession({diagnostics:directDiagnostics,saved:read(DIRECT_KEY,null),version:APP_VERSION,save:record=>{if(!persist(DIRECT_KEY,record))throw Error('Speichern fehlgeschlagen.');},onError:toast,onReaction:event=>reactionOverlay.receive(event),onChange:()=>{
   const revision=ownTurnKey(direct.snapshot?.game,direct.pid);
   if(revision!==directRevision){directRevision=revision;if(screen==='direct'){resetSelection();inspectPid=null;}}
-  if(direct.snapshot?.game)recordResult(direct.snapshot.game);
+  const preparation=preparationStep(direct.snapshot?.game,direct.pid);
+  if(preparation!==directPreparation){directPreparation=preparation;if(screen==='direct'){hiddenMineSlot=0;window.scrollTo(0,0);}}
+  recordDirectResults();
   if(screen==='direct'||screen==='home')render();
   directUi?.sync();
 }});
+if(local?.status==='finished')recordResult(local);
+recordDirectResults();
 directUi=new DirectUi(direct,{modal:openModal,close:closeModal,toast,enter:()=>{if(screen!=='direct')resetSelection();screen='direct';inspectPid=null;handover=false;render(true);},name:()=>prefs.name||'',discard:requestDiscardDirect,offlineInfo:()=>({ready:offlineReady})});
-dialog.addEventListener('close',()=>{directUi.stop();scheduleComputer();});
-function directAction(action,extra={}){try{direct.act(action,extra);vibrate();render();}catch(error){toast(error.message);}}
+dialog.addEventListener('close',()=>{if(!dialog.open){resultDialog=null;clearAnimationPreview();closeTutorialClip();}directUi.stop();scheduleComputer();scheduleResultPresentation();});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)scheduleResultPresentation();});
+function directAction(action,extra={}){try{direct.act(action,extra);vibrate();}catch(error){toast(error.message);}}
 document.addEventListener('input',event=>{if(event.target.id==='room-list-search'){savedRoomsView.query=event.target.value.slice(0,80);savedRoomsView.page=0;refreshRoomManagerResults();}});
 document.addEventListener('click',event=>{if(!event.target.closest('[data-action="version-tap"]'))versionTaps.reset();},true);
-document.addEventListener('click',async event=>{const btn=event.target.closest('[data-action]');if(!btn||btn.disabled)return;const action=btn.dataset.action,g=currentGame();if(action==='version-tap'){if(!prefs.reactionsUnlocked&&versionTaps.tap(performance.now())){prefs.reactionsUnlocked=true;persist(PREFKEY,prefs);toast('Emoji-Reaktionen freigeschaltet ☺');render();}return;}try{if(await directUi.handle(action,btn))return;switch(action){
+const demoViewActions=new Set(['close-modal','view-player','my-board','go-to-board','scores','zoom-in','zoom-out','board-fit','battle-fit','battle-zoom-in','battle-zoom-out','battle-own','result-compare','result-details','result-open','variant-help','bonus-help','mine-help']);
+document.addEventListener('click',async event=>{const btn=event.target.closest('[data-action]');if(!btn||btn.disabled)return;const action=btn.dataset.action,g=currentGame();if(gameDemo&&!demoViewActions.has(action))return;if(btn.classList.contains('feature-help')&&btn.closest('summary'))event.preventDefault();if(action==='version-tap'){if(!prefs.reactionsUnlocked&&versionTaps.tap(performance.now())){prefs.reactionsUnlocked=true;persist(PREFKEY,prefs);toast('Emoji-Reaktionen freigeschaltet ☺');render();}return;}try{if(await directUi.handle(action,btn))return;switch(action){
 case 'home':rememberRoomDraft();screen='home';inspectPid=null;handover=false;resetSelection();render();window.scrollTo(0,0);if(roomBook.entries().length)pollRoom();break;
 case 'close-modal':closeModal();break;
 case 'solo':setupSolo();break;
@@ -738,25 +1255,47 @@ case 'computer-level':openComputerLevel();break;
 case 'apply-computer-level':applyComputerLevel();break;
 case 'start-computer':startComputer();break;
 case 'replace-computer':startComputer(true);break;
-case 'continue':if(!local)break;screen='game';viewPid=local.mode==='computer'?HUMAN:nextLocalPlayer(local);if(viewPid<0)viewPid=0;inspectPid=null;handover=local.mode==='local';resetSelection();render(true);window.scrollTo(0,0);break;
+case 'continue':resumeLocalGame();break;
 case 'together':together();break;
 case 'local-setup':if(confirmNew('local'))setupLocal();break;
 case 'replace-local':setupLocal();break;
 case 'room-setup':roomSetup();break;
 case 'manage-rooms':savedRoomsView.page=0;roomManager();if(screen==='home')await pollSavedRooms();refreshRoomManagerResults();break;
+case 'game-notices':showGameNotices();await pollSavedRooms();break;
+case 'open-notice-result':await openGameNotice(btn.dataset);break;
 case 'rooms-filter':savedRoomsView.filter=['all','online','offline'].includes(btn.dataset.filter)?btn.dataset.filter:'all';savedRoomsView.page=0;refreshRoomManagerResults();break;
 case 'rooms-page-prev':savedRoomsView.page--;refreshRoomManagerResults();break;
 case 'rooms-page-next':savedRoomsView.page++;refreshRoomManagerResults();break;
 case 'refresh-saved-rooms':await pollSavedRooms(true);refreshRoomManagerResults();break;
 case 'open-saved-room':await openSavedRoom(btn.dataset.code);break;
 case 'forget-saved-room':requestForgetRoom(btn.dataset.code);break;
-case 'rules':rules();break;
+case 'rules':showTutorial();break;
+case 'rules-detail':rules();break;
 case 'about':rules();break;
 case 'settings':settings();break;
+case 'release-details':settings(undefined,true);dialog.querySelector('#settings-release-notes summary')?.focus();break;
+case 'animation-preview':showAnimationPreview();break;
+case 'animation-game':showAnimationGame($('#animation-preview-choice')?.value);break;
+case 'animation-back':settings(true);dialog.querySelector('[data-action="animation-preview"]').focus();break;
 case 'notification-settings':notificationSettings();break;
 case 'notification-enable':case 'notification-disable':case 'notification-sound':case 'notification-test':case 'notification-retry':case 'notification-check':case 'notification-push-test':await notificationAction(action);break;
 case 'scores':scores();break;
-case 'mine-help':openModal('Deine Mine.',mineHelpHtml(),'mine-help');break;
+case 'result-open':showResults();break;
+case 'previous-result':showResults(previousResult());break;
+case 'result-compare':{
+ const game=resultForAction(btn,g);if(game?.status!=='finished')break;
+ const i=Number(btn.dataset.i),own=myPid(game);if(!Number.isInteger(i)||!game.players[i]||i===own)break;
+ resultComparisons.set(resultComparisonKey(game),i);if(resultComparisons.size>100)resultComparisons.delete(resultComparisons.keys().next().value);
+ const container=dialog.contains(btn)?dialog:app,html=resultComparisonHTML(game,own,i);
+ container.querySelector('.result-comparison').outerHTML=html;
+ if(container===dialog&&g?.status==='finished'&&g.gameId===game.gameId){const inline=app.querySelector('.result-comparison');if(inline)inline.outerHTML=html;}
+ container.querySelector('[data-action="result-compare"][data-i="'+i+'"]')?.focus({preventScroll:true});break;
+}
+case 'result-details':{
+ const game=resultForAction(btn,g);if(game?.status!=='finished')break;
+ resultDialog={game,context:resultContext()};openModal('Alle Punkte im Detail.','<div class="score-content">'+scoreCardsHTML(game)+'</div>','result-scores');claimResult(game);break;
+}
+case 'mine-help':openModal('Luftangriff',mineHelpHtml(g),'mine-help');break;
 case 'mine-aim':openMineTarget();break;
 case 'mine-target':selectMineTarget(Number(btn.dataset.i));break;
 case 'mine-confirm':await confirmMine();break;
@@ -768,10 +1307,12 @@ case 'rename-direct':renameDirectRoom();break;
 case 'save-direct-name':saveDirectRoomName();break;
 case 'remove-room-member':{const member=roomState?.members.find(m=>m.id===btn.dataset.memberId);if(!member||roomState.hostId!==room.playerId)break;openModal('Person aus dem Raum entfernen?','<p>'+esc(member.name)+' verliert den bisherigen Zugang zu diesem Raum. Mit dem Raumcode kann die Person später erneut beitreten.</p><button class="primary" data-action="confirm-remove-room-member" data-member-id="'+esc(member.id)+'">'+esc(member.name)+' entfernen</button><button class="outline-btn" data-action="close-modal">Abbrechen</button>');break;}
 case 'confirm-remove-room-member':if(await roomAction('remove',{memberId:btn.dataset.memberId})){closeModal();toast('Person aus dem Raum entfernt.');}break;
+case 'room-variant':await roomAction('options',{variants:{...roomState.variants,[btn.dataset.variant]:!roomState.variants?.[btn.dataset.variant]}});break;
+case 'direct-variant':directAction('options',{variants:{...direct.snapshot.variants,[btn.dataset.variant]:!direct.snapshot.variants?.[btn.dataset.variant]}});break;
 case 'room-mines':await roomAction('options',{mines:!roomState.mines});break;
 case 'room-bonus':await roomAction('options',{bonusFields:!roomState.bonusFields});break;
 case 'room-hidden':await roomAction('options',{hiddenScores:!roomState.hiddenScores});break;
-case 'share-game':await share('Lust auf eine Runde Farbfeld?','Farbfeld – das Würfelspiel',location.origin+'/play');break;
+case 'share-game':await share('Lust auf eine Runde Farbfeld?','Farbfeld – das Würfelspiel',location.origin+'/');break;
 case 'abort-game':requestAbortGame();break;
 case 'confirm-abort-game':await confirmAbortGame();break;
 case 'confirm-discard-direct':confirmDiscardDirect();break;
@@ -786,18 +1327,42 @@ case 'reload-app':if(selection.length||screen==='direct'&&direct.snapshot?.game?
 case 'confirm-reload':location.reload();break;
 case 'roll':if(!g||busy||inspectPid!==null||g.mode==='computer'&&g.active!==HUMAN)break;if(screen==='direct')directAction('roll');else if(screen==='room')await roomAction('roll');else{local=rollGame(g);resetSelection();saveLocal();animateRoll=true;render();vibrate();}break;
 case 'handover':handover=false;render(true);break;
-case 'color-die':selectionNotice=null;choice.ci=Number(btn.dataset.i);choice.color=null;selection=[];vibrate();render();break;
-case 'number-die':selectionNotice=null;choice.ni=Number(btn.dataset.i);choice.count=null;selection=[];vibrate();render();break;
-case 'joker-color':selectionNotice=null;choice.color=btn.dataset.c;selection=[];render();break;
-case 'joker-number':selectionNotice=null;choice.count=Number(btn.dataset.n);selection=[];render();break;
+case 'hidden-mine-slot':if(g&&preparationStep(g,myPid(g))==='mines'){hiddenMineSlot=Number(btn.dataset.i);render();}break;
+case 'hidden-mine-place':await editHiddenMine({kind:'place',slot:hiddenMineSlot,index:Number(btn.dataset.i)});break;
+case 'hidden-mine-coordinate':await editHiddenMine({kind:'place',slot:hiddenMineSlot,index:Number($('#hidden-mine-row').value)*15+Number($('#hidden-mine-column').value)});break;
+case 'hidden-mine-random':await editHiddenMine({kind:'random'});break;
+case 'hidden-mine-ready':await editHiddenMine({kind:'ready'});break;
+case 'placement-fit':placementView.fit();break;
+case 'placement-zoom-out':placementView.zoom(placementView.scale/1.25);break;
+case 'placement-zoom-in':placementView.zoom(placementView.scale*1.25);break;
+case 'fleet-ship':if(g&&preparationStep(g,myPid(g))==='fleet'){fleetShip=Number(btn.dataset.i);render();}break;
+case 'fleet-rotate':await editFleet({kind:'place',ship:fleetShip,start:g.variants.battleship.fleets[myPid(g)][fleetShip][0],vertical:!fleetVertical});break;
+case 'fleet-place':case 'fleet-place-position':{const i=action==='fleet-place'?Number(btn.dataset.i):Number($('#fleet-row').value)*15+Number($('#fleet-column').value);await editFleet({kind:'place',ship:fleetShip,start:i,vertical:fleetVertical});break;}
+case 'fleet-random':await editFleet({kind:'random'});break;
+case 'fleet-ready':await editFleet({kind:'ready'});break;
+case 'variant-ability':{const own=g&&myPid(g);if(!g||!writable(g,own)||!abilityCharges(g,own,btn.dataset.type).length)break;choice.ability=choice.ability===btn.dataset.type?null:btn.dataset.type;choice.delta=1;choice.extraCell=null;choice.color=null;if(choice.ability==='color')choice=selectMoveColor(g,own,choice,null);selectionNotice=null;selection=[];render();break;}
+case 'variant-delta':choice.delta=Number(btn.dataset.n);choice.extraCell=null;selectionNotice=null;selection=[];render();break;
+case 'bonus-help':if(g)openModal('Schatzsuche.',bonusHelpHtml(g,myPid(g)),'bonus-help');break;
+case 'variant-help':{const titles={battleship:'Schiffsboni.',hiddenMines:'Versteckte Minen.',discovery:'Entdeckermodus.',objectives:'Öffentliche Aufträge.',mixing:'Farben neu mischen.'};openModal(titles[btn.dataset.help]||'Deine Varianten.',variantHelpHTML(g,{only:btn.dataset.help}),'variant-help');break;}
+case 'battle-own':inspectPid=null;render();app.querySelector('[data-player-board="'+myPid(g)+'"]')?.scrollIntoView({block:'center',inline:'center'});break;
+case 'color-die':selectionNotice=null;choice.ci=Number(btn.dataset.i);choice.color=null;choice.extraCell=null;selection=[];vibrate();render();break;
+case 'number-die':selectionNotice=null;choice.ni=Number(btn.dataset.i);choice.count=null;choice.extraCell=null;selection=[];vibrate();render();break;
+case 'joker-color':selectionNotice=null;choice=selectMoveColor(g,displayedPid(g),choice,btn.dataset.c);choice.extraCell=null;selection=[];render();break;
+case 'joker-number':selectionNotice=null;choice.count=Number(btn.dataset.n);choice.extraCell=null;selection=[];render();break;
 case 'cell':{
  if(!g||busy)break;const pid=displayedPid(g);if(!writable(g,pid))break;
+ if(choice.ability==='color')choice=selectMoveColor(g,pid,choice,choice.color);
  if(choice.ci===null||choice.ni===null){selectionMessage('Wähle zuerst deine Würfel.','Tippe eine Farbe und eine Zahl an. Danach wählst du die Felder.');break;}
  const c=resolveChoice(g,pid,choice);if(c.error){selectionMessage('Die Kombination ist noch nicht vollständig.',c.error);break;}
  const i=Number(btn.dataset.i);selectionNotice=null;
+ if(choice.ability==='extra'&&selection.length===c.count&&!selection.includes(i)){
+  if(g.players[pid].marks[i]||!selection.some(j=>neighbors(j).includes(i))){selectionMessage('Wähle ein angrenzendes Zusatzfeld.','Es muss frei sein und direkt an deiner neuen normalen Gruppe liegen.');break;}
+  choice.extraCell=choice.extraCell===i?null:i;vibrate();render();break;
+ }
+ choice.extraCell=null;
  if(selection.includes(i))selection=selection.filter(x=>x!==i);
  else{
-  if(boardFor(g).cells[i]!==c.color){selectionMessage('Dieses Feld hat die falsche Farbe.','Gewählt ist '+LABELS[c.color]+'. Tippe auf freie Felder in dieser Farbe.');break;}
+  if(boardFor(g,pid).cells[i]!==c.color){selectionMessage('Dieses Feld hat die falsche Farbe.','Gewählt ist '+LABELS[c.color]+'. Tippe auf freie Felder in dieser Farbe.');break;}
   if(selection.length>=c.count){selectionMessage('Du hast bereits '+c.count+' '+(c.count===1?'Feld':'Felder')+' gewählt.','Tippe ein gewähltes Feld an, um es zu entfernen und deine Auswahl zu ändern.');break;}
   selection.push(i);
  }
@@ -807,18 +1372,30 @@ case 'clear':resetSelection();render();break;
 case 'confirm':await submitMove(false);break;
 case 'pass':if(selection.length){openModal('Diesen Wurf passen?',`<p>Deine aktuelle Auswahl wird verworfen. Du verbrauchst keine Joker.</p><button class="primary" data-action="confirm-pass">Ja, passen</button><button class="outline-btn" data-action="close-modal">Zurück zu meiner Auswahl</button>`);}else await submitMove(true);break;
 case 'confirm-pass':closeModal();await submitMove(true);break;
-case 'hint':{selectionNotice=null;const pid=myPid(g);if(!writable(g,pid))break;const hint=findMove(g,pid);if(hint){choice={ci:hint.ci,ni:hint.ni,color:hint.color,count:hint.count};selection=hint.cells;render();const first=selection[0],bs=$('#board-scroll');if(bs){const cell=app.querySelector(`[data-action="cell"][data-i="${first}"]`);if(cell)bs.scrollLeft=cell.offsetLeft-bs.offsetLeft-bs.clientWidth/2+cell.clientWidth/2;}}else selectionMessage('Mit diesem Wurf ist kein Zug möglich.','Tippe auf „Passen“. Du verbrauchst dabei keine Joker.');break;}
+case 'hint':{selectionNotice=null;const pid=myPid(g);if(!writable(g,pid))break;let hint=findMove(g,pid,choice.ability?{ability:choice.ability,delta:choice.delta}:{});
+ if(!hint&&!choice.ability)for(const a of ABILITIES)if(abilityCharges(g,pid,a.id).length){for(const delta of a.id==='number'?[-1,1]:[1]){hint=findMove(g,pid,{ability:a.id,delta});if(hint)break;}if(hint)break;}
+ if(hint){choice={ci:hint.ci,ni:hint.ni,color:hint.color,count:hint.count,ability:hint.ability||null,delta:hint.delta||1,extraCell:hint.extraCell??null};selection=hint.cells;render();const first=selection[0],bs=$('#board-scroll');if(bs){const cell=app.querySelector(`[data-action="cell"][data-i="${first}"]`);if(cell)bs.scrollLeft=cell.offsetLeft-bs.offsetLeft-bs.clientWidth/2+cell.clientWidth/2;}}else selectionMessage('Mit diesem Wurf ist kein Zug möglich.','Tippe auf „Passen“. Du verbrauchst dabei keine Joker.');break;}
 case 'overview':case 'board-fit':boardView.fit();break;
+case 'battle-fit':shotMapView.fit();break;
+case 'battle-zoom-out':shotMapView.zoom(shotMapView.scale/1.25);break;
+case 'battle-zoom-in':shotMapView.zoom(shotMapView.scale*1.25);break;
 case 'zoom-out':boardView.zoom(boardView.scale/1.2);break;
 case 'zoom-in':boardView.zoom(boardView.scale*1.2);break;
 case 'view-player':{const i=Number(btn.dataset.i);if(!mayInspect(g,i,myPid(g))){toast('Der Spielerwechsel erfolgt nach dem Zug automatisch.');break;}if(i===myPid(g))inspectPid=null;else inspectPid=i;resetSelection();render(true);break;}
 case 'my-board':inspectPid=null;render(true);break;
+case 'go-to-board':{
+ const board=$('#game-board');
+ board?.focus({preventScroll:true});
+ board?.scrollIntoView({block:'start',inline:'nearest',behavior:'instant'});
+ break;
+}
 case 'rematch':if(screen==='direct'){directAction('rematch');}else if(screen==='room'){if(roomState.hostId!==room.playerId){toast('Der Gastgeber startet die nächste Partie.');break;}await roomAction('rematch');}else if(g.mode==='solo')setupSolo();else if(g.mode==='computer')setupComputer();else setupLocal();window.scrollTo(0,0);break;
-case 'share-result':{const ranks=rankings(g);share('Mein Farbfeld-Ergebnis: '+(g.mode==='solo'?score(g.players[0],g).total+' Punkte in 30 Würfen.':ranks.map(p=>p.name+': '+p.total+' Punkte').join(' · '))+' 🎲');break;}
+case 'share-result':{const game=resultForAction(btn,g);if(game?.status!=='finished')break;const ranks=rankings(game);share('Mein Farbfeld-Ergebnis: '+(game.mode==='solo'?score(game.players[0],game).total+' Punkte in 30 Würfen.':ranks.map(p=>p.name+': '+p.total+' Punkte').join(' · '))+' 🎲');break;}
 case 'profile':profile();break;
 case 'opponent-profile':opponentProfile(btn.dataset.opponent,btn.dataset.category);break;
 case 'profile-mode':profile(btn.dataset.category);dialog.querySelector('.profile-filters [aria-pressed="true"]').focus({preventScroll:true});break;
-case 'history':resultHistory(btn.dataset.category);break;
+case 'history':resultHistory(btn.dataset.category,btn.dataset.gameId,Number(btn.dataset.scrollTop)||0);break;
+case 'history-result':showHistoryResult(btn.dataset.gameId,btn.dataset.category);break;
 case 'export':exportData();break;
 case 'import':$('#import-file')?.click();break;
 case 'create-room':case 'join-room':{if(busy)break;const name=$('#room-name').value.trim(),code=$('#room-code').value.trim().toUpperCase();if(!name){toast('Bitte gib deinen Namen ein.');$('#room-name').focus();break;}if(action==='join-room'&&!/^[A-Z2-9]{8}$/.test(code)){toast('Bitte gib den 8-stelligen Raumcode ein.');break;}busy=true;btn.disabled=true;btn.textContent='Verbindet …';try{if(roomBook.entries().length>=MAX_SAVED_ROOMS&&(action==='create-room'||!roomBook.get(code)))throw Error('Auf diesem Gerät sind bereits 50 Räume gespeichert. Entferne zuerst einen alten Zugang.');const data=await api(action==='create-room'?'create':'join',{name,...(action==='join-room'?{code}:{roomName:$('#room-title-create').value})},action==='join-room'?roomBook.get(code):null);rememberRoomDraft();roomEpoch++;room={code:data.code,token:data.token,playerId:data.playerId,roomName:data.roomName||''};if(!roomBook.save(room,{activate:true,opened:true}))toast('Der Raumzugang konnte nicht dauerhaft gespeichert werden.');rememberRoomSnapshot(data);prefs.name=name;persist(PREFKEY,prefs);roomState=data;roomConnection.acknowledge(room.code);roomPollFailures=0;noteRoomProgress(data.game);roomAccessDenied=false;roomAnnounced=room.token;screen='room';networkError='';closeModal();resetSelection();render(true);window.scrollTo(0,0);}catch(e){toast(e.message);btn.disabled=false;btn.textContent=action==='create-room'?'Spielraum erstellen':'Beitreten';}finally{busy=false;if(screen==='room'){render();pollRoom();}}break;}
@@ -832,8 +1409,14 @@ case 'confirm-forget-room':{const code=btn.dataset.code||room?.code;if(!code)bre
 case 'host-skip':{if(screen!=='room'||roomState?.hostId!==room?.playerId||!roomState?.canSkip)break;const missing=g.players.map((p,i)=>({p,i})).filter(({i})=>!g.submitted.includes(i)&&(i===g.active||g.submitted.includes(g.active)));openModal('Eine Person überspringen.',`<p>Seit mindestens 24 Stunden gab es keine Spielaktion. Als Raumersteller kannst du einen fehlenden Zug als „Passen“ werten. Danach beginnt die Wartezeit erneut.</p>${missing.map(({p,i})=>`<button class="outline-btn" data-action="skip-person" data-i="${i}">${esc(p.name)} passt diesen Wurf</button>`).join('')}`,'skip');break;}
 case 'skip-person':if(roomState?.hostId!==room?.playerId||!roomState?.canSkip)break;closeModal();await roomAction('skip',{pid:Number(btn.dataset.i)});break;
 }}catch(e){toast(e.message||'Das hat nicht geklappt. Bitte versuche es erneut.');}});
-document.addEventListener('change',async e=>{if(['mine-column','mine-row'].includes(e.target.id)){const col=$('#mine-column')?.value,row=$('#mine-row')?.value;if(col!==''&&row!=='')selectMineTarget(Number(row)*15+Number(col));return;}if(e.target.id==='computer-difficulty'){const level=COMPUTER_LEVELS.find(item=>item.id===e.target.value);if(level&&$('#computer-difficulty-help'))$('#computer-difficulty-help').textContent=level.description;return;}if(e.target.matches('[data-board-choice]')){const description=e.target.closest('.board-picker')?.querySelector('.board-choice-description');if(description)description.textContent=BOARDS.find(b=>b.id===e.target.value)?.description||'';const context=e.target.dataset.boardChoice;if(context==='room')await roomAction('options',{boardId:e.target.value});else if(context==='direct')directAction('options',{boardId:e.target.value});return;}if(e.target.id==='player-count'){const previous=Array.from($('#name-fields').querySelectorAll('input')).map(el=>el.value);$('#name-fields').innerHTML=localNames(Number(e.target.value));$('#name-fields').querySelectorAll('input').forEach((el,i)=>{if(previous[i])el.value=previous[i];});}if(e.target.id==='import-file'){const file=e.target.files?.[0];if(!file)return;try{if(file.size>10e6)throw Error('Die Datei ist zu groß.');const data=JSON.parse(await file.text());if(data.format!=='farbfeld-backup'||data.version!==1||!validGame(data.game)||!Array.isArray(data.history)||data.statistics!==undefined&&!validStats(data.statistics))throw Error('Das ist kein gültiger Farbfeld-Spielstand.');const imported=JSON.stringify(data);openModal('Spielstand wiederherstellen?',`<p>Die lokale Partie und Ergebnisliste werden durch den gewählten Export ersetzt. Statistiken werden ohne doppelte Partien zusammengeführt.</p><button class="primary" data-action="confirm-import">Wiederherstellen</button><button class="outline-btn" data-action="close-modal">Abbrechen</button>`);dialog.querySelector('[data-action="confirm-import"]').addEventListener('click',()=>{const d=JSON.parse(imported);local=d.game;history=d.history.filter(h=>Number.isFinite(h.score)&&typeof h.date==='string'&&Array.isArray(h.players)&&Number.isInteger(h.rounds)).slice(0,100);statistics=mergeStats(mergeStats(statistics,d.statistics?.games||[]),history);persist(STATSKEY,statistics);if(typeof d.prefs?.name==='string')prefs.name=d.prefs.name.slice(0,24);prefs.patterns=!!d.prefs?.patterns;prefs.haptics=d.prefs?.haptics!==false;prefs.theme=THEMES.some(theme=>theme.id===d.prefs?.theme)?d.prefs.theme:'classic';if(validComputerDifficulty(d.prefs?.computerDifficulty))prefs.computerDifficulty=d.prefs.computerDifficulty;applyTheme();saveLocal();persist(HISTORYKEY,history);persist(PREFKEY,prefs);screen='home';closeModal();render();toast('Dein Spielstand ist wiederhergestellt.');},{once:true});}catch(err){toast(err.message||'Die Datei konnte nicht gelesen werden.');}}});
-document.addEventListener('submit',async event=>{const form=event.target;if(form.dataset.form==='room-title'){event.preventDefault();if(busy)return;const submit=form.querySelector('[type=submit]');submit.disabled=true;const saved=await roomAction('rename',{roomName:form.querySelector('#room-title').value});if(saved){closeModal();toast('Raumname gespeichert.');}else submit.disabled=false;return;}if(form.dataset.form==='local'){event.preventDefault();const names=Array.from(form.querySelectorAll('#name-fields input')).map(el=>el.value.trim()).filter(Boolean);if(names.length<2)return;const boardId=readBoardChoice();rememberBoard(boardId);local=createGame(names,'local',[],{hiddenScores:!!$('#hidden-scores')?.checked,boardId,bonusFields:$('#bonus-fields')?.checked===true,mines:$('#mine-enabled')?.checked===true});local.gameId=newId();viewPid=0;inspectPid=null;handover=true;screen='game';resetSelection();saveLocal();closeModal();render(true);window.scrollTo(0,0);}});
+document.addEventListener('change',async e=>{if(gameDemo)return;if(['mine-column','mine-row'].includes(e.target.id)){const col=$('#mine-column')?.value,row=$('#mine-row')?.value;if(col!==''&&row!=='')selectMineTarget(Number(row)*15+Number(col));return;}if(e.target.id==='computer-difficulty'){const level=COMPUTER_LEVELS.find(item=>item.id===e.target.value);if(level&&$('#computer-difficulty-help'))$('#computer-difficulty-help').textContent=level.description;return;}if(e.target.matches('[data-board-choice]')){const description=e.target.closest('.board-picker')?.querySelector('.board-choice-description');if(description)description.textContent=BOARDS.find(b=>b.id===e.target.value)?.description||'';const context=e.target.dataset.boardChoice;if(context==='room')await roomAction('options',{boardId:e.target.value});else if(context==='direct')directAction('options',{boardId:e.target.value});return;}if(e.target.id==='player-count'){const ship=$('#variant-battleship');if(ship){ship.disabled=Number(e.target.value)!==2;if(ship.disabled)ship.checked=false;}const previous=Array.from($('#name-fields').querySelectorAll('input')).map(el=>el.value);$('#name-fields').innerHTML=localNames(Number(e.target.value));$('#name-fields').querySelectorAll('input').forEach((el,i)=>{if(previous[i])el.value=previous[i];});}if(e.target.id==='import-file'){const file=e.target.files?.[0];if(!file)return;try{if(file.size>10e6)throw Error('Die Datei ist zu groß.');const data=JSON.parse(await file.text());if(data.format!=='farbfeld-backup'||data.version!==1||!validGame(data.game)||!Array.isArray(data.history)||data.statistics!==undefined&&!validStats(data.statistics))throw Error('Das ist kein gültiger Farbfeld-Spielstand.');const imported=JSON.stringify(data);openModal('Spielstand wiederherstellen?',`<p>Die lokale Partie und Ergebnisliste werden durch den gewählten Export ersetzt. Statistiken werden ohne doppelte Partien zusammengeführt.</p><button class="primary" data-action="confirm-import">Wiederherstellen</button><button class="outline-btn" data-action="close-modal">Abbrechen</button>`);dialog.querySelector('[data-action="confirm-import"]').addEventListener('click',()=>{const d=JSON.parse(imported);local=d.game;history=d.history.filter(h=>Number.isFinite(h.score)&&typeof h.date==='string'&&Array.isArray(h.players)&&Number.isInteger(h.rounds)).slice(0,100);statistics=mergeStats(mergeStats(statistics,d.statistics?.games||[]),history);persist(STATSKEY,statistics);if(typeof d.prefs?.name==='string')prefs.name=d.prefs.name.slice(0,24);prefs.patterns=!!d.prefs?.patterns;prefs.haptics=d.prefs?.haptics!==false;prefs.theme=THEMES.some(theme=>theme.id===d.prefs?.theme)?d.prefs.theme:'classic';if(validComputerDifficulty(d.prefs?.computerDifficulty))prefs.computerDifficulty=d.prefs.computerDifficulty;applyTheme();saveLocal();persist(HISTORYKEY,history);persist(PREFKEY,prefs);screen='home';closeModal();render();toast('Dein Spielstand ist wiederhergestellt.');},{once:true});}catch(err){toast(err.message||'Die Datei konnte nicht gelesen werden.');}}});
+document.addEventListener('submit',async event=>{if(gameDemo)return;const form=event.target;if(form.dataset.form==='room-title'){event.preventDefault();if(busy)return;const submit=form.querySelector('[type=submit]');submit.disabled=true;const saved=await roomAction('rename',{roomName:form.querySelector('#room-title').value});if(saved){closeModal();toast('Raumname gespeichert.');}else submit.disabled=false;return;}if(form.dataset.form==='local'){event.preventDefault();const names=Array.from(form.querySelectorAll('#name-fields input')).map(el=>el.value.trim()).filter(Boolean);if(names.length<2)return;const boardId=readBoardChoice();rememberBoard(boardId);local=createGame(names,'local',[],{hiddenScores:!!$('#hidden-scores')?.checked,boardId,bonusFields:$('#bonus-fields')?.checked===true,mines:$('#mine-enabled')?.checked===true,variants:readVariantOptions(document)});fleetShip=4;hiddenMineSlot=0;battleMapOpen=false;objectivesOpen=false;hiddenMinePanelOpen=false;local.gameId=newId();viewPid=0;inspectPid=null;handover=true;screen='game';resetSelection();saveLocal();closeModal();render(true);window.scrollTo(0,0);}});
+if(gameDemo)import('./animation-review.js').then(({createAnimationReview})=>startAnimationGame(createAnimationReview));
+else if(onlineDiagnose){
+ app.innerHTML='<main class="loading">'+logo()+'<h1>Farbfeld-Diagnose</h1><button type="button" class="outline-btn" data-action="animation-preview">Animationen testen</button><a href="/play">Zum Spiel</a></main>';
+ showAnimationPreview();
+}
+else{
 window.addEventListener('online',()=>{if(['room','home'].includes(screen)&&room)pollRoom();});window.addEventListener('offline',()=>{if(['room','home'].includes(screen)&&room){roomConnection.fail(room.code);roomPoller.stop();networkError='Du bist offline. Für den Spielraum brauchst du Internet.';render();}else if(screen==='direct')toast(direct.ready?'Internet getrennt. Eure Direktpartie läuft im WLAN/Hotspot weiter.':'Kein Internet. Die QR-Kopplung bleibt im gemeinsamen WLAN/Hotspot möglich.');else toast('Du bist offline. Deine lokale Partie läuft weiter.');});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&screen==='room')roomAnnounced='';syncNotificationContext();notifications.visibility();roomPoller.refresh();if(!document.hidden&&['room','home'].includes(screen)&&roomBook.entries().length){refreshRoomIndicators();pollRoom();}scheduleComputer();});
 window.addEventListener('pagehide',()=>{roomPoller.stop();if(notifications.state.enabled&&notifications.state.pushReady)notifications.request('presence',{visible:false},true).catch(()=>{});});
@@ -852,6 +1435,7 @@ pwa=createPwa(info=>{
 },()=>toast('Farbfeld ist als App installiert. Viel Spaß!'));
 pwa.check();
 const invite=new URL(location.href).searchParams.get('room');if(invite){if(roomBook.get(invite.toUpperCase()))openSavedRoom(invite.toUpperCase());else roomSetup();}
+const tutorialTopic=new URL(location.href).searchParams.get('anleitung');if(tutorialTopic!==null&&!invite)showTutorial(tutorialTopic);
 
 if(new URL(location.href).searchParams.get('umzug')==='1')appRecovery();
 
@@ -860,3 +1444,6 @@ if(new URL(location.href).searchParams.has('direct')&&direct.saved){screen='dire
 if(roomBook.entries().length&&screen==='home')pollRoom();
 
 window.addEventListener('storage',event=>{if(event.key==='farbfeld.rooms.v1'&&screen==='home'){refreshSavedRooms();notifications.setRooms(roomBook.entries());roomPoller.refresh();}});
+}
+
+document.addEventListener('toggle',event=>{if(!event.target.isConnected)return;if(event.target.id==='hidden-mine-panel')hiddenMinePanelOpen=event.target.open;if(event.target.id==='objectives-panel')objectivesOpen=event.target.open;if(event.target.id==='battle-map'){battleMapOpen=event.target.open;if(battleMapOpen)requestAnimationFrame(()=>shotMapView.measure(true));}},true);

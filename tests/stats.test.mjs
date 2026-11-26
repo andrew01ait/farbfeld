@@ -1,8 +1,44 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {mergeStats,summarizeStats,summarizeOpponent,statsCategory,validStats} from '../public/game/stats.js';
+import {mergeStats,summarizeStats,summarizeOpponent,statsCategory,validStats,recentResults,storedResult,resultStandings} from '../public/game/stats.js';
 const player=(name,total,jokers=4)=>({name,total,jokers});
 const game=(id,players,ownPid=0,mode='room')=>({id:String(id),date:new Date(1700000000000+Number(id)*1000).toISOString(),mode,players,ownPid,score:players[ownPid].total});
+test('Recent results retain the latest twenty by finish time and compare the player with the whole field',()=>{
+ const entries=Array.from({length:23},(_,i)=>game(i+1,[player('Du',20),player('Bea',10)]));
+ const shared={...game(24,[player('Du',20),player('Bea',20),player('Alex',16)]),finishedAt:1700000030000,completed:true,title:'Revanche'};
+ const loss=game(25,[player('Du',20,3),player('Bea',20,4),player('Alex',16)]);
+ const forfeit={...game(26,[{...player('Du',-10),left:true},player('Bea',-12)]),completed:true,forfeit:true};
+ const earlyExit={...forfeit,id:'active',completed:false},legacyExit={...forfeit,id:'old-exit',completed:undefined};
+ const results=recentResults([entries[0],shared,earlyExit,legacyExit,...entries.slice(1),loss,forfeit,shared]);
+ assert.equal(results.length,20);
+ assert.deepEqual(results.slice(0,4).map(result=>[result.id,result.outcome]),[['24','shared'],['26','forfeit'],['25','loss'],['23','win']]);
+ assert.equal(results[0].title,'Revanche');assert.equal(results[2].finishedAt,null);
+ assert.deepEqual(resultStandings(results[2]).map(p=>[p.name,p.own]),[['Bea',false],['Du',true],['Alex',false]]);
+ assert.equal(results.at(-1).id,'7');
+});
+test('Ergebnisverlauf zeigt den belegbaren Ausgang und Platz auch bei Altpartien, Gleichständen und Ausstiegen',()=>{
+ const tied=storedResult(game(1,[player('Bea',20),player('Robin',20),player('Alex',20,3)],1));
+ assert.equal(tied.outcome,'shared');
+ assert.deepEqual(resultStandings(tied).map(p=>[p.place,p.own]),[[1,false],[1,true],[3,false]]);
+
+ const old=game(2,[player('Bea',11),player('Robin',20)],1);
+ delete old.ownPid;
+ assert.equal(storedResult(old).outcome,'win');
+ const ambiguous={...old,players:[player('Bea',20),player('Robin',20,3)]};
+ assert.equal(storedResult(ambiguous).outcome,'unknown');
+ assert.equal(resultStandings(storedResult(ambiguous)).some(p=>p.own),false);
+ assert.equal(storedResult(game(3,ambiguous.players,1)).outcome,'loss');
+
+ const departed={...player('Bea',-10),left:true};
+ const last=storedResult(game(4,[departed,player('Robin',-15)],1));
+ assert.equal(last.outcome,'win');
+ assert.deepEqual(resultStandings(last).map(p=>[p.place,p.left===true]),[[1,false],[null,true]]);
+ const exit=storedResult({...game(5,[departed,player('Robin',-15)]),players:[departed,{name:'Robin',hidden:true}],forfeit:true,completed:false});
+ assert.equal(exit.outcome,'forfeit');
+ assert.deepEqual(resultStandings(exit).map(p=>[p.place,p.total]),[[null,-10],[null,undefined]]);
+ assert.equal(storedResult({...old,completed:false}),null);
+ assert.equal(storedResult(game(6,[player('Robin',30)],0,'solo')).outcome,'solo');
+});
 test('Profil: Siege, geteilte Siege und Joker-Tiebreak stimmen auch in Gruppen und auf dem Gästehandy',()=>{
  const stats=mergeStats(null,[game(1,[player('Robin',12),player('Bea',14)],1),game(2,[player('Robin',17,3),player('Bea',17,4)],1),game(3,[player('Robin',18),player('Bea',18)],1),game(4,[player('Robin',30),player('Bea',20),player('Alex',10)],1)]);
  const value=summarizeStats(stats);assert.equal(value.wins,3);assert.equal(value.sharedWins,1);assert.equal(value.losses,1);assert.equal(value.played,4);

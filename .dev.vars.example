@@ -3,3 +3,6 @@
 # FARBFELD_VAPID_PUBLIC_KEY=your-own-public-key
 # FARBFELD_VAPID_PRIVATE_KEY=your-own-private-key
 # FARBFELD_VAPID_SUBJECT=https://example.com/contact
+
+# Optional local imprint contact data. Use example values in fixtures.
+# FARBFELD_IMPRINT_CONTACT='{"email":"contact@example.test","phone":"+4300000000"}'

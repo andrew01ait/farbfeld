@@ -1,6 +1,10 @@
 # Responsive QA
 
-<!-- farbfeld-version: 1.19.4 -->
+<!-- farbfeld-version: 1.34.2 -->
+
+## Öffentliche Website und Impressum · 1.34.2
+
+Chromium prüfte Startseite, Impressum und App-Startseite vom Handy im Hoch- und Querformat bis zum Desktop in 14 Ansichtsgrößen. Die geprüften Aktionen hatten mindestens 44 CSS-Pixel Höhe. Die Kontaktfreigabe funktionierte per Eingabetaste. Der Service-Worker-Test deckt den Online-Einstieg und den gespeicherten Offline-Start über `/play` ab. Die Größenprüfung verwendete Browseransichten.
 
 ## Prüfumfang 1.19.4
 

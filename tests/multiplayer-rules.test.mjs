@@ -65,7 +65,7 @@ test('Loss of the offline relay pauses safely and reconnecting the original host
 });
 test('Direct mine actions are authenticated, applied once and projected without exposing hidden opponents',()=>{
  const p=group(3);p.host.act('options',{mines:true,hiddenScores:true,bonusFields:true});p.flush();p.host.act('start');p.flush();const g=p.host.record.snapshot.game;g.phase='choose';g.dice={colors:['g','b','o'],numbers:[1,2,3]};g.mines.unlocked.fill(true);g.players.forEach(player=>{player.marks[52]=true;blastNeighbors(52).forEach(i=>player.marks[i]=true);});p.host.broadcast();p.flush();
- const message=p.host.envelope('action',{action:'mine',target:52,gameId:g.gameId,round:g.round});p.host.apply(message,0,true);p.flush();const version=p.host.snapshot.version;p.host.apply(message,0,true);p.flush();assert.equal(p.host.snapshot.version,version);assert.equal(score(p.host.snapshot.game.players[0],p.host.snapshot.game).mineCost,5);assert.equal(p.host.snapshot.game.mines.lastBlast.targets.length,2);
+ const message=p.host.envelope('action',{action:'mine',target:52,charge:'color',gameId:g.gameId,round:g.round});p.host.apply(message,0,true);p.flush();const version=p.host.snapshot.version;p.host.apply(message,0,true);p.flush();assert.equal(p.host.snapshot.version,version);assert.equal(score(p.host.snapshot.game.players[0],p.host.snapshot.game).mineCost,5);assert.equal(p.host.snapshot.game.mines.lastBlast.targets.length,2);
  assert.deepEqual(p.guests.get(1).snapshot.game.mines.lastBlast.targets.map(t=>t.pid),[1]);assert.equal(p.guests.get(1).snapshot.game.bonuses.fields,undefined);
 });
 test('Immediate forfeit history is a loss, negative and deduplicated, without invented hidden opponent scores',()=>{
@@ -90,6 +90,20 @@ test('A later column holder inherits full points after all earlier opponents los
 test('Direct mines and departures reject another game at a matching version without mutation',()=>{
  const p=group(3);p.host.act('options',{mines:true});p.flush();p.host.act('start');p.flush();const g=p.host.snapshot.game;g.phase='choose';g.dice={colors:['g','b','o'],numbers:[1,2,3]};g.mines.unlocked.fill(true);
  const before=JSON.stringify(p.host.record);for(const action of ['mine','leave'])assert.throws(()=>p.host.apply(p.host.envelope('action',{action,target:52,gameId:'another-match',round:g.round}),0,true),/aktuelle/);assert.equal(JSON.stringify(p.host.record),before);
+});
+
+test('A direct guest can spend both airstrikes and rejoin with the exact costs and charges',()=>{
+ const p=group(2);p.host.act('options',{mines:true});p.flush();assert(p.guests.get(1).supportsMineCoverage);
+ p.host.act('start');p.flush();const g=p.host.snapshot.game;
+ g.active=1;g.phase='choose';g.dice={colors:['g','b','o'],numbers:[1,2,3]};
+ g.mines.unlocked[1]=true;g.mines.coverage.unlocked[1]=true;
+ p.host.broadcast();p.flush();
+ const attack=charge=>{p.guests.get(1).act('mine',{target:52,charge});p.flush();};
+ attack('color');attack('color');assert.match(p.errors.at(-1),/nicht mehr verfügbar/);
+ assert.equal(p.host.snapshot.game.mines.coverage.used[1],false);attack('coverage');
+ const rejoined=group(2,p.saved),next=rejoined.guests.get(1).snapshot.game;
+ assert(validMineState(next,{allowProjection:true}));assert.equal(score(next.players[1],next).mineCost,10);
+ assert.equal(next.mines.blasts.length,2);assert.equal(next.phase,'choose');assert.deepEqual(next.submitted,[]);
 });
 
 test('Tied surviving completion rounds share the full bonus after earlier holders leave',()=>{

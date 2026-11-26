@@ -1,6 +1,28 @@
 # Offline-Testprotokoll für zwei Handys
 
-<!-- farbfeld-version: 1.19.4 -->
+<!-- farbfeld-version: 1.34.2 -->
+
+## Animationsvorschau
+
+Am PC öffnet der direkte Online-Einstieg die aktuelle Vorschau auch bei einem älteren Offline-Cache der installierten App. [PC-Diagnose öffnen](https://farbfeld-andrew.endruuu.chatgpt.site/diagnose)
+
+**Einstellungen → Hilfe & Diagnose → Animationen testen** öffnen und die gewünschte Szene wählen. **Spielansicht öffnen** startet die vollständige Beispielpartie. Wähle die gewünschte Scrollposition und tippe **Abspielen**. Die Spielfläche zeigt die üblichen Scrollwechsel, Karten, Einblendungen und Toasts. **Ausschnitt abspielen** zeigt die elf Effekte auch auf dem kompakteren Beispielbrett.
+
+- **Luftangriff** zeigt den Freigabeimpuls, einen Treffer und ein leeres Ziel.
+- **Versteckte Minen** zeigen die Bodenexplosion einer Mine und zwei gleichzeitige Explosionen.
+- **Schiffsboni** zeigen einen Treffer, einen Fehlschuss und eine Versenkung je Ausrichtung.
+- **Farben neu mischen** und **Würfelwurf** zeigen die Bewegung auf dem Beispielbrett bzw. an den Würfeln.
+
+In der Spielansicht kommen eine verdeckte Luftangriffspartie, die eigene Mine beim Gegner und die Versenkung des letzten Schiffs dazu. Beim Schatz gibt es Heiß, Warm, Kalt, Fund und Schatzkette. Farbabschluss, Entdeckermodus, Auftrag, Spielende und Emoji-Reaktion lassen sich dort ebenfalls ansehen.
+
+Die Vorschau verwendet die Einstellungen für Design, Farbmuster und reduzierte Bewegung. Sie erzeugt keine Spielzüge und greift auf keine echten Partien zu.
+
+**Ablauf prüfen** steht am PC rechts neben dem Brett. Nach der Wiedergabe erscheinen dort Ereignisse mit Zeiten, sichtbaren Bereichen und Scrollwegen. Die Anzeigezeiten beruhen auf Browser-Stichproben für Lage, Überdeckung und Kartenstatus. Ein Klick auf eine Zeile zeigt links das Standbild und markiert die in diesem Ausschnitt sichtbaren Ziele, Karten oder Effekte. **Zur Spielansicht** zeigt wieder das interaktive Brett. **Bis hier abspielen** und **Feedback kopieren** stehen am geöffneten Eintrag.
+
+## Variantenfreigabe 1.21.0
+
+Die neuen Flottenaktionen und Projektionen ändern weder opt-in Aufzeichnung noch Export-Allowlist. Nicht erlaubte Varianten-/Flottenpayloads werden nicht exportiert; keine Schiffspositionen, Farbpläne, Namen, Werte oder Credentials in Diagnose. Synthetische Direktprüfung und Browsernachweise getrennt von der bisherigen Nutzerabnahme auf OnePlus dokumentieren.
+
 
 ## Hotspot-Rückmeldung 11. November 2026
 
@@ -12,9 +34,9 @@ Zusätzlich zur bestätigten Wiederkopplung hat der Nutzer zwei offline befindli
 Auf OnePlus Open/7T konnte eine bestehende Partie erneut gekoppelt werden. WLAN-Abschalten wurde als Verbindungsverlust erkannt; einmal konnte die Partie unmittelbar fortgesetzt werden, einmal war Wiederkopplung nötig. Die genaue installierte Version und neue Diagnoseberichte wurden nicht angegeben. Dies bestätigt vorhandene Wiederaufnahme, keine Garantie automatischer Erholung bei jedem Abbruch. Hotspot ohne Internet bleibt offen. Zusätzlich gemeldet: wartende Person sah Würfel erst nach der ersten Auswahl; 1.19.2 korrigiert die Anzeige bereits vorhandener öffentlicher Würfeldaten. Physische Abnahme dieser Anzeige steht separat aus.
 
 
-## Recovery diagnostics 1.17.4
+## Ergebnis der ersten OnePlus-Prüfung
 
-The bounded local-address fallback is logged as candidate-fallback without addresses or SDP. Find the test recorder under Einstellungen → Hilfe & Diagnose → Offline-Testprotokoll; it also stays available in pairing screens. Preserve both reports before starting a new numbered test. Device checks distinguish usable fallback candidates from full collection completion.
+Test 1 bestätigt gegenseitige QR-Kopplung und drei Runden auf Open/7T im selben WLAN. Test 2 bestätigt sichere Pause bei beiderseits Revision 12/Wurf 4, danach wiederholte ice-timeout-Fehler auf A trotz vorhandener lokaler Kandidaten. Die Berichte wurden vom Nutzer exportiert; keine privaten Rohdaten werden ins Repository übernommen. 1.17.4 protokolliert den begrenzten Adress-Fallback als candidate-fallback ohne Adressen/SDP. Das Testprotokoll liegt nun unter Einstellungen → Hilfe & Diagnose → Offline-Testprotokoll. Für den nächsten Wiederkopplungsversuch Test 3 auf beiden Handys verwenden; bestehende Berichte vorher sichern.
 
 Das lokale Testprotokoll hilft, Gerätevorbereitung, QR-Kopplung, tatsächlichen Verbindungsaufbau und Spielabgleich getrennt zu untersuchen. Es repariert eine Verbindung nicht selbst und ist kein Nachweis physischer Android-/Hotspot-Kompatibilität. Die bisherige **Offline-Verbindung prüfen → Prüfergebnis kopieren** bleibt als separater Einzelgerätetest erhalten.
 

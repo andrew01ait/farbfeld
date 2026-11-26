@@ -1,11 +1,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {boardFor,COLORS,FIRST,LATER,canAct,applyMove,finishRound,rollGame,score,rankings,enableMines,minesEnabled,validMineState,blastNeighbors,canUseMine,applyMineAttack,mineTargetView,chooseComputerMineTarget} from '../public/game/engine.js';
+import {boardFor,COLORS,FIRST,LATER,canAct,applyMove,finishRound,rollGame,score,rankings,enableMines,minesEnabled,validMineState,blastNeighbors,canUseMine,applyMineAttack,mineTargetView,chooseComputerMineTarget,mineCharges} from '../public/game/engine.js';
 import {BOARDS} from '../public/game/boards.js';
 import {createComputerGame,stepComputer} from '../public/game/computer.js';
 import {createGame,neighbors,findMove} from '../public/game/engine.js';
-import {scoreBreakdown} from '../public/game/game-info.js';
-import {mineSetupHtml,mineControlsHtml,mineTargetHtml,mineDamage,mineDamageHtml,playMineBlast,MINE_ANIMATION_MS} from '../public/game/mine-ui.js';
+import {projectGame,scoreBreakdown} from '../public/game/game-info.js';
+import {mineSetupHtml,mineControlsHtml,mineHelpHtml,mineTargetHtml,mineDamage,playMineBlast,MINE_ANIMATION_MS} from '../public/game/mine-ui.js';
+import {GAME_BANNER_MS} from '../public/game/variant-ui.js';
 
 function choosing({hidden=false,board='classic',actor=0}={}){
  const g=createComputerGame(hidden,board,'easy',true);g.phase='choose';g.active=actor;g.dice={colors:['g','b','o'],numbers:[1,2,3]};return g;
@@ -36,6 +37,55 @@ test('A colour completion unlocks the opponent only after shared round scoring',
  g=applyMove(g,0,{ci:0,ni:0,cells:[target]});assert.deepEqual(g.mines.unlocked,[false,false]);
  g=applyMove(g,1,{pass:true});assert.deepEqual(g.mines.unlocked,[false,true]);assert.equal(g.players[0].colors.g,5);
  assert.equal(g.players[0].jokers,8);assert.equal(g.mines.used[1],false);
+});
+
+test('Seventy confirmed fields unlock one independent airstrike for each active opponent',()=>{
+ const target=52;
+ for(const cells of [68,69]){
+  const game=createGame(['A','B','C','D'],'room',[],{mines:true,hiddenScores:true});
+  game.phase='choose';game.active=1;game.round=4;
+  const board=boardFor(game,1).cells;
+  game.dice={colors:[board[target],'g','o'],numbers:[1,2,3]};
+  const spread=COLORS.flatMap(color=>board.flatMap((c,i)=>c===color&&i!==target?[i]:[]).slice(0,14)).slice(0,cells);
+  for(const i of spread)game.players[1].marks[i]=true;
+  game.players[3].left=true;
+  assert(!canUseMine(game,0));
+  const next=applyMove(game,1,{ci:0,ni:0,cells:[target]},()=>0);
+  assert.deepEqual(next.mines.coverage.unlocked,cells===69?[true,false,true,false]:[false,false,false,false]);
+  assert.deepEqual(next.mines.unlocked,[false,false,false,false]);
+  const view=projectGame(next,0);
+  assert.deepEqual(view.mines.coverage.unlocked,[cells===69,false,false,false]);
+  if(cells===69){
+   const hit=applyMineAttack(next,0,target,()=>0);
+   assert(hit.players[1].marks.filter(Boolean).length<70);
+   assert.equal(hit.mines.coverage.used[0],true);
+   assert.equal(hit.mines.unlocked[0],false);
+   assert.equal(hit.mines.coverage.unlocked[2],true);
+   assert.equal(hit.mines.lastBlast.charge,'coverage');
+   assert(!canUseMine(hit,0));
+  }
+ }
+});
+
+test('The two charges survive reload, cost five each and cannot be spent by stale retries',()=>{
+ let game=armed();
+ game.mines.coverage.unlocked[0]=true;
+ game.players[1].marks[52]=true;
+ game=applyMineAttack(game,0,52,()=>0,'color');
+ assert.equal(score(game.players[0],game).mineCost,5);
+ assert.throws(()=>applyMineAttack(game,0,52,()=>0,'color'),/nicht mehr verfügbar/);
+ game=JSON.parse(JSON.stringify(game));
+ assert(validMineState(game)&&canUseMine(game,0));
+ game=applyMineAttack(game,0,52,()=>0,'coverage');
+ assert.equal(score(game.players[0],game).mineCost,10);
+ assert.deepEqual(mineCharges(game,0).map(charge=>charge.used),[true,true]);
+ assert.deepEqual(game.mines.blasts.map(blast=>blast.charge??'color'),['color','coverage']);
+ assert(validMineState(game));assert(!canUseMine(game,0));
+ const duplicate=structuredClone(game);delete duplicate.mines.blasts[1].charge;delete duplicate.mines.lastBlast.charge;
+ assert(!validMineState(duplicate));
+ const legacy=createGame(['A','B'],'local',[],{mines:true,mineCoverage:false});
+ assert.equal(legacy.mines.schema,1);assert(validMineState(legacy));
+ assert.deepEqual(mineCharges(legacy,0).map(charge=>charge.reason),['color']);
 });
 test('A hit removes its centre and three to five occupied eight-way neighbours without touching normal-turn state',()=>{
  for(const extra of [3,4,5]){
@@ -124,7 +174,7 @@ test('Hidden targeting and its HTML are identical for different private opponent
  assert.deepEqual(mineTargetView(a,0),mineTargetView(b,0));assert.equal(mineTargetHtml(a,52),mineTargetHtml(b,52));
  assert(!mineTargetHtml(a,52).includes('mine-marked'));assert(!mineTargetHtml(a,52).includes('angekreuzt'));assert(!mineTargetHtml(a,52).includes('×'));
  a.hiddenScores=false;assert(mineTargetHtml(a,52).includes('mine-marked'));
- assert.match(mineTargetHtml(b),/Leeres Ziel:<\/b> kein Schaden, auch nicht an Nachbarn/);
+ assert.match(mineTargetHtml(b),/<b>Leer:<\/b> kein Schaden/);
 });
 test('A hidden computer chooses blindly without reading human marks, bonus totals or jokers',()=>{
  const g=armed({hidden:true,actor:1});
@@ -148,6 +198,22 @@ test('Malformed mine metadata is rejected and a locked game never renders a usab
  g.mines.unlocked[0]=true;assert(!mineControlsHtml(g).includes(' disabled'));
 });
 
+test('Airstrike help explains the unlocks supported by the actual match',()=>{
+ const modern=createGame(['Du','Gegner'],'room',[],{mines:true,variants:{hiddenMines:true}});
+ const currentHelp=mineHelpHtml(modern);
+ assert.match(currentHelp,/bis zu zwei Luftangriffe/);
+ assert.match(currentHelp,/mindestens 70 von 105 Feldern/);
+ assert.match(currentHelp,/Ausgelöste Minen werden vorher ausgewertet/);
+ const legacy=createGame(['Du','Gegner'],'room',[],{mines:true,mineCoverage:false});
+ const legacyHelp=mineHelpHtml(legacy);
+ assert.match(legacyHelp,/jede Person einen Luftangriff/);
+ assert.doesNotMatch(legacyHelp,/70|bis zu zwei/);
+ for(const help of [currentHelp,legacyHelp]){
+  assert.match(help,/gemeinsame[nr]? Wertung des Wurfs/);
+  assert.match(help,/Jeder Angriff kostet <b>5 Punkte/);
+ }
+});
+
 test('Complete opted-in games on every board keep legal moves, bounded attacks, valid saves and final scoring',()=>{
  let seed=8127;const rng=max=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return Math.floor(seed/4294967296*max);};
  for(const board of BOARDS.map(b=>b.id))for(const hidden of [false,true]){
@@ -158,19 +224,20 @@ test('Complete opted-in games on every board keep legal moves, bounded attacks, 
    else if(g.phase==='roll')g=rollGame(g,rng);
    else if(canUseMine(g,0))g=applyMineAttack(g,0,rng(105),rng);
    else g=applyMove(g,0,findMove(g,0)??{pass:true});
-   for(let pid=0;pid<2;pid++)if(!previous.mines.used[pid]&&g.mines.used[pid])spent[pid]++;
+   if(g.mines.lastBlast?.turn!==previous.mines.lastBlast?.turn)spent[g.mines.lastBlast.by]++;
    assert(validMineState(g));assert(g.players.every(p=>p.jokers>=0));
   }
-  assert.equal(g.status,'finished',board);assert(spent.every(n=>n<=1));
-  g.players.forEach(p=>{const s=score(p,g);assert.equal(s.total,s.columns+s.colors+s.jokers-s.penalty-s.mineCost);});
+  assert.equal(g.status,'finished',board);assert(spent.every(n=>n<=2));
+  g.players.forEach((p,pid)=>{const s=score(p,g);assert.equal(s.mineCost,spent[pid]*5);assert.equal(s.total,s.columns+s.colors+s.jokers-s.penalty-s.mineCost);});
  }
 });
 
 test('Damage markers last through the next full round, survive reload and never reveal a hidden opponent',()=>{
  const g=armed();g.players[1].marks[52]=true;blastNeighbors(52).forEach(i=>g.players[1].marks[i]=true);const next=applyMineAttack(g,0,52,()=>0),round=next.round;
- const visible=mineDamage(next,1,0);assert.deepEqual(visible.cells,next.mines.lastBlast.cells);assert.equal(visible.untilRound,round+1);assert.equal(mineDamage(next,0,0),null);
+ const visible=mineDamage(next,1,0);assert.deepEqual(visible.cells,next.mines.lastBlast.cells);assert.equal(visible.airstrike.untilRound,round+1);assert.equal(mineDamage(next,0,0),null);
+ const info=mineControlsHtml(next,{damage:visible.airstrike});assert.match(info,/Markiert bis Ende von Wurf \d/);assert.equal((info.match(new RegExp(visible.cells.length+' Kreuze entfernt','g'))??[]).length,1);
  const saved=JSON.parse(JSON.stringify(next));saved.round++;assert(validMineState(saved));assert(mineDamage(saved,1,0));saved.round++;assert.equal(mineDamage(saved,1,0),null);
- next.hiddenScores=true;assert.equal(mineDamage(next,1,0),null);assert(mineDamage(next,1,1));assert.match(mineDamageHtml(visible),/Ende des nächsten Wurfs/);
+ next.hiddenScores=true;assert.equal(mineDamage(next,1,0),null);assert(mineDamage(next,1,1));
  const old=structuredClone(next);delete old.mines.lastBlast.round;delete old.mines.blasts;assert(validMineState(old));assert.equal(mineDamage(old,1,1),null);
 });
 test('Both attacks retain their own one-round evidence even after the second explosion',()=>{
@@ -184,11 +251,79 @@ test('A mine is visibly ready after unlock, remains emphasized after reload, the
  assert.match(mineControlsHtml(g,{highlight:true}),/mine-new/);assert.match(mineControlsHtml(g),/bereit – jetzt freigeschaltet/);assert.match(mineControlsHtml(JSON.parse(JSON.stringify(g))),/jetzt freigeschaltet/);
  const used=applyMineAttack(g,0,52,()=>0);assert(!mineControlsHtml(used).includes('mine-ready-badge'));
 });
-test('The three-second effect scopes cell animation to the rendered victim and respects reduced motion',()=>{
+function effectEnvironment(reduced=false){
+ const animations=[],created=[],queries=[],scrolled=[],timers=[];
+ const node=()=>{const n={attributes:{},children:[],removed:false,setAttribute(k,v){this.attributes[k]=v;},remove(){this.removed=true;},append(child){this.children.push(child);},scrollIntoView(){scrolled.push(this);},animate(frames,options){animations.push({cell:this,frames,options});}};created.push(n);return n;};
+ const board=node(),cellMap=new Map([52,53,68,84].map(i=>[i,node()]));
+ const body=node(),document={body,createElement:node,querySelector(selector){queries.push(selector);if(selector==='[data-player-board="0"]')return board;const match=selector.match(/^\[data-player-board="0"\] \[data-i="(\d+)"\]$/);return match?cellMap.get(Number(match[1]))??null:null;},querySelectorAll(){return [];}};
+ return {animations,created,queries,scrolled,timers,cellMap,body,environment:{document,matchMedia:()=>({matches:reduced}),setTimeout(fn,ms){timers.push({fn,ms});}}};
+}
+test('The animation preview uses its own board and notice area and can cancel a running blast',()=>{
+ const fixture=effectEnvironment(),root=fixture.environment.document,cancelled=[];
+ const environment={...fixture.environment,
+  document:{createElement:root.createElement,querySelector(){throw Error('production board accessed');}},
+  setTimeout(run,ms){fixture.timers.push({run,ms});return fixture.timers.length;},
+  clearTimeout(timer){cancelled.push(timer);}
+ };
+ const stop=playMineBlast({by:1,target:52,targets:[{pid:0,cells:[52,53]}],root,noticeHost:fixture.body,scroll:false,messages:[{type:'bonus',title:'Schatz entdeckt',detail:'Du · +2'}]},environment);
+ assert.equal(fixture.animations.length,2);assert.deepEqual(fixture.scrolled,[]);
+ assert.match(fixture.body.children[0].innerHTML,/2 Kreuze entfernt/);
+ assert.match(fixture.body.children[0].innerHTML,/Schatz entdeckt/);
+ stop();assert.deepEqual(cancelled,[1,2]);assert(fixture.body.children[0].removed);
+ assert(fixture.cellMap.get(52).children[0].removed);
+});
+test('The slower airstrike uses confirmed cells, with a banner that outlasts the effects',()=>{
  for(const reduced of [false,true]){
-  let delay=null,removed=0,animated=0,selector='';const effect={setAttribute(){},remove(){removed++;}};
-  const document={querySelector(){return null;},createElement(){return effect;},body:{append(){}},querySelectorAll(value){selector=value;return [{animate(){animated++;}}];}};
-  let callback;playMineBlast({by:1,targetPid:0},{document,matchMedia:()=>({matches:reduced}),setTimeout(fn,ms){delay=ms;callback=fn;}});
-  assert.equal(delay,3000);assert.equal(delay,MINE_ANIMATION_MS);assert.equal(removed,0);callback();assert.equal(removed,1);assert.equal(animated,reduced?0:1);if(!reduced)assert.match(selector,/data-player-board="0"/);
+  const t=effectEnvironment(reduced);playMineBlast({by:1,target:52,targets:[{pid:0,cells:[52,53,68]}],ownPid:0,attacker:'A < B'},t.environment);
+  assert.deepEqual(t.timers.map(timer=>timer.ms),reduced?[GAME_BANNER_MS]:[GAME_BANNER_MS,MINE_ANIMATION_MS]);assert.equal(GAME_BANNER_MS,6000);
+  assert.equal(t.animations.length,reduced?0:3);assert.equal(t.cellMap.get(84).children.length,0,'older damage outside this attack does not replay');
+  if(!reduced){assert.match(t.cellMap.get(52).children[0].innerHTML,/airstrike-flight/);assert.doesNotMatch(t.cellMap.get(53).children[0].innerHTML,/airstrike-flight/);assert.equal(t.animations[0].options.delay,1450);}else assert.equal(t.cellMap.get(52).children.length,0);
+  assert.equal(t.body.children.length,1);assert.match(t.body.children[0].innerHTML,/Luftangriff von A &lt; B · H4/);assert.match(t.body.children[0].innerHTML,/3 Kreuze entfernt/);assert.equal(t.body.children[0].attributes.role,'status');
+  assert.equal(t.scrolled[0],t.cellMap.get(52));
+  for(const {cell} of t.animations)assert.ok([52,53,68].some(i=>t.cellMap.get(i)===cell));
+  if(!reduced)t.timers[1].fn();assert.equal(t.body.children[0].removed,false);for(const cell of t.cellMap.values())assert.ok(cell.children.every(n=>n.removed));
+  t.timers[0].fn();assert.ok(t.body.children[0].removed);
  }
+});
+test('The viewport reveals an off-screen hit before the effect and leaves an already visible area in place',()=>{
+ for(const kind of ['hidden','airstrike']){
+  for(const offscreen of [true,false]){
+   const t=effectEnvironment(),{environment}=t,root=environment.document,anchor=t.cellMap.get(52),near=t.cellMap.get(53);
+   const query=root.querySelector.bind(root),tray={getBoundingClientRect:()=>({top:322})};
+   root.querySelector=selector=>selector==='.dice-card.choosing'?tray:query(selector);
+   root.body.querySelector=()=>root.body.children.length?{getBoundingClientRect:()=>({bottom:92})}:null;
+   environment.visualViewport={width:320,height:568};
+   environment.getComputedStyle=()=>({position:'fixed'});
+   anchor.closest=()=>({getBoundingClientRect:()=>({left:20,right:300})});
+   anchor.style={scrollMargin:'2px'};
+   const x=offscreen?518:100,y=offscreen?498:154,calls=[];
+   anchor.getBoundingClientRect=()=>({left:x,right:x+32,top:y,bottom:y+32});
+   near.getBoundingClientRect=()=>({left:x+32,right:x+64,top:y,bottom:y+32});
+   anchor.scrollIntoView=options=>calls.push({options,margin:anchor.style.scrollMargin,effects:anchor.children.length});
+   playMineBlast({kind,by:1,target:52,targets:[{pid:0,cells:[52,53]}]},environment);
+   assert.deepEqual(calls,offscreen?[{options:{block:'center',inline:'center',behavior:'instant'},margin:'100px 32px 254px 0px',effects:0}]:[]);
+   assert.equal(anchor.style.scrollMargin,'2px');
+   assert.equal(anchor.children.length,1);
+  }
+ }
+});
+test('Hidden mine feedback cannot reveal or animate foreign damage, and a visible empty target has no removed crosses',()=>{
+ let prior=null;
+ for(const secretCells of [[],[52],[52,53,68]]){
+  const t=effectEnvironment();playMineBlast({by:0,target:52,targets:[{pid:1,cells:secretCells}],ownPid:0,concealed:true},t.environment);
+  const html=t.body.children[0].innerHTML;assert.match(html,/Ergebnis bleibt verdeckt/);assert.doesNotMatch(html,/Kreuz|kein Schaden/);assert.deepEqual(t.animations,[]);assert.ok(!t.queries.some(q=>q.includes('data-player-board="1"')));if(prior!==null)assert.equal(html,prior);prior=html;
+ }
+ const miss=effectEnvironment();playMineBlast({by:1,target:52,targets:[{pid:0,cells:[]}],ownPid:0},miss.environment);assert.equal(miss.animations.length,0);assert.match(miss.body.children[0].innerHTML,/Leeres Ziel · kein Schaden/);assert.equal(miss.cellMap.get(52).children.length,1);assert.match(miss.cellMap.get(52).children[0].className,/mine-impact-miss/);
+});
+test('Luftangriff targeting keeps coordinates and confirmation explicit, shows possible neighbours without promising random damage',()=>{
+ const g=armed();g.players[1].marks[52]=true;const html=mineTargetHtml(g,52);
+ assert.match(html,/Ziel H4/);assert.match(html,/H4 angreifen · −5 P/);assert.equal((html.match(/class="mine-cell[^"]*mine-near/g)||[]).length,8);assert.equal((html.match(/data-action="mine-target"/g)||[]).length,105);assert.match(html,/<details class="mine-rule-details"><summary>So wirkt der Angriff/);assert.doesNotMatch(html,/<details[^>]* open/);
+ const empty=mineTargetHtml(g,0);assert.match(empty,/Leeres Ziel · kein Schaden/);assert.doesNotMatch(empty,/mine-near/);assert.match(mineTargetHtml(g),/data-action="mine-confirm" disabled/);
+ const before=JSON.stringify(g);mineTargetHtml(g,52);assert.equal(JSON.stringify(g),before,'aiming is not an attack and costs nothing');
+});
+
+test('The mine card keeps a confirmed own target and outcome, without reading concealed damage',()=>{
+ const empty=applyMineAttack(armed(),0,52,()=>0);assert.match(mineControlsHtml(empty),/Dein Angriff · H4/);assert.match(mineControlsHtml(empty),/Kein Treffer/);assert.match(mineControlsHtml(empty),/Wurf 1/);
+ empty.hiddenScores=true;for(const blast of empty.mines.blasts)Object.defineProperty(blast,'targets',{get(){throw Error('concealed damage');}});
+ assert.doesNotThrow(()=>mineControlsHtml(empty));assert.match(mineControlsHtml(empty),/Ergebnis verdeckt/);assert.doesNotMatch(mineControlsHtml(empty),/Kein Treffer|Kreuze entfernt/);
 });

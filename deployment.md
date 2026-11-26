@@ -1,6 +1,12 @@
 # Development and deployment
 
-<!-- farbfeld-version: 1.19.4 -->
+<!-- farbfeld-version: 1.34.2 -->
+
+## Public home and imprint
+
+`/` serves the public game website. `/play` serves the installable game. Set the canonical URL for your own instance in `lib/public-site.ts`; the landing page, robots.txt and sitemap share that value.
+
+For the imprint, adapt the operator and locality to your instance. Set `FARBFELD_IMPRINT_CONTACT` in the runtime to a JSON object with `email` and `phone` strings. Use an international phone number starting with `+`. The imprint returns the contact links after the visitor submits the form.
 
 ## Menüreihenfolge 1.19.4
 

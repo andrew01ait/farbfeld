@@ -1,8 +1,11 @@
 # Farbfeld contributor instructions
 
-<!-- farbfeld-version: 1.19.4 -->
+<!-- farbfeld-version: 1.34.2 -->
 
-Follow the user-ranked feature roadmap in [docs/roadmap.md](docs/roadmap.md): Battleship first, then discovery, public objectives, periodic color changes and Color Swap. Preserve ranks 8/9/10 for bridges/co-op/growing grid. Ranks 6/7 are unassigned. Challenge-Code is explicitly excluded; preplaced mines remain undecided. The ranking sets priority, not finalized game rules.
+## Public website and game releases
+
+Keep the GitHub review branch current with the hosted application and verify the public tree. Preserve separate hosting configuration, public review history and example-only fixtures. Keep live contact values in the runtime. Test the public page at `/`, the installable app at `/play`, the built-in guide and the imprint contact flow. Maintain the [roadmap](docs/roadmap.md) alongside released rules and supported modes.
+
 
 
 ## Menüreihenfolge 1.19.4

@@ -1,6 +1,10 @@
 # Source and documentation workflow
 
-<!-- farbfeld-version: 1.19.4 -->
+<!-- farbfeld-version: 1.34.2 -->
+
+## Keep the public review branch current
+
+With each hosted game release, review and publish the corresponding shared source and documentation on the GitHub review branch. Check the remote commit and its tree. Hosted deployment and GitHub review each have their own verification.
 
 ## Review 1.19.0
 

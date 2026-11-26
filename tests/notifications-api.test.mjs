@@ -90,7 +90,7 @@ test('Status prüft eine Revanche im persönlichen Raum auch nach Freigabe des e
 test('Raumaktionen planen Push erst nach erfolgreichem Commit; Zustellfehler ändern keinen Zug',async()=>{
  const h=await harness(),queued=[],scheduled=[];globalThis.__notificationHookEnv=h.env;globalThis.__notificationHook=(...args)=>{queued.push(args);return Promise.reject(Error('Push ist offline'));};globalThis.__notificationWait=promise=>scheduled.push(promise.catch(()=>{}));
  let source=fs.readFileSync('app/api/rooms/route.ts','utf8').replace("import { env,waitUntil } from 'cloudflare:workers';",'const env=globalThis.__notificationHookEnv;const waitUntil=globalThis.__notificationWait;').replace("import {enqueueRoomNotices,drainPushOutbox} from '../../../lib/notifications.js';",'const enqueueRoomNotices=globalThis.__notificationHook;const drainPushOutbox=async()=>{};');
- for(const file of ['engine','game-info','boards','reactions','room-status'])source=source.replace('../../../public/game/'+file+'.js',pathToFileURL(process.cwd()+'/public/game/'+file+'.js').href);
+ for(const file of ['variants','engine','game-info','boards','reactions','room-status'])source=source.replace('../../../public/game/'+file+'.js',pathToFileURL(process.cwd()+'/public/game/'+file+'.js').href);
  source=source.replace('../../../lib/room-presence.js',pathToFileURL(process.cwd()+'/lib/room-presence.js').href);
  const compiled=ts.transpileModule(source.replace('../../../lib/room-retention.js',pathToFileURL(process.cwd()+'/lib/room-retention.js').href),{compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.ESNext}}).outputText;
  const {POST}=await import('data:text/javascript;base64,'+Buffer.from(compiled).toString('base64'));

@@ -1,3 +1,4 @@
+import {preparationStep} from './view-state.js';
 import {canAct} from './engine.js';
 export const PRESENCE_TTL=90000;
 export const PRESENCE_WRITE_INTERVAL=30000;
@@ -14,6 +15,10 @@ export function homeRoomStatus(game,playerId){
  if(pid<0)return {kind:'unknown',text:'Spielerzugang prüfen',button:'Öffnen'};
  if(game.players[pid].left)return {kind:'finished',text:'Partie verlassen · −10 Punkte',button:'Verlauf'};
  if(game.status==='finished')return {kind:'finished',text:'Partie beendet · Ergebnis ansehen',button:'Ergebnis'};
+ const setup=preparationStep(game,pid);
+ if(setup==='fleet')return {kind:'turn',text:'Deine Flotte aufstellen',button:'Aufstellen'};
+ if(setup==='mines')return {kind:'turn',text:'Deine Minen auslegen',button:'Auslegen'};
+ if(setup==='waiting')return {kind:'waiting',text:'Vorbereitung bestätigt · auf die anderen warten',button:'Öffnen'};
  if(game.phase==='roll'&&game.active===pid)return {kind:'turn',text:'Du bist dran · würfeln',button:'Weiterspielen'};
  if(game.phase==='choose'&&canAct(game,pid))return {kind:'turn',text:'Du bist dran · Felder wählen',button:'Weiterspielen'};
  if(game.submitted.includes(pid))return {kind:'waiting',text:'Dein Zug ist bestätigt · bitte warten',button:'Öffnen'};

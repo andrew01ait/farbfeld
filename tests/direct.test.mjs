@@ -4,6 +4,9 @@ import assert from 'node:assert/strict';
 import {DirectGame,hostRecord,guestRecord,validRecord,validSnapshot,normalizeDirectRoomName,DIRECT_PROTOCOL} from '../public/game/direct-game.js';
 import {findMove,BOARD,COLORS,BONUS_FEATURE,bonusPoints,validBonusState} from '../public/game/engine.js';
 import {LAN_RTC_CONFIG,validateHandshake,waitForIce} from '../public/game/direct-connection.js';
+import {preparationStep} from '../public/game/view-state.js';
+import {TREASURE_HUNT_FEATURE,treasureHuntView} from '../public/game/bonus-fields.js';
+import {HIDDEN_MINES_FEATURE} from '../public/game/variants.js';
 function pair({records=null}={}){
   const out=[],errors=[],saved={};
   const hRecord=records?.host||hostRecord('Robin');
@@ -176,6 +179,36 @@ test('Bonus-Revanchen ziehen neu, behalten die Startwahl und nehmen keine alten 
  p.host.record.snapshot.game.bonuses.fields[0].claim={round:1,winners:[0]};p.host.record.snapshot.game.status='finished';p.host.record.snapshot.game.phase='finished';
  p.host.act('rematch');p.flush();assert.equal(p.host.snapshot.bonusFields,true);p.host.act('start');p.flush();
  assert.notEqual(p.host.snapshot.game.gameId,previousId);assert.equal(bonusPoints(p.host.snapshot.game,0),0);assert(p.host.snapshot.game.bonuses.fields.every(f=>f.claim===null&&f.pending.length===0));assert.equal(p.guest.snapshot.game.bonuses.awards.length,0);
+});
+
+test('Direct sessions save each own consecutive setup, show private clues and preserve a missed result after reconnect',()=>{
+ const p=pair(),link=p.host.links.get(1),features=link.features;
+ link.features=features.filter(f=>f!==TREASURE_HUNT_FEATURE&&f!==HIDDEN_MINES_FEATURE);
+ assert.throws(()=>p.host.act('options',{bonusFields:true}),/1\.25\.0/);
+ assert.throws(()=>p.host.act('options',{variants:{hiddenMines:true}}),/1\.25\.0/);
+ link.features=features;
+ p.host.act('options',{variants:{battleship:true,hiddenMines:true},bonusFields:true,hiddenScores:true});p.host.act('start');p.flush();
+ const gameId=p.host.snapshot.game.gameId;
+ assert.equal(preparationStep(p.guest.snapshot.game,1),'fleet');
+ assert.deepEqual(p.guest.snapshot.game.variants.hiddenMines.positions[0],[null,null]);
+ p.guest.act('fleet',{fleet:{kind:'ready'}});p.flush();
+ assert.equal(preparationStep(p.guest.snapshot.game,1),'mines');assert.equal(preparationStep(p.host.snapshot.game,0),'fleet');
+ p.guest.act('hidden-mine',{placement:{kind:'ready'}});p.flush();
+ assert.equal(preparationStep(p.guest.snapshot.game,1),'waiting');assert.throws(()=>p.host.act('roll'));
+ p.host.act('fleet',{fleet:{kind:'ready'}});p.host.act('hidden-mine',{placement:{kind:'ready'}});p.host.rng=()=>0;p.host.act('roll');p.flush();
+ const move=findMove(p.host.snapshot.game,0);assert(move);p.host.act('move',{move});p.flush();
+ assert.equal(treasureHuntView(p.guest.snapshot.game,1).history.length,0);
+ assert.equal(treasureHuntView(p.guest.snapshot.game,0),null);
+ assert.equal(treasureHuntView(p.host.snapshot.game,0).history.length,1);
+ p.dropHost(true);p.host.act('leave');
+ const finishTime=p.host.snapshot.game.finishedAt;
+ assert(Number.isSafeInteger(finishTime)&&finishTime>0);
+ p.host.act('rematch');p.host.act('start');
+ assert.equal(p.guest.snapshot.game.gameId,gameId);assert.equal(p.guest.snapshot.game.status,'playing');
+ const resumed=pair({records:p.saved}),archived=resumed.guest.snapshot.lastResult;
+ assert.equal(archived.gameId,gameId);assert.equal(archived.status,'finished');assert.equal(archived.finishedAt,finishTime);assert.equal(archived.players[0].forfeit,-10);
+ assert.equal(archived.bonuses.hint,undefined);assert.equal(archived.bonuses.fields,undefined);
+ assert.notEqual(resumed.guest.snapshot.game.gameId,gameId);assert.ok(validRecord(resumed.saved.guest));assert.ok(validRecord(resumed.saved.host));
 });
 
 test('Random-Direktpartie teilt genau einen Plan und behält ihn bei der Wiederverbindung',()=>{

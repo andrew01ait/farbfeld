@@ -15,7 +15,7 @@ async function harness(t){
  DB.batch=async statements=>{sql.exec('BEGIN');try{const results=statements.map(statement=>statement._run());sql.exec('COMMIT');return results;}catch(error){sql.exec('ROLLBACK');throw error;}};
  globalThis.__roomLifetimeEnv={DB};globalThis.__roomLifetimeWait=promise=>scheduled.push(promise);
  let source=fs.readFileSync('app/api/rooms/route.ts','utf8').replace("import { env,waitUntil } from 'cloudflare:workers';",'const env=globalThis.__roomLifetimeEnv;const waitUntil=globalThis.__roomLifetimeWait;');
- for(const file of ['engine','game-info','boards','reactions','room-status'])source=source.replace('../../../public/game/'+file+'.js',pathToFileURL(process.cwd()+'/public/game/'+file+'.js').href);
+ for(const file of ['variants','engine','game-info','boards','reactions','room-status'])source=source.replace('../../../public/game/'+file+'.js',pathToFileURL(process.cwd()+'/public/game/'+file+'.js').href);
  for(const file of ['notifications','room-presence'])source=source.replace('../../../lib/'+file+'.js',pathToFileURL(process.cwd()+'/lib/'+file+'.js').href);
  const compiled=ts.transpileModule(source.replace('../../../lib/room-retention.js',pathToFileURL(process.cwd()+'/lib/room-retention.js').href),{compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.ESNext}}).outputText;
  const api=await import('data:text/javascript;base64,'+Buffer.from(compiled+'\n// '+crypto.randomUUID()).toString('base64'));

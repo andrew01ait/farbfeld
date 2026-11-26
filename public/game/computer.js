@@ -1,4 +1,5 @@
-import {bonusPoints} from './bonus-fields.js';
+import {enableComputerVariants,variantsReady,computerVariants,abilityCharges,variantMoveValue} from './variants.js';
+import {bonusPoints,treasureMoveValue} from './bonus-fields.js';
 import {createGame,canAct,rollGame,applyMove,findMove,randomInt,availableDice,neighbors,COLORS,FIRST,LATER,score,enableMines,canUseMine,chooseComputerMineTarget,applyMineAttack} from './engine.js';
 import {boardFor} from './boards.js';
 
@@ -15,10 +16,10 @@ export const validComputerDifficulty=value=>COMPUTER_LEVELS.some(level=>level.id
 export const computerDifficulty=game=>validComputerDifficulty(game?.computerDifficulty)?game.computerDifficulty:'easy';
 export const computerLevel=game=>COMPUTER_LEVELS.find(level=>level.id===computerDifficulty(game));
 
-export function createComputerGame(hiddenScores=false,boardId='classic',difficulty='medium',withMines=false,withBonusFields=false){
+export function createComputerGame(hiddenScores=false,boardId='classic',difficulty='medium',withMines=false,withBonusFields=false,variants={}){
  if(!validComputerDifficulty(difficulty))throw Error('Wähle Leicht, Mittel oder Schwer.');
  const game={...createGame(['Du','Computer'],'computer',[],{hiddenScores,boardId,bonusFields:withBonusFields===true}),computerDifficulty:difficulty};
- return withMines===true?enableMines(game):game;
+ return enableComputerVariants(withMines===true?enableMines(game):game,variants,randomInt);
 }
 
 export function changeComputerDifficulty(game,difficulty){
@@ -28,7 +29,7 @@ export function changeComputerDifficulty(game,difficulty){
 }
 
 export function needsComputerTurn(game){
- return game?.mode==='computer'&&game.players.length===2&&game.status==='playing'&&
+ return variantsReady(game)&&game?.mode==='computer'&&game.players.length===2&&game.status==='playing'&&
   (game.phase==='roll'?game.active===COMPUTER:canAct(game,COMPUTER));
 }
 
@@ -54,7 +55,7 @@ function shapes(player,board){
 }
 
 function position(game,pid){
- const player=game.players[pid],board=boardFor(game),columns=Array(15).fill(0),colors=Object.fromEntries(COLORS.map(color=>[color,0]));
+ const player=game.players[pid],board=boardFor(game,pid),columns=Array(15).fill(0),colors=Object.fromEntries(COLORS.map(color=>[color,0]));
  let marked=0;for(let i=0;i<105;i++)if(player.marks[i]){marked++;columns[i%15]++;colors[board.cells[i]]++;}
  const frontier=new Set();for(let i=0;i<105;i++)if(!player.marks[i]&&(i%15===7||ADJ[i].some(j=>player.marks[j])))frontier.add(i);
  const columnValue=(col,count)=>player.columns[col]!==null?0:(game.columnClaims[col]===null?FIRST[col]:LATER[col])*(count===7?1:0.8*(count/7)**2.4);
@@ -65,7 +66,7 @@ function position(game,pid){
   let gain=cells.length*0.32-cost*jokerPrice;const added=new Map(),nextFrontier=new Set();
   for(const i of cells){if(stars.has(i))gain+=2;const col=i%15;added.set(col,(added.get(col)||0)+1);for(const j of ADJ[i])if(!player.marks[j]&&!cells.includes(j)&&!frontier.has(j))nextFrontier.add(j);}
   for(const [col,count] of added)gain+=columnValue(col,columns[col]+count)-columnValue(col,columns[col]);
-  gain+=colorValue(color,colors[color]+cells.length)-colorValue(color,colors[color]);
+  for(const c of COLORS){const count=cells.filter(i=>board.cells[i]===c).length;if(count)gain+=colorValue(c,colors[c]+count)-colorValue(c,colors[c]);}
   gain+=(nextFrontier.size-cells.filter(i=>frontier.has(i)).length)*0.035;
   return gain;
  }
@@ -73,11 +74,19 @@ function position(game,pid){
 }
 
 function candidates(game,pid){
- const state=position(game,pid),groups=shapes(state.player,state.board),dice=availableDice(game,pid),moves=[];
- for(const c of uniqueFaces(dice.colors))for(const n of uniqueFaces(dice.numbers)){
-  const cost=Number(c.value==='*')+Number(n.value==='?');if(cost>state.player.jokers)continue;
-  for(const color of c.value==='*'?COLORS:[c.value])for(const count of n.value==='?'?[1,2,3,4,5]:[n.value]){
-   for(const cells of groups[color][count])moves.push({move:{ci:c.index,ni:n.index,color,count,cells},cost,value:state.value(cells,color,cost)});
+ const state=position(game,pid),groups=shapes(state.player,state.board),dice=availableDice(game,pid),moves=[],abilities=[null,...['color','number','extra'].filter(a=>abilityCharges(game,pid,a).length)];
+ for(const ability of abilities)for(const delta of ability==='number'?[-1,1]:[0])for(const c of uniqueFaces(dice.colors))for(const n of uniqueFaces(dice.numbers)){
+  const cost=Number(c.value==='*'&&ability!=='color')+Number(n.value==='?');if(cost>state.player.jokers)continue;
+  for(const color of c.value==='*'||ability==='color'?COLORS:[c.value])for(const baseCount of n.value==='?'?[1,2,3,4,5]:[n.value]){
+   const count=baseCount+delta;if(count<1||count>5)continue;
+   for(const cells of groups[color][count]){
+    let all=cells,extraCell;
+    if(ability==='extra'){
+     const options=[...new Set(cells.flatMap(i=>ADJ[i]))].filter(i=>!state.player.marks[i]&&!cells.includes(i));if(!options.length)continue;
+     options.sort((a,b)=>state.value([...cells,b],color,cost)+variantMoveValue(game,pid,[...cells,b])+treasureMoveValue(game,pid,[...cells,b])-state.value([...cells,a],color,cost)-variantMoveValue(game,pid,[...cells,a])-treasureMoveValue(game,pid,[...cells,a]));extraCell=options[0];all=[...cells,extraCell];
+    }
+    moves.push({move:{ci:c.index,ni:n.index,color,count:baseCount,cells,...(ability?{ability,...(ability==='number'?{delta}:{})}:{}),...(extraCell!==undefined?{extraCell}:{})},cost,value:state.value(all,color,cost)+variantMoveValue(game,pid,all)+treasureMoveValue(game,pid,all)-(ability?{color:1.2,number:0.8,extra:0.35}[ability]:0)});
+   }
   }
  }
  return moves.sort((a,b)=>b.value-a.value);
@@ -148,8 +157,23 @@ function hardMove(game,pid,moves){
 
 export function chooseComputerMove(game,pid=COMPUTER){
  if(!canAct(game,pid))return null;
- const difficulty=computerDifficulty(game);if(difficulty==='easy')return findMove(game,pid);
+ const difficulty=computerDifficulty(game);if(difficulty==='easy'){const basic=findMove(game,pid);return basic??(computerVariants(game)?candidates(game,pid)[0]?.move:null);}
  const moves=candidates(game,pid);if(difficulty==='medium')return moves[0]?.value>0?moves[0].move:null;
+ if(computerVariants(game)){
+  // Do not clone or simulate the private enemy fleet. Future colour mixing is
+  // unknown, so omit look-ahead at the imminent five-round boundary.
+  let best=null,bestValue=0;
+  for(const entry of moves.slice(0,BEAM)){
+   let value=entry.value;
+   if(!game.variants.mixing||game.round%5){
+    const cells=entry.move.ability==='extra'?[...entry.move.cells,entry.move.extraCell]:entry.move.cells,set=new Set(cells),own=game.players[pid];
+    const next={...game,players:game.players.map((p,i)=>i===pid?{...own,marks:own.marks.map((m,j)=>m||set.has(j)),jokers:own.jokers-entry.cost}:p)};
+    value+=nextTurnValue(next,pid)*0.4;
+   }
+   if(value>bestValue){bestValue=value;best=entry.move;}
+  }
+  return best;
+ }
  return hardMove(game,pid,moves);
 }
 
@@ -159,5 +183,5 @@ export function stepComputer(game,rng=randomInt){
  if(!needsComputerTurn(game))return game;
  if(game.phase==='roll')return rollGame(game,rng);
  if(canUseMine(game,COMPUTER))return applyMineAttack(game,COMPUTER,chooseComputerMineTarget(game,rng),rng);
- return applyMove(game,COMPUTER,chooseComputerMove(game)??{pass:true});
+ return applyMove(game,COMPUTER,chooseComputerMove(game)??{pass:true},rng);
 }

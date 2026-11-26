@@ -8,6 +8,7 @@ function summary(value){
  for(const key of ['version','round','lastUsedAt','cleanupAt'])if(Number.isSafeInteger(value[key])&&value[key]>=0)result[key]=value[key];
  if(Number.isInteger(value.memberCount)&&value.memberCount>=1&&value.memberCount<=6)result.memberCount=value.memberCount;
  if(result.access==='ok'&&Array.isArray(value.participants))result.participants=value.participants.slice(0,6).filter(p=>p&&typeof p.name==='string'&&p.name.trim()&&p.name.length<=24).map(p=>({name:p.name.trim(),host:p.host===true}));
+ if(result.access==='ok'&&typeof value.resultId==='string'&&value.resultId.length>0&&value.resultId.length<=128)result.resultId=value.resultId;
  if(['playing','finished','lobby'].includes(value.gameStatus))result.gameStatus=value.gameStatus;
  result.cleanupDue=value.cleanupDue===true;
  if(value.turn&&['turn','waiting','lobby','finished','unknown'].includes(value.turn.kind)&&typeof value.turn.text==='string')result.turn={kind:value.turn.kind,text:value.turn.text.slice(0,240),button:typeof value.turn.button==='string'?value.turn.button.slice(0,30):'Öffnen'};

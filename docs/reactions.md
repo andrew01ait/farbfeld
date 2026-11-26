@@ -1,6 +1,69 @@
 # Emoji-Reaktionen
 
-<!-- farbfeld-version: 1.19.4 -->
+<!-- farbfeld-version: 1.34.2 -->
+
+Die Debug-Beispielszene **Emoji-Reaktion** erfasst die gerenderte Reaktion und ihren Eintritt in den sichtbaren Ausschnitt in der Zeitleiste.
+
+## Schusskarte und Spielhinweise · 1.25.0
+
+In der Schusskarte liegen die Zeilenlabels 1–7 innerhalb der Zoomfläche. Zellrelative Treffer und Versenkungen verwenden die tatsächliche Schusskoordinate unter Berücksichtigung des Nummernrands. Die Glocke bei „Deine Räume“ führt zu den gespeicherten Partieergebnissen. Emojis werden über die Reaktionsanzeige an die gewählten Empfänger zugestellt.
+
+## Kartenschluss und nummeriertes Brett · 1.24.0
+
+Fertige Detailkarten schließen einmal, bleiben manuell wieder lesbar und behalten die vorhandenen Zell-/Versenkungseffekte. Der Hauptraster hat eine zusätzliche Nummernspur: ganze eingehende Schiffs-Silhouetten werden um eine Gridspalte versetzt, dieselben Effekte in der separaten Schusskarte behalten den bisherigen Versatz. Emoji-/Bewegungs-/Reduced-Motion-Regeln bleiben erhalten.
+
+
+## Schatzslots und Suchhistorie · 1.23.2
+
+Die statische Fundmarkierung und fünf eigenen Suchmessungen verwenden dieselben themeabhängigen Statusflächen. Sie starten keine Animationen oder Reaktionsnachrichten; Emoji-Steuerung, Empfänger und reduzierte Bewegung bleiben unverändert.
+
+## Eigene Ansicht bei automatischen Minen · 1.23.1
+
+Die automatische Blattwahl entfällt nur für versteckte Minen; ihre Effekte bleiben an sichtbare tatsächlich betroffene Zellen gebunden. Bericht und Suchlegende sind statische lokale UI. Flug-/Boden-/Versenkungseffekte, reduzierte Bewegung, Drei-Sekunden-Bereinigung sowie Computer-/Ergebnisaufschub bleiben erhalten. Keine Änderung an Emoji-Gesten, Empfängern, Nachrichten oder Reaktionsrechten.
+
+## Schatzsuche 1.23.0
+
+Suchtemperaturen und Fundspuren gehören zur lokalen Bonuskarte, nicht zu den Emoji-Reaktionen. Empfängerrechte, Gesten, Versand, Bewegungen, Deduplizierung und bisherige Gerätegrenzen der Reaktionen ändern sich nicht. Die Schatzsuche benötigt keine Reaktionsnachricht.
+
+## Bündige Hilfen · 1.22.5
+
+Die statischen Kartenköpfe erhalten gleichbleibende Hilfs-/Pfeilspalten; Schatzsuche benennt die bestehenden Bonusfelder um. Reaktionsgesten, Flugbahnen, Treffer-/Versenkungs-/Explosionsanimationen und reduzierte Bewegung bleiben erhalten.
+
+## Schiffsanker · 1.22.4
+
+Die statische gemeinsame Ankergrafik passt vollständig in ihre SVG-Fläche. Reaktionsgesten, Übertragung, Flugbahnen, Treffer-/Versenkungsanimationen und reduzierte Bewegung bleiben unverändert.
+
+## Aufstellungs-Pinch · 1.22.3
+
+Die eigenen Aufstellraster nutzen isolierte Zwei-Touch-Gesten und unterdrücken versehentliche Rasterklicks während/nach dem Pinch. Echte Browserereignisse bestätigten unveränderte Positionen bei Zoom und ignorierte ansonsten gültige Platzierungsziele während der Geste. Emoji-Gesten, Flugeffekte, Schuss-/Versenkungsanimationen und deren Übertragung bleiben erhalten. Kein neuer Effektversand oder Timerpoll.
+
+
+1.22.1 vereinheitlicht Aufstellung und Statuskarten; Reaktionsgesten, Zielauswahl, Effekte und Transport bleiben unverändert.
+
+## Überflug und Bodenexplosion · 1.22.0
+
+Der bezahlte Luftangriff nutzt ein lokales Flugzeug-SVG mit Abwurf, die neue geheime Mine einen lokalen Lichtblitz, acht Splitter und Druckwellen. Beide verwenden bestätigte tatsächliche Zellen, skalieren mit dem Brett und räumen nach drei Sekunden auf. Zwei Minen derselben Zugbestätigung werden visuell vereinigt, mit zwei Zentren und einmal gezählten Entfernungen. Keine Emoji-Reaktion, keine zusätzlichen Empfänger oder Reaktionsrechte. Reduzierte Bewegung lässt die ruhige Statusmeldung bestehen und erzeugt keine Zellanimation; der Enddialog wartet weiter auf die letzten Effekte.
+
+
+## Minenanimation 1.21.2
+
+Minen verwenden jetzt zellgebundene SVG-Ringe statt der großen Bildschirmmittenexplosion. Diese Dekorationen sind keine Emoji-Reaktionen, senden nichts und verwenden keine Reaktionsfähigkeiten. Eine eigene Bereinigung nach unverändert drei Sekunden und statisches Feedback bei reduzierter Bewegung erhalten den bestehenden Reaktions- und Ergebnisablauf.
+
+
+## Gruppierte Farbmischung 1.21.1
+
+Die vorhandene Mischanimation liest weiterhin ausschließlich gespeicherte geänderte Koordinaten des eigenen Blatts. Gruppentausch ändert keine Emoji-Geste, Reaktion, Fähigkeit oder Übertragung; reduzierte Bewegung bleibt erhalten. Kein zusätzlicher Effekt-Timer für Netzwerkanfragen.
+
+
+## Mehrspielervarianten 1.21.0
+
+Varianten verwenden die vorhandenen direkten beziehungsweise Internetverbindungen. Neue variants-v1-Unterstützung ist unabhängig von reactions-v1/reactions-extra-v1; keine Reaktion beweist Variantenunterstützung. Empfängerauswahl, Deduplizierung, Größen, Raten und Reaktionsrechte bleiben unverändert. Schiffseffekte verwenden den tatsächlichen eigenen Spielerindex.
+
+
+## Ergebnisanzeige 1.20.6
+
+Ergebnisdialog und Regelköpfe verwenden lokale dekorative SVGs; bestehende Reaktionsauswahl, Netzwerkfähigkeiten und Versand bleiben gleich. Der verzögerte Enddialog wartet die letzten Spielanimationen ab und überschreibt keinen offenen Reaktions-/anderen Dialog.
+
 
 ## Menüreihenfolge 1.19.4
 
@@ -31,9 +94,9 @@ Teilnehmernamen und Gastgeberkennzeichen sind nur Übersichtsdaten. Suche/Filter
 
 Der gemeinsame Name ändert keine Teilnehmerkennung, Reaktionsadresse oder Direktverbindung. Reaktionen bleiben am bestehenden authentifizierten Kanal und der laufenden Partie gebunden.
 
-## Direct recovery 1.17.4
+## Direktverbindung 1.17.4
 
-Compact connection details and re-pairing keep the existing direct player identities and reaction transport. Direct reactions still require the actual live channel. No push or new signaling request.
+Die kompaktere Verbindungsanzeige und die neue QR-Vorbereitung ändern Reaktionen nicht. Direktreaktionen bleiben an den tatsächlich geöffneten Kanal gebunden; erneut gekoppelte bestehende Spielerplätze behalten ihre Identität. Kein neuer Transport oder Push.
 
 Revanche-Hinweise ab 1.15.0 betreffen ausschließlich den tatsächlichen Neustart einer Internet-Partie. Reaktionen, Emoji-Flüge und deren Empfängerwahl lösen weiterhin keine Pushs aus; Fähigkeiten und Übertragung der fünf Reaktionen bleiben unverändert.
 
@@ -69,7 +132,7 @@ Die App wählt zwischen geradem Flug, Hüpfen und Looping. Zwei unmittelbar aufe
 
 ## Veröffentlichte Browserprüfung 1.10.0
 
-Am 4. November 2026 nach dem normalen PWA-Update von 1.9.10 auf 1.10.0 mit zwei eigenen Spielerzugängen geprüft: 2,5 Sekunden gedrückt halten sendet einmalig; ein zuvor geschlossenes Empfängerfenster erhält beim nächsten Öffnen `scale: 2.5`, `motion: fly` und das gewählte Lachen. Nach erneuter Seitenladung und bestätigtem Raumabruf waren keine weiteren Flüge vorhanden. Die neue Anleitung und Auswahl wurden sichtbar geprüft (Browserbild (private QA screenshot omitted)). Eigene Testpartie danach abgebrochen und lokale Raumzugänge entfernt. Kein Zugriff auf bestehende Nutzerpartien.
+Am 4. November 2026 nach dem normalen PWA-Update von 1.9.10 auf 1.10.0 mit zwei eigenen Spielerzugängen geprüft: 2,5 Sekunden gedrückt halten sendet einmalig; ein zuvor geschlossenes Empfängerfenster erhält beim nächsten Öffnen `scale: 2.5`, `motion: fly` und das gewählte Lachen. Nach erneuter Seitenladung und bestätigtem Raumabruf waren keine weiteren Flüge vorhanden. Die neue Anleitung und Auswahl wurden sichtbar geprüft (Browserbild). Eigene Testpartie danach abgebrochen und lokale Raumzugänge entfernt. Kein Zugriff auf bestehende Nutzerpartien.
 
 Die Metadaten wurden während des tatsächlichen Empfangs am sichtbaren DOM geprüft. Ein flüchtiger Flug ließ sich im gespeicherten Browserbild nicht zuverlässig erfassen; das Bild zeigt daher die Auswahl und keine behauptete Momentaufnahme des Fluges. Native Android-Berührung, Handy-/Tablet-Viewport und Hotspot bleiben getrennte offene Geräteprüfungen.
 
@@ -79,9 +142,8 @@ Der bisherige Gesture-Controller stellte beim Loslassen nur eine Größe bereit;
 
 Die App zeigt den laufenden Versand und sperrt parallele Sendungen. Fehler werden angezeigt und die Auswahl wieder freigegeben. Grenzen, Vorschau, Abbrechen, Empfänger, Effekte und Serverregeln bleiben erhalten. 224 Tests sowie Raum-/Kopplungsintegration, JavaScript und TypeScript bestanden. Neue Fälle: kein Folge-Klick, echte Pointer-Capture-Freigabe samt Lost-Capture-Ereignis, nachfolgender/umgeleiteter Klick, frische Eingabe, deaktiviertes/entferntes Element, weitere Finger und Tastatur. Der fehlende Folge-Klick wurde simuliert; die konkrete Android-Ereignisfolge auf dem Nutzerhandy ist damit nicht aufgezeichnet. Physische Android-Abnahme bleibt offen.
 
-Nach Veröffentlichung 1.10.1 im vorhandenen Browser geprüft: normales PWA-Update von 1.10.0; kurzer 80-ms-Klick (empfangen: Kuss, Größe 1,05, Hüpfen); 2,5-Sekunden-Halten (empfangen: Lachen, Größe 2,5, Flug). Jeweils zwei eigene Spielerzugänge, Empfängerfenster während des Versands geschlossen und beim Neustart empfangen. Nach erneutem Empfängerneustart kein weiterer Flug. Eigene Partie danach abgebrochen und lokale Zugänge entfernt. Auswahl in 1.10.1 (private QA screenshot omitted). Das Browserwerkzeug bedient einen Mauszeiger; echte Android-Touch-Ereignisse sind weiterhin nicht geprüft.
+Nach Veröffentlichung 1.10.1 im vorhandenen Browser geprüft: normales PWA-Update von 1.10.0; kurzer 80-ms-Klick (empfangen: Kuss, Größe 1,05, Hüpfen); 2,5-Sekunden-Halten (empfangen: Lachen, Größe 2,5, Flug). Jeweils zwei eigene Spielerzugänge, Empfängerfenster während des Versands geschlossen und beim Neustart empfangen. Nach erneutem Empfängerneustart kein weiterer Flug. Eigene Partie danach abgebrochen und lokale Zugänge entfernt. Auswahl in 1.10.1. Das Browserwerkzeug bedient einen Mauszeiger; echte Android-Touch-Ereignisse sind weiterhin nicht geprüft.
 
 1.10.2: Die dauerhafte Raumlebensdauer verlängert keine Emoji-Frist: weiterhin neueste passende Reaktion je Absender, höchstens 24 Stunden und nur in derselben Partie. Keine rückwirkenden Flüge aus alten Partien und keine neue Abfrage.
 
 1.11.0: Reaktionen des ausgewählten Raums werden auch mit der Sammelübersicht beim ersten Startseitenabruf empfangen. Andere Räume behalten ihre Reaktion bis zum Öffnen innerhalb der bestehenden 24 Stunden. Keine gesammelte Flut über alle gespeicherten Räume. Scopes bleiben Raum/Partie/Spieler; Raumwechsel ändern keine bereits gesehenen Ereignisse. Die Bereinigung eines tatsächlich gelöschten Raums entfernt dessen Serverreaktionen.
-
