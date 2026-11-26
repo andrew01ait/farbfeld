@@ -15,7 +15,7 @@ async function harness(t){
  DB.batch=async statements=>{sql.exec('BEGIN');try{const results=statements.map(statement=>statement._run());sql.exec('COMMIT');return results;}catch(error){sql.exec('ROLLBACK');throw error;}};
  globalThis.__roomLifetimeEnv={DB};globalThis.__roomLifetimeWait=promise=>scheduled.push(promise);
  let source=fs.readFileSync('app/api/rooms/route.ts','utf8').replace("import { env,waitUntil } from 'cloudflare:workers';",'const env=globalThis.__roomLifetimeEnv;const waitUntil=globalThis.__roomLifetimeWait;');
- for(const file of ['engine','game-info','boards','reactions','room-status'])source=source.replace('../../../public/game/'+file+'.js',pathToFileURL(process.cwd()+'/public/game/'+file+'.js').href);
+ for(const file of ['variants','engine','game-info','boards','reactions','room-status'])source=source.replace('../../../public/game/'+file+'.js',pathToFileURL(process.cwd()+'/public/game/'+file+'.js').href);
  for(const file of ['notifications','room-presence'])source=source.replace('../../../lib/'+file+'.js',pathToFileURL(process.cwd()+'/lib/'+file+'.js').href);
  const compiled=ts.transpileModule(source.replace('../../../lib/room-retention.js',pathToFileURL(process.cwd()+'/lib/room-retention.js').href),{compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.ESNext}}).outputText;
  const api=await import('data:text/javascript;base64,'+Buffer.from(compiled+'\n// '+crypto.randomUUID()).toString('base64'));
@@ -87,4 +87,11 @@ test('Zwei Räume spielen unabhängig: zweite Partie beenden und neu starten erh
  const rematch=await h.post('rematch',{...hosts[1],version:current.version}),next=await h.post('start',{...hosts[1],version:rematch.version});assert.equal(next.status,200);assert.deepEqual(h.state(hosts[0].code),paused);
  assert.equal((await h.post('move',{...hosts[0],token:hosts[1].token,version:states[0].version},{move:{pass:true}})).status,403);
  const reopened=await h.post('open',hosts[0]);assert.equal(reopened.game.gameId,states[0].game.gameId);assert.deepEqual(reopened.game.dice,states[0].game.dice);assert.equal((await h.post('move',{...hosts[0],version:reopened.version},{move:{pass:true}})).status,200);
+});
+
+test('Raumindex liefert Teilnehmer und aktuellen Gastgeber nur nach Prüfung des Raumtokens',async t=>{
+ const h=await harness(t),code='HOST2345',room=h.seed(code);room.game.hiddenScores=true;room.hostId=room.members[1].id;h.sql.prepare('UPDATE rooms SET state = ? WHERE code = ?').run(JSON.stringify(room),code);
+ const before=h.state(code),index=await h.post('index',{}, {rooms:[{code,token:'fixture-host'}]});assert.equal(index.status,200);assert.deepEqual(index.rooms[0].participants,room.members.map(m=>({name:m.name,host:m.id===room.hostId})));assert.deepEqual(h.state(code),before);
+ const text=JSON.stringify(index);for(const forbidden of ['fixture-host','fixture-guest','"marks"','"jokers"','"score"'])assert(!text.includes(forbidden));
+ const denied=await h.post('index',{}, {rooms:[{code,token:'not-a-member'}]});assert.deepEqual(denied.rooms,[{code,access:'denied'}]);
 });

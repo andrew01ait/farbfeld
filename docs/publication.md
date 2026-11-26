@@ -1,6 +1,10 @@
 # Public source snapshot
 
-<!-- farbfeld-version: 1.18.0 -->
+<!-- farbfeld-version: 1.34.2 -->
+
+## Public source 1.34.2
+
+This review branch includes the current game and guide media together with the public home, imprint and crawl metadata. The repository includes reusable build configuration and source fixtures. The deployed app reads its contact settings from its own runtime environment.
 
 ## Source update 1.17.4
 

@@ -1,12 +1,16 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
-export const DOCUMENTS=['README.md','deployment.md','AGENTS.md','CHANGELOG.md','docs/README.md','docs/architecture.md','docs/flows.md','docs/notifications.md','docs/versions.md','docs/offline-multiplayer.md','docs/internet-rooms.md','docs/statistics.md','docs/room-status.md','docs/responsive-qa.md','docs/reactions.md','docs/computer.md','CONTRIBUTING.md','docs/source-workflow.md','docs/publication.md','docs/offline-diagnostics.md','docs/mines.md','docs/bonus-fields.md','docs/random-board.md','docs/leaving.md','docs/ui-design.md'];
+export const DOCUMENTS=['README.md','deployment.md','AGENTS.md','CHANGELOG.md','docs/README.md','docs/architecture.md','docs/flows.md','docs/notifications.md','docs/versions.md','docs/offline-multiplayer.md','docs/internet-rooms.md','docs/statistics.md','docs/room-status.md','docs/responsive-qa.md','docs/reactions.md','docs/computer.md','CONTRIBUTING.md','docs/source-workflow.md','docs/publication.md','docs/offline-diagnostics.md','docs/mines.md','docs/hidden-mines.md','docs/bonus-fields.md','docs/random-board.md','docs/leaving.md','docs/ui-design.md','docs/roadmap.md','docs/computer-variants.md'];
 const root=fileURLToPath(new URL('../',import.meta.url));
 export function checkRelease(){
  const errors=[],read=file=>fs.readFileSync(path.join(root,file),'utf8');
  let release;try{release=JSON.parse(read('public/version.json'));}catch{return ['public/version.json fehlt oder ist ungültig.'];}
  const version=release.version;if(!/^\d+\.\d+\.\d+$/.test(version))errors.push('Ungültige Clientversion.');
+ const notes=release.releaseNotes?.[version];
+ const validLines=lines=>Array.isArray(lines)&&lines.length>0&&lines.every(line=>typeof line==='string'&&line.trim());
+ if(!validLines(notes?.highlights)||notes.highlights.length>2)errors.push('public/version.json braucht ein bis zwei kurze Stichpunkte für Version '+version+'.');
+ if(!validLines(notes?.details))errors.push('public/version.json braucht ausführlichere Versionshinweise für Version '+version+'.');
  const versions={
   'package.json':JSON.parse(read('package.json')).version,
   'public/game/pwa.js':read('public/game/pwa.js').match(/APP_VERSION='([^']+)'/)?.[1],

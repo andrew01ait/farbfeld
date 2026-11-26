@@ -1,3 +1,4 @@
+import {VARIANTS_FEATURE,validVariantState} from '../public/game/variants.js';
 import {RANDOM_BOARD_FEATURE,boardFor} from '../public/game/boards.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -5,8 +6,8 @@ import fs from 'node:fs';
 import ts from 'typescript';
 import {DatabaseSync} from 'node:sqlite';
 import {pathToFileURL} from 'node:url';
-import {createGame,rollGame,BONUS_FEATURE,bonusPoints,MINE_FEATURE,LEAVE_FEATURE,rankings,score} from '../public/game/engine.js';
-const all=['hidden-scores-v1','boards-v1','reactions-v1',BONUS_FEATURE,RANDOM_BOARD_FEATURE,MINE_FEATURE,LEAVE_FEATURE],old=['hidden-scores-v1'];
+import {createGame,rollGame,BONUS_FEATURE,bonusPoints,MINE_FEATURE,MINE_COVERAGE_FEATURE,LEAVE_FEATURE,rankings,score} from '../public/game/engine.js';
+const all=['hidden-scores-v1','boards-v1','reactions-v1',BONUS_FEATURE,RANDOM_BOARD_FEATURE,MINE_FEATURE,LEAVE_FEATURE,VARIANTS_FEATURE],old=['hidden-scores-v1'];
 const origin='https://farbfeld.test',code='ABCD2345';
 async function harness(t){
  const sql=new DatabaseSync(':memory:');t.after(()=>sql.close());
@@ -15,7 +16,7 @@ async function harness(t){
  const DB={prepare(query){let values=[];return {bind(...args){values=args;return this;},async first(){return sql.prepare(query).get(...values)||null;},async all(){return {results:sql.prepare(query).all(...values)};},async run(){if(query.startsWith('UPDATE rooms SET state')){writes++;beforeSave?.();}return {meta:{changes:Number(sql.prepare(query).run(...values).changes)}};}};}};
  globalThis.__capabilitiesEnv={DB};globalThis.__capabilitiesWait=promise=>scheduled.push(promise);
  let source=fs.readFileSync('app/api/rooms/route.ts','utf8').replace("import { env,waitUntil } from 'cloudflare:workers';",'const env=globalThis.__capabilitiesEnv;const waitUntil=globalThis.__capabilitiesWait;');
- for(const file of ['engine','game-info','boards','reactions','room-status'])source=source.replace('../../../public/game/'+file+'.js',pathToFileURL(process.cwd()+'/public/game/'+file+'.js').href);
+ for(const file of ['variants','engine','game-info','boards','reactions','room-status'])source=source.replace('../../../public/game/'+file+'.js',pathToFileURL(process.cwd()+'/public/game/'+file+'.js').href);
  source=source.replace('../../../lib/notifications.js',pathToFileURL(process.cwd()+'/lib/notifications.js').href);
  source=source.replace('../../../lib/room-presence.js',pathToFileURL(process.cwd()+'/lib/room-presence.js').href);
  const compiled=ts.transpileModule(source.replace('../../../lib/room-retention.js',pathToFileURL(process.cwd()+'/lib/room-retention.js').href),{compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.ESNext}}).outputText;
@@ -107,7 +108,7 @@ test('Raum-Gastgeber verlässt: Rolle wandert weiter, ein letzter Spieler gewinn
  response=await as('fixture-third','leave',{gameId});assert.equal(response.status,200);assert.equal(response.data.game.status,'finished');assert.equal(rankings(response.data.game)[0].index,1);assert.equal(score(response.data.game.players[0],response.data.game).total,-10);
  response=await as('fixture-guest','rematch');assert.equal(response.status,200);assert.deepEqual(response.data.members.map(m=>m.id),['guest']);assert.equal((await h.get('fixture-host')).status,403);assert.equal((await as('fixture-guest','start')).status,400);
 });
-test('Raum-Minen treffen alle Gegner atomar; falsche Identität, Wiederholungen und fremde Partien ändern nichts',async t=>{
+test('Raum-Luftangriff treffen alle Gegner atomar; falsche Identität, Wiederholungen und fremde Partien ändern nichts',async t=>{
  const h=await harness(t);await h.get();let response=await h.post('options',h.state().version,{mines:true});assert.equal(response.status,200);response=await h.post('start',response.data.version);const room=h.state().room;room.game.phase='choose';room.game.dice={colors:['g','b','o'],numbers:[1,2,3]};room.game.mines.unlocked.fill(true);room.game.players[1].marks[52]=true;h.sql.prepare('UPDATE rooms SET state = ? WHERE code = ?').run(JSON.stringify(room),code);
  assert.equal((await h.post('mine',h.state().version,{target:52,gameId:'wrong',round:1})).status,409);
  const before=h.state().version;response=await h.post('mine',before,{target:52,gameId:room.game.gameId,round:1,pid:1});assert.equal(response.status,200);assert.equal(h.state().room.game.mines.used[0],true);assert.equal(h.state().room.game.mines.used[1],false);assert.equal(h.state().room.game.players[1].marks[52],false);
@@ -132,4 +133,70 @@ test('All optional rules start together in new two/six-player Internet games wit
   assert.equal((await h.post('options',h.state().version,{mines:false})).status,409);
   await Promise.allSettled(h.scheduled);
  }
+});
+
+const humanVariants={battleship:true,discovery:true,objectives:true,shuffle:true};
+async function variantPost(h,token,action,extra={}){
+ const response=await h.api.POST(new Request(origin+'/api/rooms',{method:'POST',headers:{'Content-Type':'application/json','X-Player-Token':token},body:JSON.stringify({action,code,features:all,version:h.state().version,...(h.state().room.game?{gameId:h.state().room.game.gameId,round:h.state().room.game.round}:{}),...extra})}));return {status:response.status,data:await response.json()};
+}
+test('Internet rooms negotiate both airstrikes and save each confirmed charge exactly once',async t=>{
+ const h=await harness(t),modern=[...all,MINE_COVERAGE_FEATURE];
+ await h.get('fixture-host',modern);
+ await h.get('fixture-guest',all);
+ let r=await variantPost(h,'fixture-host','options',{features:modern,mines:true});
+ assert.equal(r.data.supportsMineCoverage,false);
+ await h.get('fixture-guest',modern);
+ r=await variantPost(h,'fixture-host','start',{features:modern});
+ assert.equal(r.status,200);assert.equal(r.data.game.mines.schema,2);
+ assert.equal((await h.get('fixture-guest',all)).status,409);
+ const room=h.state().room,g=room.game;
+ g.phase='choose';g.dice={colors:['g','b','o'],numbers:[1,2,3]};
+ g.mines.unlocked[0]=true;g.mines.coverage.unlocked[0]=true;
+ h.sql.prepare('UPDATE rooms SET state = ? WHERE code = ?').run(JSON.stringify(room),code);
+ const attack=charge=>variantPost(h,'fixture-host','mine',{features:modern,target:52,charge});
+ const before=h.state().version;
+ assert.equal((await attack(undefined)).status,409);assert.equal(h.state().version,before);
+ assert.equal((await attack('color')).status,200);
+ assert.equal((await attack('color')).status,400);assert.equal(h.state().version,before+1);
+ assert.equal((await attack('coverage')).status,200);
+ const next=h.state().room.game;
+ assert.equal(h.state().version,before+2);assert.equal(score(next.players[0],next).mineCost,10);
+ assert.equal(next.phase,'choose');assert.deepEqual(next.submitted,[]);
+});
+test('Human room variants require explicit current support, host-only configuration, two private fleets and both authenticated confirmations',async t=>{
+ const h=await harness(t);assert.equal((await h.post('options',11,{variants:humanVariants})).status,409);const registered=await h.get();assert.equal(registered.data.supportsVariants,true);
+ assert.equal((await variantPost(h,'fixture-guest','options',{variants:humanVariants})).status,403);
+ let r=await h.post('options',h.state().version,{variants:humanVariants,hiddenScores:true,mines:true,bonusFields:true});assert.equal(r.status,200);
+ r=await h.post('start',r.data.version);assert.equal(r.status,200);assert.equal(r.data.game.variants.battleship.fleets[1],null);assert.equal(r.data.game.variants.layouts[1],null);assert.ok(validVariantState(r.data.game,{allowProjection:true}));
+ const full=structuredClone(h.state().room.game),before=h.state().version;assert.equal((await variantPost(h,'fixture-host','roll')).status,400);assert.equal(h.state().version,before);
+ assert.equal((await variantPost(h,'fixture-guest','fleet',{gameId:'wrong-match',fleet:{kind:'ready'}})).status,409);assert.equal(h.state().version,before);
+ r=await variantPost(h,'fixture-guest','fleet',{pid:0,fleet:{kind:'random'}});assert.equal(r.status,200);assert.equal(r.data.game.variants.battleship.fleets[0],null);assert.deepEqual(h.state().room.game.variants.battleship.fleets[0],full.variants.battleship.fleets[0]);
+ r=await variantPost(h,'fixture-guest','fleet',{pid:0,fleet:{kind:'ready'}});assert.equal(r.status,200);assert.deepEqual(h.state().room.game.variants.battleship.ready,[false,true]);
+ r=await variantPost(h,'fixture-host','fleet',{fleet:{kind:'ready'}});assert.equal(r.status,200);assert.deepEqual(r.data.game.variants.battleship.ready,[true,true]);
+ assert.equal((await variantPost(h,'fixture-guest','fleet',{fleet:{kind:'random'}})).status,400);r=await variantPost(h,'fixture-host','roll');assert.equal(r.status,200);assert.equal(r.data.game.phase,'choose');
+ const expected=h.state().room.game;assert.equal((await h.get('fixture-guest',all.filter(f=>f!==VARIANTS_FEATURE))).status,409);assert.deepEqual(h.state().room.game,expected);
+});
+test('Six human room players settle tied objectives and bonus fields after a mine, then shuffle once with exact persistent scores',async t=>{
+ const h=await harness(t);await h.get();let room=h.state().room;
+ for(let pid=2;pid<6;pid++)room.members.push({id:'player'+pid,token:'fixture-'+pid,name:'Person '+pid,features:all});h.sql.prepare('UPDATE rooms SET state = ? WHERE code = ?').run(JSON.stringify(room),code);
+ assert.equal((await variantPost(h,'fixture-host','options',{variants:humanVariants})).status,409);
+ let r=await variantPost(h,'fixture-host','options',{variants:{discovery:true,objectives:true,shuffle:true},mines:true,bonusFields:true,hiddenScores:true});assert.equal(r.status,200);r=await variantPost(h,'fixture-host','start');assert.equal(r.status,200);
+ room=h.state().room;const g=room.game;g.round=5;g.phase='choose';g.dice={colors:['g','g','o'],numbers:[1,1,3]};g.mines.unlocked.fill(true);g.bonuses.fields=[7,8,9].map(index=>({index,claim:null,pending:[]}));g.variants.discovery.fields.forEach((f,i)=>f.index=[7,22,37,52,67,82][i]);
+ g.variants.objectives.tasks.forEach((task,i)=>{task.type=i===0?'stars':'columns';task.target=i===0?1:15;task.deadline=i===0?5:null;delete task.color;});
+ h.sql.prepare('UPDATE rooms SET state = ? WHERE code = ?').run(JSON.stringify(room),code);
+ r=await variantPost(h,'fixture-host','move',{move:{ci:0,ni:0,cells:[7]}});assert.equal(r.status,200);assert.equal(r.data.game.variants.objectives.tasks[0].pending[0],5);assert.equal(r.data.game.variants.discovery.fields[0].owner,0);
+ r=await variantPost(h,'fixture-guest','mine',{target:7});assert.equal(r.status,200);assert.equal(h.state().room.game.players[0].marks[7],false);assert.equal(h.state().room.game.variants.objectives.tasks[0].pending[0],5);assert.equal(r.data.game.variants.objectives.tasks[0].pending[0],null);
+ const tokens=['fixture-host','fixture-guest',...Array.from({length:4},(_,i)=>'fixture-'+(i+2))];
+ for(let pid=1;pid<6;pid++){r=await variantPost(h,tokens[pid],'move',{move:{ci:1,ni:1,cells:[7]}});assert.equal(r.status,200,JSON.stringify(r.data.error));}
+ const final=h.state().room.game;assert.equal(final.round,6);assert.equal(final.variants.mixing.lastRound,5);assert.deepEqual(final.variants.objectives.tasks[0].claims,Array(6).fill(5));assert.equal(final.variants.discovery.fields[0].owner,0);
+ assert.deepEqual(final.players.map(p=>score(p,final).total),[-15,-18,-13,-13,-13,-13]);assert.ok(validVariantState(final));
+ for(let pid=0;pid<6;pid++){r=await h.get(tokens[pid]);assert.equal(r.status,200);assert.ok(validVariantState(r.data.game,{allowProjection:true}));assert.deepEqual(r.data.game.variants.layouts[pid],final.variants.layouts[pid]);assert.equal(r.data.game.bonuses.fields,undefined);for(let other=0;other<6;other++)if(other!==pid){assert.equal(r.data.game.variants.layouts[other],null);assert.equal(r.data.game.players[other].marks,undefined);}}
+});
+test('Concurrent room fleet update conflicts preserve the original fleet and confirmation; obsolete or malformed commands cannot overwrite it',async t=>{
+ const h=await harness(t);await h.get();await variantPost(h,'fixture-host','options',{variants:humanVariants});await variantPost(h,'fixture-host','start');const original=structuredClone(h.state().room.game);
+ h.setBeforeSave(()=>{h.setBeforeSave(null);h.sql.prepare('UPDATE rooms SET version = version + 1 WHERE code = ?').run(code);});
+ let r=await variantPost(h,'fixture-guest','fleet',{fleet:{kind:'ready'}});assert.equal(r.status,409);assert.deepEqual(h.state().room.game,original);
+ r=await variantPost(h,'fixture-guest','fleet',{fleet:{kind:'place',ship:4,start:104,vertical:false}});assert.equal(r.status,400);assert.deepEqual(h.state().room.game,original);
+ assert.equal((await variantPost(h,'invalid-token','fleet',{fleet:{kind:'ready'}})).status,403);assert.equal((await variantPost(h,'fixture-guest','fleet',{round:999,fleet:{kind:'ready'}})).status,409);
+ assert.equal((await variantPost(h,'fixture-host','options',{variants:{shuffle:'yes'}})).status,409);assert.deepEqual(h.state().room.game,original);
 });

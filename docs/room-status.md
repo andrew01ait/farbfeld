@@ -1,14 +1,53 @@
 # Raumstatus, Zuganzeige und Wartezeit
 
-<!-- farbfeld-version: 1.18.0 -->
+<!-- farbfeld-version: 1.34.2 -->
+
+## Offene Züge und Ergebnisse · 1.25.3
+
+Unter **Deine Räume** steht die Zahl der Partien, in denen du dran bist. Rechts stehen die Glocke, **Alle Räume** und **Raum hinzufügen** auf einer Höhe. Sie verwendet den Zugstatus der Raumkarten und reagiert auf eigene bestätigte Züge. Die Glocke markiert ungesehene Abschlüsse und öffnet **Ergebnisse** mit Zeit und persönlichem Ausgang. Ein zwischenzeitlich gestartetes Rückspiel belässt das letzte Ergebnis im Spielraum und im autorisierten Index. Beim Anzeigen des Endstands wird der jeweilige Eintrag auf diesem Gerät als gesehen markiert. Bereitschaft unterscheidet die eigene Flotte, die eigenen Minen und anschließendes Warten auf andere.
+
+## Flottenaufstellung 1.21.0
+
+Jede unbestätigte eigene Flotte wird als Deine Flotte aufstellen mit eigener Zugpriorität geführt, auch für die zweite Person vor dem ersten Wurf. Nach Bestätigung: Flotte bestätigt · auf die andere Person warten. Bereitwechsel zählen im geöffneten Raum als Spielfortschritt. Keine zusätzlichen Polls, neuen Timer oder Geheimdaten im Übersichtsindex.
+
+
+## Öffnen einer Offline-Partie 1.20.3
+
+Beim Fortsetzen einer gespeicherten Computer-, Solo- oder Ein-Handy-Partie aus Alle Räume schließt der Dialog vor der Spielansicht. Suche, Filter, Statusabrufe und Netzwerk-/Direktzugänge bleiben unverändert.
+
+
+## Menüreihenfolge 1.19.4
+
+Im Menü Zusammen steht Internet – Spielraum zuerst, danach Offline – mehrere Handys und Ein Handy weitergeben. Die drei bestehenden Ziele, Beschriftungen und Abläufe bleiben erhalten. Reine DOM-Reihenfolge; keine zusätzliche Anfrage, Spiel-/Push- oder Speicheränderung.
+
+
+## Lokaler Direktzugang
+
+Verwerfen einer Direktpartie setzt keine Verbindung voraus und entfernt ihre Startkarte erst nach erfolgreicher lokaler Speicherung der Entfernung. Wiederkoppeln bleibt eine separate Möglichkeit zur Fortsetzung. Raum-/Local-/Computerzugänge und deren Status werden nicht gelöscht.
+
+
+## Direktwurf im Wartestatus
+
+Warten vor der ersten Direktwahl zeigt den tatsächlichen gemeinsamen Wurf als nicht interaktive Vorschau mit Name der aktiven Person. Zugrechte und Verbindungsstatus bleiben getrennt; ein gespeicherter oder pausierter Wurf wird nicht als neue Spielgelegenheit ausgegeben. Internet-Raumdarstellung unverändert.
+
+
+## Kompakte Statusdarstellung
+
+Modus und aktueller Status bleiben getrennte Informationen: der Modus steht in der Metazeile, der Zug-/Verbindungsstatus darunter. Eigene Spielgelegenheiten erhalten eine feine dunkle Kontur und lesbaren Status statt großer Farbflächen. Keine zusätzlich sichtbare Erklärung der Sortierung; die Priorisierung selbst bleibt unverändert.
+
+
+## Modus, Namen und begrenzte Startvorschau
+
+Modus und Verbindungsstatus sind getrennt: Online · Internet-Raum, Offline · Direktpartie und Offline · Dieses Handy bleiben unabhängig von Empfang oder Kanalzustand. Höchstens drei Startkarten, bekannte eigene Zuggelegenheiten zuerst; weitere offene Züge als Anzahl. Alle Räume zeigt alle Partien mit lokaler Suche/Modusfilter und zehn Einträgen pro Seite. Die Namensliste stammt aus dem autorisierten Index oder dem eigenen Offline-Stand; fett/♛ markiert den tatsächlichen Host. Alte Caches zeigen bis zur nächsten normalen Antwort keine erfundenen Namen.
+
 
 ## Benannte Direktpartien
 
 Der gemeinsame Name ist kein Verbindungsnachweis. Verbindungspunkte und Neu-koppeln-Zustand kommen weiter vom tatsächlichen Direktkanal. Die Startkarte nennt den gespeicherten Namen, Spielerzahl/Wurf und Verbindungsstatus; sie öffnet nur den vorhandenen Stand.
 
-## Direct status 1.17.4
+## Direktstatus 1.17.4
 
-Compact direct status is above the player strip; expandable details hold Disconnect. Paused games expose re-pairing. Real transport/authenticated state determines connection status, never Internet reachability. Hidden status labels cannot widen the document when their players scroll out of view.
+Der tatsächliche Kanalstatus steht kompakt oberhalb der Spielerleiste; aufklappen zeigt Verbindung trennen. Bei Pause bleibt Neu koppeln unmittelbar sichtbar. Punkt-/Spielerbereich und die Verbindung sind getrennt. Eine WLAN-Wiederkehr oder Internetanzeige allein setzt keinen Teilnehmer auf verbunden; vorhandener Kanal oder erneuter authentifizierter Abgleich entscheidet.
 
 Ausgestiegene werden als **Partie verlassen · −10 Punkte** angezeigt und nicht mehr als am Zug. Die laufende Gruppe behält feste Indizes; Online-Präsenz ist weiterhin getrennt vom freiwilligen Ausstieg. Internet-Gastgeberwechsel ist atomar, Offline-Gastgeber bleibt Relay. [Regeln](leaving.md).
 
@@ -75,27 +114,29 @@ Präsenz ist von Raum-JSON und Zugversion getrennt. Speicherfehler dieser Tabell
 
 Tests prüfen Zeitablauf und Wiederverbindung einzelner Mitglieder, fehlende Tabelle, Schreibdrossel, unveränderte Zugversionen, WebRTC-Teilgruppen, Rollen/Zugwechsel auf der Startkarte, unbekannte/verdeckte Ansichten, die genaue 24-Stunden-Grenze, ausschließliches Gastgeberrecht, neue Wartezeit nach Aktion sowie Altpartien ohne Zeitanker. Timerprüfungen decken Hintergrundstopp, inaktive Startseite, Fehler-Backoff und wiederholtes Rendern ohne zusätzliche Abfragen ab.
 
-Version 1.9.5: 33 vorhandene Anzeige-/Status-/PWA-Tests und Produktionsbuild bestanden. Auf der veröffentlichten Site mit zwei eigenen Testzugängen geprüft: langer Titel, separate Startkartenzeilen und eigener Auswahlstatus, Bestätigung/Passen, kompakte 22-Pixel-Statuszeile ohne gesperrtes Würfelpanel sowie Rückkehr aktiver Würfel bei einer neuen eigenen Gelegenheit. Die Testpartien wurden abgebrochen und die Testzugänge im Browser ausgeblendet; Nutzerpartien wurden nicht verändert. Startkarte (private QA screenshot omitted) · Spielkopf (private QA screenshot omitted).
+Version 1.9.5: 33 vorhandene Anzeige-/Status-/PWA-Tests und Produktionsbuild bestanden. Auf der veröffentlichten Site mit zwei eigenen Testzugängen geprüft: langer Titel, separate Startkartenzeilen und eigener Auswahlstatus, Bestätigung/Passen, kompakte 22-Pixel-Statuszeile ohne gesperrtes Würfelpanel sowie Rückkehr aktiver Würfel bei einer neuen eigenen Gelegenheit. Die Testpartien wurden abgebrochen und die Testzugänge im Browser ausgeblendet; Nutzerpartien wurden nicht verändert. Startkarte · Spielkopf.
 
 Die Live-Prüfung erfolgte im verfügbaren Desktop-Browser. Schmale Hoch-/Querformatansichten konnten in dieser Browserumgebung nicht separat visuell geprüft werden; die responsive CSS-Anordnung ist implementiert, eine echte Android-Abnahme bleibt offen. Die Screenshots sind keine Handy- oder Hardware-Abnahme.
 
 Automatisierte Datenbanktests verwenden die tatsächliche API-Route mit sämtlichen SQL-Migrationen in SQLite. Die neue Migration wurde zusätzlich erfolgreich über den lokalen D1-CLI angewendet. Insgesamt bestehen 185 Regressionstests, einschließlich der korrekten Window-Bindung nativer Timer.
 
-Statuspunkte neben beiden Spielernamen in Version 1.9.1 (private QA screenshot omitted)
+Am 04.11.2026 wurde die veröffentlichte Version 1.9.1 mit zwei getrennten Spielerzugängen im Browser geprüft: Erstellen/Beitreten und freigegebene Lobby, Gastgeber-/Gaststeuerung, grüne Statuspunkte, eigener Zug auf beiden Startkarten, Würfeln/Passen des Gastgebers, gültiger bestätigter Gastzug und synchronisierter Wechsel in die nächste Runde. Vor Ablauf der Frist erschien kein Überspringen-Knopf. Anschließend wurde ausschließlich die temporäre Testpartie abgebrochen. Der tatsächliche PWA-Updateweg von 1.9.0 auf 1.9.1 funktionierte ohne Deinstallation. Nutzerpartien wurden nicht verändert.
 
-Hervorgehobene Startkarte bei eigener Zugberechtigung (private QA screenshot omitted)
+!Statuspunkte neben beiden Spielernamen in Version 1.9.1
+
+!Hervorgehobene Startkarte bei eigener Zugberechtigung
 
 Die verwaltete lokale Browser-Vorschau war nicht erreichbar; die spätere Browserprüfung erfolgte auf der veröffentlichten Site mit eigenen Testdaten. Physische Android-/Akku-Abnahme bleibt offen. Aus den bestandenen Timer- und API-Tests folgt keine gemessene Akkulaufzeit.
 
 Eine geschlossene App verlängert keine Vordergrund-Lease. Neue eigene Züge können daher auch nach einer Stunde Abwesenheit per Server-Push gemeldet werden. Ab 1.9.8 gilt beim Push-Dienst eine maximale Zustellfrist von 24 Stunden; aktuelle Rolle und ungelesenes Ereignis werden vor Anzeige erneut geprüft. Dies ändert weder den Online-Punkt noch den adaptiven Abrufplan und führt keine regelmäßigen Erinnerungen ein. [Details](notifications.md).
 
-Version 1.9.7 wurde auf der veröffentlichten Site mit zwei eigenen Testzugängen geprüft: Karten-Metazeile enthält zwei Personen, der rechte Pfeil öffnet den Raum per Enter, seine Fläche misst 44 × 44 CSS-Pixel. Die eigene-Zug-Karte misst bei Desktopbreite rund 97 Pixel Höhe; im Spielkopf beginnt die Metazeile 3 Pixel unter dem Titel. Raumkarte (private QA screenshot omitted) · Spielkopf (private QA screenshot omitted). Diese Desktopprüfung bestätigt kein reales Android-/Querformatgerät.
+Version 1.9.7 wurde auf der veröffentlichten Site mit zwei eigenen Testzugängen geprüft: Karten-Metazeile enthält zwei Personen, der rechte Pfeil öffnet den Raum per Enter, seine Fläche misst 44 × 44 CSS-Pixel. Die eigene-Zug-Karte misst bei Desktopbreite rund 97 Pixel Höhe; im Spielkopf beginnt die Metazeile 3 Pixel unter dem Titel. Raumkarte · Spielkopf. Diese Desktopprüfung bestätigt kein reales Android-/Querformatgerät.
 
 ## Kopfzeile ab 1.9.9
 
 Im Handy-Hochformat stehen Zurück und Titel/Code in einer gemeinsamen oberen Zeile. Darunter teilen sich Wurfzähler, Punkteübersicht und Beenden die gesamte Breite ohne leere Rasterfelder. Die Beschriftungen erleichtern das Erkennen der beiden Aktionen; alle drei Bereiche sind mindestens 44 CSS-Pixel hoch. Nach Spielende teilen sich Wurf und Punkte die Breite. Die bestehende kompakte Querformat-Anordnung bleibt erhalten. Regel- und Zugstatuslogik ändern sich nicht. Jede Layoutänderung folgt der [Handy-/Tablet-/Desktop-Prüfmatrix](responsive-qa.md).
 
-1.9.9: Im separat geprüften Desktop-Browser (1363 × 936) blieben der volle Name, der 3-Pixel-Abstand zur Metazeile, Punkteöffnung per Enter und die Abbruchbestätigung erhalten. Nachweis (private QA screenshot omitted). Dies ist keine Handy-/Tablet- oder Hardwareabnahme; die [Prüfmatrix](responsive-qa.md) nennt die offenen Ansichten.
+1.9.9: Im separat geprüften Desktop-Browser (1363 × 936) blieben der volle Name, der 3-Pixel-Abstand zur Metazeile, Punkteöffnung per Enter und die Abbruchbestätigung erhalten. Nachweis. Dies ist keine Handy-/Tablet- oder Hardwareabnahme; die [Prüfmatrix](responsive-qa.md) nennt die offenen Ansichten.
 
 Die Querformatkorrektur in 1.9.10 hält Würfel, Zughinweis und Bestätigung im normalen Fluss. Bei wenig Höhe scrollt die rechte Box gemeinsam. Die kompakte Wartezeile, Spielerrollen und Netzwerkberechtigungen bleiben unverändert.
 
@@ -114,4 +155,3 @@ Die Startseite zeigt mehrere gespeicherte Räume mit eigenen Zughinweisen; eigen
 Nutzungszeit für die vierzehntägige Bereinigung ist ausdrücklich von Präsenz und dem letzten echten Spielzug für Skip getrennt. Öffnen/Rückkehr und akzeptierte Aktionen verlängern; passive Abfragen, Push und Gerätezustand nicht. Daten, deren Frist nur verstrichen ist, bleiben zugänglich, bis die begrenzte Bereinigung sie tatsächlich entfernt. Andere gespeicherte Zugänge werden durch einen fehlenden/entfernten Raum nicht gesperrt. Legacy-Räume erhalten eine volle Schonfrist.
 
 1.11.2 ergänzt keine periodische Diagnoseabfrage: Der Internet-Test ist eine ausdrückliche Einzelaktion. Ein empfangener Push erzeugt höchstens eine begrenzte Gerätequittung; offene Einstellungen erhalten deren Ergebnis lokal vom Worker, geschlossene Geräte zeigen es später auf manuellen Abruf. Raumindex, Präsenzintervalle und 24-Stunden-Skip-Uhr bleiben unverändert.
-

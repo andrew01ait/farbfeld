@@ -50,7 +50,7 @@ test('Passing and invalid moves neither reserve nor award fields',()=>{
  const g=choosing(),before=structuredClone(g);assert.throws(()=>applyMove(g,0,{ci:0,ni:0,cells:[8]}));assert.deepEqual(g,before);
  const done=finishPasses(applyMove(g,0,{pass:true}));assert.equal(bonusAwards(done).length,0);assert(done.bonuses.fields.every(f=>!f.pending.length));
 });
-test('Mine damage cannot remove a pending bonus or its later permanent award',()=>{
+test('Luftangriff damage cannot remove a pending bonus or its later permanent award',()=>{
  let g=fields(createComputerGame(false,'classic','easy',true,true));g.phase='choose';g.dice={colors:['g','b','o'],numbers:[1,2,3]};g.mines.unlocked=[true,true];
  g=applyMove(g,0,green);g=applyMineAttack(g,1,7,()=>0);assert.equal(g.players[0].marks[7],false);assert.deepEqual(g.bonuses.fields[0].pending,[0]);
  g=applyMove(g,1,{pass:true});assert.equal(bonusPoints(g,0),2);assert.equal(score(g.players[1],g).mineCost,5);
@@ -64,7 +64,7 @@ test('Already settled bonus points survive both centre and surrounding mine dama
 });
 test('All projections keep unclaimed locations, pending winners and even claimed coordinates private',()=>{
  for(const hidden of [false,true]){
-  let g=choosing(2,'room',hidden);g=applyMove(g,0,green);const before=structuredClone(g),view=projectGame(g,1);
+  let g=choosing(2,'room',hidden);g=applyMove(g,0,green);const before=structuredClone(g),view=projectGame(g,1,{treasureHints:false});
   assert.equal(view.bonuses.fields,undefined);assert.deepEqual(view.bonuses,{schema:1,enabled:true,awards:[],remaining:3});assert(validBonusState(view,{allowProjection:true}));assert(!validBonusState(view));assert.deepEqual(g,before);
   g=applyMove(g,1,green);const settled=projectGame(g,1);assert.equal(settled.bonuses.fields,undefined);assert.deepEqual(settled.bonuses.awards,[{slot:0,round:1,winners:[0,1]}]);assert(!JSON.stringify(settled.bonuses).includes('index'));
   g.status='finished';assert.equal(projectGame(g,0).bonuses.fields,undefined);
@@ -72,11 +72,11 @@ test('All projections keep unclaimed locations, pending winners and even claimed
 });
 test('A public view and the full game score the same awards; rendering does not mutate either state',()=>{
  let g=finishPasses(applyMove(choosing(),0,green));const p=projectGame(g,0),before=structuredClone(p);
- assert.equal(score(p.players[0],p).total,score(g.players[0],g).total);bonusStatusHtml(p);bonusAwards(p).reverse();assert.deepEqual(p,before);assert.deepEqual(projectBonuses(g),p.bonuses);
+ assert.equal(score(p.players[0],p).total,score(g.players[0],g).total);bonusStatusHtml(p);bonusAwards(p).reverse();assert.deepEqual(p,before);assert.deepEqual(projectBonuses(g,0),p.bonuses);
 });
 test('Hidden bonus notices identify discovery without exposing coordinates, private marks or totals',()=>{
  let g=choosing(2,'local',true);g.players[0].name='<img onerror=bad>';g=finishPasses(applyMove(g,0,green));
- const html=bonusStatusHtml(g);assert(html.includes('&lt;img'));assert(!html.includes('<img'));assert(!html.includes('+2'));assert(!html.includes('H1'));assert(!html.includes('data-i'));
+ const html=bonusStatusHtml(projectGame(g,1),{own:1});assert(html.includes('&lt;img'));assert(!html.includes('<img'));assert(!html.includes('+2'));assert(!html.includes('H1'));assert(!html.includes('data-i'));
  assert.equal(bonusAnnouncement(g,bonusAwards(g)[0]),'<img onerror=bad>');assert.match(bonusSetupHtml(),/id="bonus-fields"/);assert(!bonusSetupHtml().includes(' checked'));assert(bonusSetupHtml(true).includes(' checked'));
  assert.match(bonusOptionHtml(false,true,'room-bonus',false,['Old <client>']),/disabled/);assert.match(bonusOptionHtml(false,true,'room-bonus',false,['Old <client>']),/Old &lt;client&gt;/);
 });
@@ -98,7 +98,7 @@ test('Complete optional computer games on every board keep bounded permanent bon
   let g=createComputerGame(hidden,board.id,'easy',true,true),steps=0;const previous=[0,0];
   while(g.status==='playing'&&steps++<1800){
    if(g.phase==='roll'&&g.active===1||canAct(g,1))g=stepComputer(g,rng);else if(g.phase==='roll')g=rollGame(g,rng);else g=applyMove(g,0,findMove(g,0)??{pass:true});
-   assert(validBonusState(g));for(let pid=0;pid<2;pid++){const points=bonusPoints(g,pid);assert(points>=previous[pid]&&points<=6&&points%2===0);previous[pid]=points;}
+   assert(validBonusState(g));for(let pid=0;pid<2;pid++){const points=bonusPoints(g,pid);assert(points>=previous[pid]&&[0,2,4,9].includes(points));previous[pid]=points;}
   }
   assert.equal(g.status,'finished');assert(validBonusState(JSON.parse(JSON.stringify(g))));
  }
@@ -112,11 +112,11 @@ test('Compact bonus notices and expandable history retain tied winners, round an
   assert.equal(bonusAnnouncement(g,award),names+(hiddenScores?'':' · je +2'));
   assert(html.includes('<details>'));assert(html.includes('aria-label="Wurf 1"'));assert(html.includes('1/3'));
   assert(html.includes(names.replaceAll('&','&amp;')));assert(!html.includes('Bonusfeld gefunden'));
-  if(n===6)assert(html.includes('Alle 6'));
+  assert(html.includes('1/3 eigene'));
   assert.equal(html.includes('+2'),!hiddenScores);
   g.status='finished';assert(bonusStatusHtml(g).includes('je +2'));
  }
  let g=finishPasses(applyMove(choosing(),0,green));g.players[0].name='Du';
  assert.equal(bonusAnnouncement(g,bonusAwards(g)[0]),'Du · +2');
- const empty=bonusStatusHtml(choosing());assert(empty.includes('Noch unentdeckt'));assert(!empty.includes('<details>'));assert(empty.includes('0/3'));
+ const empty=bonusStatusHtml(projectGame(choosing(),0,{treasureHints:false}));assert(empty.includes('Noch unentdeckt'));assert(!empty.includes('<details>'));assert(empty.includes('0/3'));
 });

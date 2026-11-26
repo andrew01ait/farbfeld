@@ -1,8 +1,21 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createGame,rollGame,applyMove} from '../public/game/engine.js';
-import {nextLocalPlayer,turnOrder,mayInspect,playerRole,turnDescription,ownTurnKey} from '../public/game/view-state.js';
+import {nextLocalPlayer,turnOrder,mayInspect,playerRole,turnDescription,ownTurnKey,mineInspectionChange} from '../public/game/view-state.js';
 import {boardLayout,pinchScale,clampZoom,innerBoardWidth} from '../public/game/board-view.js';
+
+test('Automatic mine detonations preserve the viewed sheet and never inspect their victim payload',()=>{
+ for(const hiddenScores of [false,true]){
+  const game=createGame(['Du','Computer'],'computer',[],{hiddenScores}),blast={kind:'hidden',by:0};
+  Object.defineProperty(blast,'targets',{get(){throw Error('automatic mine navigation read');}});
+  assert.equal(mineInspectionChange(game,[blast],0),undefined);assert.equal(mineInspectionChange(game,[{...blast,by:1}],0),undefined);
+ }
+});
+test('Explicit airstrikes retain open victim inspection and return to own incoming damage, with concealed foreign sheets protected',()=>{
+ const game=createGame(['Du','Computer'],'computer'),outgoing={by:0,targets:[{pid:1,cells:[7]}]},incoming={by:1,targets:[{pid:0,cells:[7]}]};
+ assert.equal(mineInspectionChange(game,[outgoing],0),1);assert.equal(mineInspectionChange(game,[incoming],0),null);
+ game.hiddenScores=true;Object.defineProperty(outgoing.targets[0],'cells',{get(){throw Error('concealed victim read');}});assert.equal(mineInspectionChange(game,[outgoing],0),undefined);
+});
 
 test('Lokales Spiel: andere Namen übertragen niemals die Kontrolle',()=>{
  const game=createGame(['Robin','Bea'],'local');
@@ -79,6 +92,26 @@ test('Parallel bestätigte fremde Züge erhalten die eigene unbestätigte Auswah
 test('Einpassen nutzt die Innenbreite ohne Scroll-Padding und schneidet die letzte Spalte nicht ab',()=>{
  assert.equal(innerBoardWidth(324,2,2),320);assert.equal(innerBoardWidth(300,4.5,5.5),290);assert.equal(innerBoardWidth(20,30,30),1);
  for(const client of [251,284,324,343,650]){const width=innerBoardWidth(client,2,2),scale=width/638;assert(Math.floor(638*scale)+4<=client);assert.equal(boardLayout(width,400,true).width,width);}
+});
+
+test('A numbered board reserves its row gutter inside the fitted width while retaining fifteen playable columns',()=>{
+ for(const width of [240,280,320,393,568,851,1440])for(const columnGap of [2,3,4]){
+  const layout=boardLayout(width,350,true,{rowLabelWidth:20,labelHeight:24,columnGap});
+  assert(Math.abs(layout.cellWidth*15+20+columnGap*15-width)<.001);assert.equal(layout.width,width);assert(layout.cellWidth>0);assert(layout.cellHeight>0);
+ }
+});
+test('Landscape fitting budgets room for both label rows at the new board width',()=>{
+ const rowGap=3,metrics={rowLabelWidth:20,columnGap:2,rowGap};
+ const labelSpace=layout=>layout.height-7*layout.cellHeight-8*rowGap;
+ let previous=0;
+ for(const width of [240,380,568,851,1080]){
+  const tall=boardLayout(width,750,true,metrics);
+  const short=boardLayout(width,240,true,metrics);
+  assert(labelSpace(tall)>previous);
+  assert(Math.abs(labelSpace(tall)-labelSpace(short))<.01);
+  assert(short.height<=240+.01);
+  previous=labelSpace(tall);
+ }
 });
 
 test('Turn descriptions conjugate literal Du correctly without treating a named participant as Du',()=>{

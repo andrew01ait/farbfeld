@@ -1,6 +1,16 @@
 # Eine Partie freiwillig verlassen
 
-<!-- farbfeld-version: 1.18.0 -->
+<!-- farbfeld-version: 1.34.2 -->
+
+## Verlassen kombinierter Varianten 1.21.0
+
+Fester Ausstieg −10 und die letzte aktive Person als Sieger bleiben erhalten. Das gilt auch während der Flottenaufstellung; bei zwei Personen endet die Partie unmittelbar, ohne eine Flotte künstlich zu bestätigen. Bereits erworbene Variantenfakten bleiben gespeichert, vergebene Entdeckerfunde werden durch Ausstieg nicht erneut sammelbar. Ausgestiegene Farbpläne nehmen nicht mehr am Mischen teil. Host-/Relay-Regeln unverändert.
+
+
+## Gerätelokal verwerfen ohne Verbindung
+
+Beenden einer Direktpartie bietet unabhängig von Erreichbarkeit eine zusätzliche ausdrücklich bestätigte Option Auf diesem Gerät verwerfen. Sie löscht nur den gespeicherten Direktstand samt Zugang und schließt lokale Kopplung/Kanäle. Andere Handys behalten ihre Kopie. Kein gemeinsamer Ausstieg, −10-Ergebnis, Sieg oder Gastgeberwechsel wird daraus abgeleitet. Der normale verbundene Verlassen-Zug mit −10 Punkten bleibt unverändert. Pausierte, ausstehende und bereits verlassene Direktpartien lassen sich lokal entfernen; Rückkehr aus dem Bestätigungsdialog verändert nichts. Veraltete Bestätigungen entfernen keine ersetzte Sitzung, Speicherausfälle lassen den bisherigen Zugang erhalten.
+
 
 ## Ort der Aktion
 

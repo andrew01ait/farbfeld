@@ -1,6 +1,16 @@
 # Geräteprofil und Statistik
 
-<!-- farbfeld-version: 1.18.0 -->
+<!-- farbfeld-version: 1.34.2 -->
+
+## Variantenpunkte in menschlichen Ergebnissen 1.21.0
+
+Menschliche Mehrspieler-Ergebnisse enthalten die gleichen bestätigten Schiffs-/Auftrags-/Bonusprämien und Minenkosten wie die gemeinsame Engine. Die bestehende Trennung Mensch/Computer/Solo, Deduplizierung, eigene Spielerzuordnung und Ausstieg −10 bleiben erhalten. Laufende verdeckte Werte werden weder in Karten noch Verlauf erfunden.
+
+
+## Neu 1.17.0: Versteckte Bonusfelder
+
+Die optionale Startregel verteilt drei gemeinsame geheime Felder mit jeweils +2 Punkten. Alle Treffer im ersten gemeinsamen Trefferwurf gewinnen; spätere Treffer nicht. Bekanntgabe erfolgt nach Wurfende ohne Koordinaten, Bonuspunkte bleiben bei Minenschaden erhalten. Lokale Startdialoge und Gastgeber-Lobbys bieten die Wahl an. Multiplayer verlangt die bestätigte Fähigkeit `bonus-fields-v1` (ab 1.17.0); Standardpartien bleiben kompatibel. [Regeln, Datenschutz und Abläufe](bonus-fields.md).
+
 
 ## Dateinamen beim Sichern
 
@@ -18,7 +28,9 @@ Auf der Startseite **Statistik** (Diagramm-Icon) oder in den Einstellungen **Pro
 
 Die Bereiche beeinflussen einander nicht. Eine Computerniederlage unterbricht beispielsweise keine Siegesserie gegen Menschen; ein Solo-Bestwert überschreibt keinen anderen Bestwert. **Ergebnisse** öffnet nur die letzten sichtbaren Ergebnisse des ausgewählten Bereichs; **Zur Statistik** kehrt dorthin zurück. Die sichtbare Liste bleibt auf 100 Ergebnisse insgesamt begrenzt, der kompakte Statistikverlauf nicht.
 
-Abgeschlossene Partien und ausdrücklich bestätigte Mehrspieler-Ausstiege zählen. Ein Ausstieg zählt sofort einmal als feste −10-Punkte-Niederlage, selbst wenn verbleibende Personen weniger Punkte haben. Solo-Abbruch, verworfene Kopplungen und bloß laufende Spiele zählen nicht. Verdeckte fremde Werte bleiben im frühen Ausstiegsdatensatz unbekannt. [Regeln und gemeinsame Handyhistorie](leaving.md).  Innerhalb eines Bereichs verlängern geteilte Gesamtsiege die Serie. Ein unbekannter alter Ausgang unterbricht die belegbare Bereichsserie. Bestwert und Durchschnitt verwenden den eigenen gespeicherten Punktestand.
+Im Ergebnisverlauf stehen die eigenen Punkte, der Ausgang, der Platz und bei Mehrspielerpartien die Namen der Mitspielenden. Gleiche Punkte und übrige Joker ergeben einen geteilten Platz. Ein Tipp auf eine Partie zeigt die gespeicherten Punkte und übrigen Joker je Person. Beim Ausstieg während der Partie zeigt diese Ansicht den gespeicherten Stand beim Ausstieg. Bei älteren Partien mit uneindeutigem Ausgang bleibt die Karte als **Ausgang unbekannt** sichtbar.
+
+Abgeschlossene Partien und ausdrücklich bestätigte Mehrspieler-Ausstiege zählen. Ein Ausstieg zählt sofort einmal als feste −10-Punkte-Niederlage, selbst wenn verbleibende Personen weniger Punkte haben. Solo-Abbruch, verworfene Kopplungen und bloß laufende Spiele zählen nicht. Verdeckte fremde Werte bleiben im frühen Ausstiegsdatensatz unbekannt. [Regeln und gemeinsame Handyhistorie](leaving.md). Innerhalb eines Bereichs verlängern geteilte Gesamtsiege die Serie. Ein unbekannter alter Ausgang unterbricht die belegbare Bereichsserie. Bestwert und Durchschnitt verwenden den eigenen gespeicherten Punktestand.
 
 ## Eine bestimmte Person
 
@@ -53,8 +65,8 @@ Beim ersten Start werden vorhandene lokale Ergebnisse übernommen. Bereits vor d
 
 Automatisiert: Gastrolle, Gruppenvergleiche, Joker-Tiebreak, geteilte Gesamtsiege, direkte Remis, chronologische Serien, vollständige Modustrennung einschließlich Mittel-/Bestwerten, negative Werte, über 100 Ergebnisse, über fünf Duelle, wiederholte Erfassung/Import, normalisierte/gleiche Gegnernamen, unbekannte Gegner, mehrdeutige Altrollen und Ausschluss von Zugangsdaten/Blättern.
 
-Browser-QA für 1.8.1 verwendet Beispiel-Endstände und die echte Oberfläche: Bereiche/Ergebnisfilter, Menschen namens „Computer“, Gegnerdetails mit Joker-Tiebreak, Rücksprung, leere Profile und lange Namen in Hoch-/Querformat. Diese Prüfung ist keine neue reale Partie auf Android. Bildnachweis 1.8.1 mit Beispieldaten (private QA screenshot omitted).
+Browser-QA für 1.8.1 verwendet Beispiel-Endstände und die echte Oberfläche: Bereiche/Ergebnisfilter, Menschen namens „Computer“, Gegnerdetails mit Joker-Tiebreak, Rücksprung, leere Profile und lange Namen in Hoch-/Querformat. Diese Prüfung ist keine neue reale Partie auf Android. Bildnachweis 1.8.1 mit Beispieldaten.
 
-Historische Integrationsprüfung 1.8.0: vollständige lokale Serverpartie mit zwei getrennten Clients nach 51 Würfen (Alex 38, Bea 28), passende eigene Rollen und gegenseitige Bilanz sowie echter Browser-Export ohne Raumzugänge. Bildnachweis 1.8.0 (private QA screenshot omitted). Physische Android-Abnahme bleibt offen.
+Historische Integrationsprüfung 1.8.0: vollständige lokale Serverpartie mit zwei getrennten Clients nach 51 Würfen (Robin 38, Bea 28), passende eigene Rollen und gegenseitige Bilanz sowie echter Browser-Export ohne Raumzugänge. Bildnachweis 1.8.0. Physische Android-Abnahme bleibt offen.
 
 1.11.0: Beendete Partien aus der autorisierten Sammelübersicht werden mit tatsächlichem eigenen Spielerindex und Spiel-ID erfasst, auch wenn gerade ein anderer Raum gewählt ist. Es gibt keine laufenden Punktestände im Index. Deduplizierung über Spiel-ID, getrennte Spielarten und namensbasierte Gegnerbilanz bleiben erhalten. Raumwechsel/Bereinigung löschen keine lokalen Statistiken. Bereits überschriebene serverseitige Endstände werden dadurch nicht nachträglich rekonstruiert.

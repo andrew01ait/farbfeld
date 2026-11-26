@@ -1,43 +1,58 @@
-# Optionaler Minenangriff
+# Optionaler Luftangriff
 
-<!-- farbfeld-version: 1.18.0 -->
+<!-- farbfeld-version: 1.34.2 -->
 
-## Darstellung 1.17.2
+Treffer, leeres Ziel und Freigabeimpuls lassen sich unter **Hilfe & Diagnose → Animationen testen** abspielen. [Animationsvorschau](offline-diagnostics.md#animationsvorschau)
 
-Die Minenleiste teilt neutrale Fläche, Kontur, 14-Pixel-Radius und 32-Pixel-Symbolfeld mit Bonus-/Farbhinweisen. Nur das Bereitschaftssymbol und die Bereit-Chips erhalten einen grünen Akzent; die gesamte Karte bleibt neutral. Hilfe und Zünden bleiben 44 Pixel hoch, die eigene Bereitschaftsanimation und die Drei-Sekunden-Explosion bestehen weiter. Rötliche Tönung bleibt tatsächlichem Schaden vorbehalten. [Gestaltung](ui-design.md).
+## Karte und Hilfe
 
-**Minenangriff** ist eine freiwillige Startregel für zwei bis sechs Personen: Computer, gemeinsam an einem Handy, Internet-Raum und Offline-Direktgruppe. Kein Solo. Vor dem neuen Start wählen; in Netzwerk-Lobbys entscheidet der Gastgeber. Classic, Flusslauf, Mosaik und Random sowie offene/verdeckte Punkte werden unterstützt. Alte Spiele ohne Minen bleiben Standardpartien. Die frühere Beschränkung auf zwei Computergegner wurde auf ausdrücklichen Nutzerwunsch ab 1.17.0 aufgehoben.
+Der gemeinsame Kartenkopf zeigt Statuschips linksbündig unter dem Titel und die Hilfe in derselben Spalte wie die anderen Spielkarten. Die eigenen Freischaltungen bleiben sichtbar, die Mitspielenden lassen sich bei Platzmangel seitlich durchsehen. **Ziel wählen** steht bei Bereitschaft unter dem Kopf. Hilfe und Zielwahl haben mindestens 44 Pixel Antippfläche.
 
-## Ein Angriff gegen alle Gegner
+Das **?** erklärt die Freischaltungen der aktuellen Partie, die Zielwahl, die Punkte und die Markierungen. Bei einer Partie mit einzelnem Luftangriff steht nur die Freigabe nach dem Farbabschluss darin. Mit zwei möglichen Angriffen führt die Hilfe auch die Schwelle **70 Felder** auf.
 
-- Ein gemeinschaftlich gewerteter Farbabschluss schaltet die einmaligen Minen **aller anderen aktiven Personen** frei. Die eigene Mine wird dadurch nicht freigeschaltet. Eine Freigabe bleibt trotz späteren Schadens bestehen.
-- Eine Mine pro Person und Partie. Zusätzliche Aktion in der eigenen Auswahl vor dem normalen Bestätigen; Würfel, Joker und normaler Zug bleiben erhalten. Nach Spielende kein Angriff.
-- **Insgesamt fünf Punkte Einsatz**, auch bei einem Fehlschlag gegen alle Gegner. Keine Kosten pro Gegner und keine Mindestpunktzahl.
-- Ein gemeinsames Zielfeld A–O/1–7 wählen. Es wird unabhängig auf jedem aktiven Gegnerblatt geprüft, das eigene Blatt bleibt intakt. Ausgestiegene werden nicht mehr angegriffen.
-- Ist das Zentrum bei einem Gegner leer, entfernt der Angriff bei diesem Gegner **überhaupt nichts**, auch keine belegten Nachbarn. Andere Gegner können mit derselben Koordinate getroffen werden.
-- Bei belegtem Zentrum: dieses Kreuz sowie zufällig drei bis fünf belegte achtfach angrenzende Nachbarn ohne Zurücklegen entfernen. Diagonalen zählen; bei weniger belegten Nachbarn nur diese. Keine Zeilenumbrüche an Kanten.
-- Bei mehr als zwei Personen zeigt die Zielwahl das gemeinsame unmarkierte Raster. In einer offenen Zweierpartie darf das eine Gegnerblatt sichtbar sein. Bei verdeckten Punkten niemals gegnerische Kreuze, Schadenspositionen oder Trefferzahlen offenlegen; der eigene empfangene Schaden bleibt sichtbar.
+
+Seit 1.22.0 heißt der bisherige **Minenangriff** in der Oberfläche **Luftangriff**. Flugzeugsymbol und Überflug mit anschließendem Einschlag unterscheiden ihn von den neuen [versteckten Minen](hidden-mines.md). Alle bisherigen Regeln, Kosten, Freischaltungen und gespeicherten Spielstände bleiben erhalten. Historische technische Namen wie game.mines, applyMineAttack und mines-v1 sind absichtlich unverändert.
+
+## Vor einer neuen Partie wählen
+
+Freiwillige Startregel für zwei bis sechs Personen: Computer, gemeinsam an einem Handy, Internet-Raum und Offline-Direktgruppe. Kein Solo. Bei Netzwerkpartien entscheidet der Gastgeber in der Lobby. Classic, Flusslauf, Mosaik und Random sowie offene/verdeckte Punkte werden unterstützt. Alte Spiele ohne diese Option bleiben Standardpartien. Die frühere Begrenzung auf Computerpartien wurde auf ausdrücklichen Nutzerwunsch ab 1.17.0 aufgehoben.
+
+## Zwei mögliche Freischaltungen gegen alle Gegner
+
+- Ein gemeinschaftlich gewerteter Farbabschluss schaltet für **alle anderen aktiven Personen** je einen Angriff frei. Sobald eine Person nach einem bestätigten Zug mindestens 70 von 105 Kreuzen auf ihrem eigenen Brett hat, schaltet sie unabhängig davon für dieselben Gegner je einen weiteren frei. Die Freischaltungen bleiben auch bei späterem Schaden bestehen. Ausgelöste versteckte Minen werden vor dem Zählen abgewickelt.
+- Pro Bedingung steht jeder Person einmal ein Angriff zur Verfügung. Angriffe sind zusätzliche Aktionen in der eigenen Auswahl vor dem normalen Bestätigen. Würfel, Joker und normaler Zug bleiben erhalten. Nach Spielende sind keine Angriffe mehr möglich.
+- **Fünf Punkte je Angriff**, auch bei einem Fehlschlag gegen alle Gegner. Die Kosten werden pro Einsatz abgezogen. Es gibt keine Mindestpunktzahl.
+- Ein gemeinsames Zielfeld A–O/1–7 wählen. Es wird unabhängig auf jedem aktiven Gegnerblatt geprüft; das eigene Blatt bleibt intakt. Ausgestiegene werden nicht mehr angegriffen.
+- Ist das Zentrum bei einem Gegner leer, entfernt der Angriff dort **überhaupt nichts**, auch keine belegten Nachbarn. Andere Gegner können mit derselben Koordinate getroffen werden.
+- Bei belegtem Zentrum: dieses Kreuz und zufällig drei bis fünf belegte achtfach angrenzende Nachbarn ohne Zurücklegen entfernen. Diagonalen zählen; bei weniger belegten Nachbarn nur diese. Keine Zeilenumbrüche an Kanten.
+- Bei mehr als zwei Personen zeigt die Zielwahl das gemeinsame unmarkierte Raster. In einer offenen Zweierpartie darf das eine Gegnerblatt sichtbar sein. Bei verdeckten Punkten niemals gegnerische Kreuze, Schadenspositionen oder Trefferzahlen offenlegen; eigener empfangener Schaden bleibt sichtbar.
 
 ## Wertung nach Schaden
 
 Nicht mehr vollständige Spalten/Farben verlieren sofort ihre Punkte; entfernte Sterne kosten wieder zwei Punkte. Die früheste noch aktive Person mit bereits gewertetem vollständigem Abschluss erhält den Erstbonus. Mehrere Halter aus demselben frühesten Wurf erhalten ihn alle. Spätere vollständige Halter erhalten den niedrigeren Bonus. Ohne verbleibenden Halter wird der Erstbonus wieder frei. Wiedervervollständigen erzeugt einen neuen Abschlusszeitpunkt. Noch nicht gemeinsam gewertete Kreuze erhalten durch einen Angriff keine vorzeitigen Punkte.
 
-**Bonusfeld-Punkte bleiben immer erhalten**, auch bereits bestätigte, im aktuellen Wurf noch nicht veröffentlichte Bonustreffer. Kein erneuter Bonus durch Wiederauffüllen. Der Einsatz wird unabhängig von diesen Neubewertungen abgezogen. Das normale Ende nach zwei vollständigen Farben einer aktiven Person gilt nach gemeinsamer Rundenwertung weiter.
+**Bonusfeld-Punkte bleiben erhalten**, einschließlich bestätigter, im aktuellen Wurf noch nicht veröffentlichter Funde. Kein erneuter Bonus durch Wiederauffüllen. Der Einsatz wird unabhängig von dieser Neubewertung abgezogen. Das normale Ende nach zwei vollständigen Farben einer aktiven Person gilt nach gemeinsamer Rundenwertung weiter.
 
-## Kompakte Bedienung und sichtbarer Schaden
+Bestätigte Schüsse/Versenkungen, exklusive Funde/Ladungen und mit einem Zug erfüllte Aufträge bleiben ebenfalls erhalten, auch vor der gemeinsamen Wertung. Bei individuellen gemischten Farbplänen verwenden Zielansicht und Schaden boardFor(game,pid). Beschädigte Felder behalten zunächst ihre Farbe und nehmen erst an der nächsten planmäßigen Mischung teil. Dort bleiben freie Gruppen zusammenhängend; markierte Felder verbinden sie nicht. Der Luftangriff erhöht den Aktionszähler, nicht Runde/Mischintervall. Eine Entdeckerfähigkeit darf danach im normalen Zug verwendet werden. [Kombinationen](computer-variants.md).
 
-Die kleine Leiste zeigt ab 1.17.1 dauerhaft ein gefülltes Minesweeper-Symbol, auch auf dem kleinsten Handy. Der eigene Status lautet **Gesperrt**, **Bereit** oder **Verbraucht**, ergänzt durch Schloss/Grünhaken/verbraucht und neutrale/grüne Farben. Weitere Namen lassen sich in einem getrennten Bereich seitlich ansehen; das Minensymbol bleibt dabei stehen. Das Fragezeichen erklärt die Symbole. Beim Freischalten erscheinen **Mine bereit**, ein kurzer Puls und die dauerhaft grüne Bereitschaft; **Zünden · −5** ist nur im erlaubten eigenen Moment bedienbar. Im Ziel-Dialog stehen eine kurze Anweisung und drei Regeln, weitere Details sind eingeklappt. Große Spalten-/Zeilenauswahlen ergänzen das feine Raster.
+## Zielwahl und Fluganimation
 
-Nach autoritativ bestätigtem Einsatz läuft die Explosion **drei Sekunden**. Sichtbarer Schaden wird ins Blickfeld gescrollt; betroffene Zellen leuchten langsamer auf. Anschließend bleiben rote gestrichelte Felder und verlorene Kreuze bis einschließlich Ende des nächsten vollen Wurfs markiert. Wieder gefüllte Stellen erscheinen grün gestrichelt. Mehrere Angriffe werden mit ihrer jeweiligen Frist vereinigt. In offenen Partien kann das betroffene Blatt nach eigenem Angriff geprüft und mit **Zu meinem Spielfeld** verlassen werden; die eigene unbestätigte Auswahl bleibt erhalten. Verdeckte gegnerische Schäden erscheinen weder im Effekt noch im Raster. Reduzierte Bewegung wird berücksichtigt.
+Die neutrale Box mit 32-Pixel-Flugzeugsymbol zeigt rechts die bisher eingesetzten eigenen Punkte. Der Abzug beträgt −5 P nach einem und −10 P nach zwei Angriffen und bleibt verdeckt, wenn die Punkte verdeckt sind. Die beiden Freischaltungen zeigen Gesperrt, Bereit oder Verbraucht mit Schloss, grünem Häkchen oder durchgestrichenem Kreis. Hilfe und Zielwahl behalten mindestens 44 Pixel Antippfläche; nur Bereitschaft erhält den grünen Akzent.
 
-Der Computer nutzt seine Mine vor seinem normalen Zug und wartet nach dem Angriff auf das Ende des Effekts. Offen wählt er anhand bekannter Kreuze/Sterne/Boni, verdeckt blind ohne Lesen menschlicher Kreuze oder Punkte. Der nächste Zufallsschaden wird nicht vorweggenommen.
+**Ziel wählen** öffnet **Luftangriff einsetzen.** Raster zuerst: A–O, Zeilen 1–7, Antippen oder große Spalten-/Zeilenfelder in beliebiger Reihenfolge. Ein Zielkreuz markiert die gewählte Koordinate. Gestrichelte Nachbarn zeigen nur den möglichen Bereich; bei bekannt leerem offenem Ziel gibt es keinen Nachbarbereich. Niemand sagt die zufälligen Schadensnachbarn voraus. **H4 angreifen · −5 P** bestätigt das genaue Ziel; Abbrechen kostet nichts. Regeln stehen eingeklappt unter **So wirkt der Angriff**. Fokus, Rasterposition und geöffnete Regeln bleiben bei Zielwechsel erhalten. Während ausstehender Quittierung bleibt das Ziel fix und der Knopf zeigt Wird bestätigt ….
 
-## Zustand, Autorisierung und Kompatibilität
+Erst die autoritative Bestätigung schließt den Dialog. Ein zellgebundenes Flugzeug fliegt 2,2 Sekunden diagonal über das Ziel. Die Bombe erreicht das Feld, bevor sich die Druckwellen ausbreiten. Nur bestätigte Felder animieren. Ein leeres Ziel zeigt eine blaue Welle und Kein Schaden. Die Zelleffekte enden nach drei Sekunden. Das obere Banner bleibt bis zu sechs Sekunden sichtbar. Bei reduzierter Bewegung bleibt die Meldung statisch.
 
-`game.mines` bleibt Schema 1. Arrays `unlocked`/`used` passen zur Spielerzahl. Vollständige Autorität führt Abschlusswürfe pro Spalte/Farbe und höchstens eine Angriffshistorie pro Person. Alte Zweierstände ohne Rundenregister werden aus den vorhandenen Abschlüssen abgeleitet. Gästen wird eine getrennte Projektion ohne Abschlussregister gegeben; verborgen werden nur die eigenen Schadenszellen übertragen. Öffentliche Projektionen lassen sich nicht als vollständige Autorität zum Weiterrechnen verwenden.
+Liegt das sichtbare Ziel außerhalb des freien Brettbereichs, scrollt Farbfeld vor dem Anflug dorthin. Auf schmalen Geräten zählt auch der waagrecht sichtbare Ausschnitt. In Ansichten mit fester Würfelleiste liegt das Ziel oberhalb der Leiste und unter dem Banner.
 
-Server/Direkt-Gastgeber prüfen authentifizierte Person, Spielkennung, Wurf und Version; Schaden an allen Gegnern und fünf Punkte Einsatz werden zusammen gespeichert. Wiederholung kostet keine zweite Mine. Netzwerkpartien benötigen tatsächlich bestätigtes `mines-v1` auf allen Apps ab 1.17.0. Neue Gruppenstände nicht mit 1.16.0 fortsetzen. Keine neue Datenbankmigration, Push-Art oder Hintergrundabfrage. Spielstatistik enthält die abschließende Wertung; freiwilliger Ausstieg ersetzt sie mit −10, siehe [Aussteigen](leaving.md).
+Entfernte Kreuze sind leere Farbflächen mit roter gestrichelter Kontur und zellabhängigem Minus-Kreis. Später wieder angekreuzte Zellen tragen einen grünen durchgehenden Rand. Die Karte **Luftangriff** zeigt die Zahl der entfernten und wieder angekreuzten Kreuze des sichtbaren Spielfelds und das Ende der jeweiligen Markierung. Jede Markierung bleibt bis zum Ende des nächsten vollen Wurfs. Die Karte dokumentiert auch das Ziel, die Runde und das bestätigte Ergebnis des eigenen letzten bezahlten Angriffs. In Gruppen steht dort die Gesamtzahl der entfernten Kreuze. Bei verdeckten Punkten bleibt der fremde Schaden verborgen.
 
-## Prüfung
+In offenen Partien lässt sich das betroffene Blatt ansehen und mit **Zu meinem Spielfeld** verlassen. Eigene Würfel/Feldwahl bleiben erhalten. Der Computer verwendet seinen bestehenden Luftangriff vor dem normalen Zug und wartet den Effekt ab; offene Auswahl anhand bekannter Fakten, verdeckte Auswahl blind ohne fremde Daten oder zukünftigen Zufall.
 
-Regressionen für alle Modi/Bretter, zwei bis sechs Personen, unabhängige Treffer/Leerziele, unveränderten Schützen, einmalige Kosten, Freigaben, Grenzen/Zufall, Sterne, chronologischen Erstbonus und Gleichstände, spätere Wiedervervollständigung, Bonusfeldbeständigkeit, Projektionen, geheime Computeranalyse, falsche/alte Aktionen, Wiederaufnahme und verlorene Quittungen. Effektlaufzeit, reduzierte Bewegung und Schadensfristen sind separat geprüft. [Responsive QA](responsive-qa.md) dokumentiert gerenderte Ansichten; echte Android-/Hotspot- und subjektive Balanceprüfung bleiben separat.
+## Zustand und Kompatibilität
+
+`game.mines` Schema 1 behält die ursprüngliche Farbfreigabe. Schema 2 führt für die Flächenfreigabe zusätzlich `coverage.unlocked` und `coverage.used`. Vollständige Autorität führt Abschlusswürfe pro Spalte/Farbe und höchstens einen Angriff je Freischaltung und Person. Alte Zweierstände ohne Rundenregister werden aus vorhandenen Abschlüssen abgeleitet. Gäste erhalten eine getrennte Projektion ohne Abschlussregister; verborgen werden ausschließlich eigene Schadenszellen übertragen. Öffentliche Projektionen lassen sich nicht als vollständige Autorität weiterrechnen.
+
+Server/Direkt-Gastgeber prüfen authentifizierte Person, Spielkennung, Wurf und Version; Schaden an allen Gegnern, verwendete Freischaltung und fünf Punkte Einsatz werden zusammen gespeichert. Ein wiederholter Befehl für eine verbrauchte Freischaltung verändert die Partie nicht. Neue Netzwerkpartien verwenden beide Freigaben mit bestätigtem `airstrike-coverage-v1` ab 1.33.0 auf allen Geräten. Die bisherige Regel bleibt mit bestätigtem `mines-v1` ab 1.17.0 spielbar. Neue Gruppenstände nicht mit 1.16.0 fortsetzen. Die Umbenennung allein erfordert keine neue Fähigkeit oder Kopplung. Keine DB-Migration, Push-Art oder Hintergrundabfrage. Statistik enthält die abschließende Wertung; freiwilliger Ausstieg ersetzt sie mit −10, siehe [Aussteigen](leaving.md).
+
+Versteckte Minen stehen auch im Mehrspielerspiel zur Wahl. Wenn beide Regeln gewählt sind, teilen sie dieselbe Schadensroutine und dasselbe vorhandene Abschlussregister. Die automatische Mine verursacht keinen zusätzlichen Fünf-Punkte-Einsatz, verbraucht den Luftangriff nicht und löst keine Kettenreaktion aus. [Minenregeln und aktueller Freigabestand](hidden-mines.md), [Browser-/Testnachweise](responsive-qa.md).

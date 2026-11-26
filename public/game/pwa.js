@@ -1,4 +1,4 @@
-export const APP_VERSION='1.18.0';
+export const APP_VERSION='1.34.2';
 export const UPDATE_CHECK_INTERVAL=5*60*1000;
 function newerVersion(version){
  if(!/^\d+\.\d+\.\d+$/.test(version||''))return false;
@@ -7,10 +7,32 @@ function newerVersion(version){
  return false;
 }
 export function createPwa(onChange=()=>{},onInstalled=()=>{}) {
-  const state={status:'checking',message:'Offline-Dateien werden geprüft …',version:APP_VERSION,availableVersion:null,offlineReady:false,recovery:false,installed:matchMedia('(display-mode: standalone)').matches,prompt:null};
-  let registration=null,checking=null,lastCheck=-Infinity;
+  const state={status:'checking',message:'Offline-Dateien werden geprüft …',version:APP_VERSION,availableVersion:null,availableNotes:null,installedNotes:{},offlineReady:false,recovery:false,installed:matchMedia('(display-mode: standalone)').matches,prompt:null};
+  let registration=null,checking=null,lastCheck=-Infinity,requestedNotes=false;
   const publish=()=>onChange({...state});
-  function set(status,message){state.status=status;state.message=message;publish();}
+  function set(status,message){
+    state.status=status;state.message=message;publish();
+    if(status!=='checking'&&!state.installedNotes[APP_VERSION]&&!requestedNotes&&navigator.onLine){
+      requestedNotes=true;
+      loadInstalledNotes();
+    }
+  }
+  function rememberInstalled({version,releaseNotes}){
+    if(!releaseNotes?.[APP_VERSION]||version!==APP_VERSION&&state.installedNotes[APP_VERSION])return false;
+    state.installedNotes=version===APP_VERSION?releaseNotes:{[APP_VERSION]:releaseNotes[APP_VERSION]};
+    return true;
+  }
+  async function loadInstalledNotes(){
+    try{
+      const response=await fetch('/version.json',{credentials:'include'});
+      if(response.ok&&rememberInstalled(await response.json()))publish();
+    }catch{}
+  }
+  function rememberAvailable(report){
+    state.availableVersion=report.ready&&newerVersion(report.version)?report.version:null;
+    state.availableNotes=state.availableVersion?report.releaseNotes?.[state.availableVersion]??null:null;
+    if(report.ready)rememberInstalled(report);
+  }
   function workerStatus(worker){return new Promise((resolve,reject)=>{
     const channel=new MessageChannel();
     const timer=setTimeout(()=>{channel.port1.close();reject(Error('Der Offline-Speicher antwortet nicht. Bitte erneut prüfen.'));},6000);
@@ -44,7 +66,7 @@ export function createPwa(onChange=()=>{},onInstalled=()=>{}) {
           try{
             const saved=await workerStatus(existing.active);
             if(saved.ready){
-              state.availableVersion=newerVersion(saved.version)?saved.version:null;state.offlineReady=saved.version===APP_VERSION;state.recovery=false;
+              rememberAvailable(saved);state.offlineReady=saved.version===APP_VERSION;state.recovery=false;
               if(state.offlineReady)set('ready','Alle Spieldateien sind auf diesem Gerät offline verfügbar.');
               else if(newerVersion(saved.version))set('update',`Version ${saved.version} ist bereit. Öffne sie mit „Aktualisieren“. Deine bestätigten Züge bleiben gespeichert.`);
               else if(!navigator.onLine)throw Error('Der aktuelle Offline-Download benötigt Internet.');
@@ -56,14 +78,14 @@ export function createPwa(onChange=()=>{},onInstalled=()=>{}) {
         if(registration.active&&navigator.onLine)await registration.update();
         const active=await activeWorker(registration);
         const result=await workerStatus(active);
-        state.availableVersion=result.ready&&newerVersion(result.version)?result.version:null;
+        rememberAvailable(result);
         state.offlineReady=!!result.ready&&result.version===APP_VERSION;state.recovery=false;
         if(result.ready&&result.version===APP_VERSION)set('ready','Alle Spieldateien sind auf diesem Gerät offline verfügbar.');
         else if(result.ready&&newerVersion(result.version))set('update',`Version ${result.version} ist bereit. Öffne sie mit „Aktualisieren“. Deine bestätigten Züge bleiben gespeichert.`);
         else throw Error('Der Offline-Download ist noch nicht vollständig. Bitte erneut prüfen.');
       }catch(error){
         state.recovery=/redirect|behind a redirect/i.test(error?.message||'');
-        try{const cached=registration?.active||(await navigator.serviceWorker.getRegistration('/'))?.active;if(cached){const result=await workerStatus(cached);state.offlineReady=!!result.ready&&result.version===APP_VERSION;if(result.ready&&newerVersion(result.version)&&!state.recovery){state.availableVersion=result.version;set('update',`Version ${result.version} ist bereit. Öffne sie mit „Aktualisieren“. Deine bestätigten Züge bleiben gespeichert.`);return;}}}catch{}
+        try{const cached=registration?.active||(await navigator.serviceWorker.getRegistration('/'))?.active;if(cached){const result=await workerStatus(cached);state.offlineReady=!!result.ready&&result.version===APP_VERSION;if(result.ready&&newerVersion(result.version)&&!state.recovery){rememberAvailable(result);set('update',`Version ${result.version} ist bereit. Öffne sie mit „Aktualisieren“. Deine bestätigten Züge bleiben gespeichert.`);return;}}}catch{}
         if(background&&state.offlineReady&&!state.recovery){set('ready','Alle Spieldateien sind auf diesem Gerät offline verfügbar.');return;}
         const message=state.recovery?'Diese Installation verwendet eine weitergeleitete alte Adresse. Sichere deine lokalen Spielstände und öffne die aktuelle Adresse über „Hilfe beim App-Umzug“.':/offline|fetch|network|internet/i.test(error?.message||'')?'Das Update konnte nicht geladen werden. Bitte Internet prüfen und erneut versuchen.':'Die Offline-Dateien konnten nicht vollständig geprüft werden. Bitte mit Internet erneut prüfen.';
         set('error',message+(state.offlineReady?' Die bereits geladene Version bleibt offline nutzbar.':''));

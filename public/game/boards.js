@@ -58,7 +58,7 @@ export function validRandomBoard(layout){
 }
 export const validGameBoard=game=>validBoardId(game?.boardId)&&(game?.boardId!=='random'||validRandomBoard(game.boardLayout));
 const dynamicBoards=new WeakMap();
-export function boardFor(value){
+function baseBoardFor(value){
  const id=typeof value==='string'?value:value?.boardId;
  if(id!=='random'||typeof value==='string')return BOARD_CHOICES.find(board=>board.id===id)||CLASSIC;
  const layout=value.boardLayout,signature=layout&&Array.isArray(layout.rows)&&Array.isArray(layout.stars)?layout.rows.join('/')+'|'+layout.stars.join(','):null,cached=layout&&dynamicBoards.get(layout);
@@ -69,4 +69,14 @@ export function boardFor(value){
 export function requireBoardId(id='classic'){
  if(!validBoardId(id))throw Error('Dieses Spielbrett ist nicht verfügbar. Bitte alle Apps aktualisieren.');
  return id;
+}
+
+// A shuffled sheet belongs to one participant; the base layout remains available.
+export function boardFor(value,pid){
+ const base=baseBoardFor(value),colors=Number.isInteger(pid)&&pid>=0&&pid<(value?.players?.length??0)?value.variants?.layouts?.[pid]:null;
+ if(!colors)return base;
+ const signature=colors.join(''),cached=dynamicBoards.get(colors);if(cached?.signature===signature)return cached.board;
+ if(colors.length!==105||colors.some(c=>!COLORS.includes(c)))throw Error('Ungültige gemischte Farbverteilung.');
+ const board=Object.freeze({...base,cells:Object.freeze([...colors]),rows:Object.freeze(Array.from({length:7},(_,r)=>colors.slice(r*15,r*15+15).join('')))});
+ dynamicBoards.set(colors,{signature,board});return board;
 }

@@ -3,13 +3,34 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {createGame,BOARD,finishRound,applyMineAttack} from '../public/game/engine.js';
 import {colorAnnouncements,colorCompletionText,projectGame} from '../public/game/game-info.js';
+import {colorCompletionBanner} from '../public/game/variant-ui.js';
 
 // Exercise the actual app renderer, including its selection of events, without a DOM shim.
 const app=readFileSync(new URL('../public/game/app.js',import.meta.url),'utf8');
 const renderer=app.slice(app.indexOf('function completionsHTML(g){'),app.indexOf('\nfunction announceColors(g)'));
+const announcer=app.slice(app.indexOf('function announceColors(g){'),app.indexOf('\nfunction announceBonusFields(g)'));
 const esc=s=>String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
 const render=Function('colorAnnouncements','colorCompletionText','myPid','esc',renderer+';return completionsHTML;')(colorAnnouncements,colorCompletionText,()=>0,esc);
-const fill=(g,pid)=>BOARD.forEach((c,i)=>{if(c==='g')g.players[pid].marks[i]=true;});
+const freshAnnouncements=()=>Function('colorAnnouncements','colorCompletionBanner','myPid',"let colorNoticeGame='',seenColorNotices=new Set();\n"+announcer+';return announceColors;')(colorAnnouncements,colorCompletionBanner,()=>0);
+const fill=(g,pid,color='g')=>BOARD.forEach((c,i)=>{if(c===color)g.players[pid].marks[i]=true;});
+
+test('Colour banners announce newly scored colours once, with grouped colours and hidden points',()=>{
+ const announce=freshAnnouncements();
+ const hidden=createGame(['Du','Mika'],'room',[],{hiddenScores:true});hidden.gameId='hidden-colors';
+ assert.equal(announce(hidden),undefined);
+ fill(hidden,0);assert.equal(announce(hidden),null);
+ finishRound(hidden);
+ const snapshot=projectGame(hidden,0);
+ assert.deepEqual(announce(snapshot),{type:'colors',color:'g',title:'Du hast Grün abgeschlossen',detail:''});
+ assert.equal(announce(snapshot),null);
+ assert.equal(freshAnnouncements()(snapshot),undefined);
+
+ const open=createGame(['Du','Mika'],'room');open.gameId='visible-colors';
+ announce(open);fill(open,1);finishRound(open);
+ assert.deepEqual(announce(open),{type:'colors',color:'g',title:'Mika hat Grün abgeschlossen',detail:'+5 Punkte'});
+ fill(open,0,'y');fill(open,1,'b');finishRound(open);
+ assert.deepEqual(announce(open),{type:'colors',color:null,title:'2 Farbabschlüsse',detail:'Gelb · Blau'});
+});
 
 test('Confirmed colour cards survive many rounds, reload and every supported mode without exposing hidden points',()=>{
  for(const mode of ['solo','computer','local','room','direct'])for(const hiddenScores of [false,true]){

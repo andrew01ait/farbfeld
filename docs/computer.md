@@ -1,6 +1,32 @@
 # Computer-Stärken
 
-<!-- farbfeld-version: 1.18.0 -->
+<!-- farbfeld-version: 1.34.2 -->
+
+## Schatzsuche 1.23.0
+
+Neue optionale Bonuspartien enthalten Warm/kalt-Hinweise, grobe Fundspuren und den einmaligen Kettenbonus. Leicht behält die bisherige Zugwahl. Mittel/Schwer berücksichtigen ausschließlich ihre eigenen bereits erhaltenen Temperatur-/Spaltenband-Hinweise als begrenzten Erwartungswert für die vorhandenen legalen Kandidaten. Ohne Hinweis gibt es keinen Suchbonus. Unbekannte Positionen, fremde Hinweise, vorzeitige fremde Funde und künftige Zufallswerte bleiben unzugänglich. Die hypothetische schwere Engine-Simulation entfernt weiterhin die gesamten privaten Bonusdaten. Geheime Positionen mit werfenden Gettern sind auch nach Hinweisen regressionsgeprüft.
+
+## Neue geheime Minen · 1.22.0
+
+Der Computer platziert vor dem ersten Wurf seine zwei Minen zufällig und bestätigt nur seine Seite. Die menschliche Aufstellung bleibt editierbar bis zur eigenen Bestätigung; Flotte und Minen blockieren gemeinsam den Start. Easy/Medium/Hard lesen keine menschlichen Minenpositionen bei der Zugwahl und verwenden dabei keinen Zufall. Tatsächliche bestätigte Computerzüge können menschliche Minen auslösen und werden mit derselben Engine korrigiert. Kein neues Verhalten für Partien ohne gewählte Minen. Der bisherige Mineneinsatz vor dem normalen Computerzug heißt Luftangriff, mit unveränderter Fünf-Punkte-Gebühr. [Regeln](hidden-mines.md).
+
+
+## Gruppierte Mischung 1.21.1
+
+Alle drei Stärken und menschliche Züge lesen weiterhin ausschließlich den tatsächlichen eigenen Plan. Die neue gruppierte Mischung läuft nur beim echten Fünf-Runden-Abschluss; Suche und Hinweise ziehen keine zukünftigen Zufallszahlen und simulieren keine geheime Mischung. Größere freie Farbgruppen bleiben spielbar; Punkte und Farbbudgets ändern sich durch den Gruppentausch nicht.
+
+
+## Variantenfreigabe 1.21.0
+
+Die vier zuvor gegen Computer erprobten Varianten sind nach ausdrücklichem Nutzer-OK auch für menschliche Mehrspieler freigegeben. Computerrolle 0/1, drei Stärken, private Flottengrenzen und bekannte Speicherung bleiben erhalten. Gemeinsame Regeln verwenden nun variantsEnabled; die Computerfabrik bleibt genau zwei Personen. Neue spätere Mechaniken weiterhin zuerst nur gegen Computer.
+
+
+## Varianten ab 1.20.0
+
+Vier optionale Regeln in der Computer-Einrichtung, auch kombinierbar mit Minen/Bonusfeldern. [Vollständige Regeln](computer-variants.md). Leicht bleibt ohne Varianten die bisherige Suche; mit Varianten nutzt er Fähigkeiten als Ausweg, wenn kein normaler Zug möglich ist. Mittel bewertet öffentliche Fundorte/Aufträge und die eigenen bestätigten Schüsse mit. Schwer nutzt dafür einen begrenzten eigenen Zukunftsblick ohne Simulation oder Lesen der geheimen Gegnerflotte; unmittelbar vor einer Neumischung entfällt die unbekannte Zukunft. Die frühere 216er-Stärkenprobe beschreibt Partien ohne die neuen Varianten, keine bewiesene Balance mit Varianten.
+
+Keine geheime Bonusposition, verdeckte fremde Markierung, fremder Jokerstand, gegnerische Flotte oder künftige Zufallszahl darf die Entscheidung beeinflussen. Die Varianten-Suche ist RNG-frei; nur echte Rundenabschlüsse mischen. `scoring-combinations.test.mjs` prüft komplette Partien aller 128 Kombinationen aus vier Varianten, Minen, Bonusfeldern und verdeckten Punkten. Physische Android-Balance und Nutzerabnahme bleiben separat.
+
 
 ## Hinweise und verdeckte Ansicht
 
@@ -13,11 +39,9 @@ Drei geheime **Bonusfelder** vergeben je +2 an alle ersten Finder desselben Wurf
 **Partie verlassen** gibt sofort einen einmaligen Verlaufseintrag mit −10 Punkten und Niederlage. Die anderen spielen weiter; die letzte aktive Person gewinnt sofort. Im Internet wandert die Gastgeberrolle weiter. Offline bleibt das ursprüngliche Gastgeber-Handy als Zuschauer und Verbindung geöffnet; Verbindungsverlust pausiert sicher, ohne neue Autorität zu erfinden. Alle beteiligten Apps für neue Regeln auf 1.17.0 aktualisieren. [Bonusfelder](bonus-fields.md) · [Minen](mines.md) · [Random](random-board.md) · [Aussteigen](leaving.md).
 
 
+## Offline-Testprotokoll
 
-## Neu 1.16.0: Offline-Testprotokoll und optionale Computer-Minen
-
-Ein freiwilliges lokales A/B-Testprotokoll hilft bei Offline-Kopplung und Spielabgleich; es ist aus Einstellungen und Kopplungsdialogen exportierbar. [Testanleitung und Datenschema](offline-diagnostics.md). Die neue Startoption **Minenangriff testen** wurde in 1.16.0 zunächst gegen den Computer erprobt; ab 1.17.0 gilt sie für alle Mehrspielerarten: gegnerischer Farbabschluss schaltet einen einmaligen Angriff für fünf Punkte frei. Ein leeres Zielfeld ist ein vollständiger Fehlschlag ohne Nachbarschaden. [Regeln, verdeckte Zielwahl und Wertung](mines.md).
-
+Das freiwillige lokale A/B-Testprotokoll unterstützt Kopplungs- und Abgleichstests. [Anleitung](offline-diagnostics.md).
 
 ## Spielen
 
@@ -61,8 +85,7 @@ Schwer benötigte im Host-Lauf durchschnittlich etwa 3,7–3,9 ms pro Zug und ma
 
 Regressionen prüfen gespeicherte/alte Stärken, Änderung ohne Zustandsverlust, identische Würfe ohne Vorausschauen, unabhängige verdeckte Gegnerdaten, einen sicheren Sieg durch die zweite Farbe, Jokergrenzen, unverändertes Leicht und vollständige Partien auf allen drei Brettern. Responsive und veröffentlichte Prüfung stehen in [responsive-qa.md](responsive-qa.md), Releasechecks in [deployment.md](../deployment.md).
 
-Veröffentlichte Oberfläche einschließlich Stärkewechsel mit erhaltenem Entwurf und Fortsetzen nach Neuladen geprüft; Bildnachweis (private QA screenshot omitted). Eigene Testpartie danach abgebrochen. Gerenderte Handy-/Tablet- und physische Android-Prüfung bleiben offen.
+Veröffentlichte Oberfläche einschließlich Stärkewechsel mit erhaltenem Entwurf und Fortsetzen nach Neuladen geprüft; Bildnachweis. Eigene Testpartie danach abgebrochen. Gerenderte Handy-/Tablet- und physische Android-Prüfung bleiben offen.
 
 
-1.13.1: Veröffentlichter PWA-Updateweg und Titel-Zugang zum Stärkewechsel Mittel → Schwer bei unverändertem Wurf 1 auf Desktop geprüft. Eigene Testpartie anschließend abgebrochen. Desktop-Nachweis (private QA screenshot omitted). Handy-/Tablet-Rendering und physisches Android bleiben offen.
-
+1.13.1: Veröffentlichter PWA-Updateweg und Titel-Zugang zum Stärkewechsel Mittel → Schwer bei unverändertem Wurf 1 auf Desktop geprüft. Eigene Testpartie anschließend abgebrochen. Desktop-Nachweis. Handy-/Tablet-Rendering und physisches Android bleiben offen.

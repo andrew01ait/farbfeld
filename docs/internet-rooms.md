@@ -1,6 +1,43 @@
 # Internet-Spielräume
 
-<!-- farbfeld-version: 1.18.0 -->
+<!-- farbfeld-version: 1.34.2 -->
+
+## Luftangriff in neuen Raumspielen
+
+Mit Farbfeld 1.33.0 oder neuer auf allen teilnehmenden Geräten startet die gewählte Option **Luftangriff** mit zwei unabhängig erfüllbaren Voraussetzungen. Bei gemischten Versionen gilt die bisherige Farbfreigabe. Bereits gestartete Partien behalten ihre Startregel. Eine alte App benötigt ein Update, um eine bereits gestartete Partie mit beiden Freigaben zu öffnen. [Angriffsregeln](mines.md)
+
+## Revanche, Schatzsuche und versteckte Minen · 1.25.0
+
+Beim Wechsel zum Rückspiel bleibt das letzte fertige Ergebnis für die Teilnehmenden dieser Partie im Raum verfügbar. Ein Gast, der erst nach dem Neustart zurückkommt, sieht es automatisch, solange es auf seinem Gerät ungesehen ist. In Lobby und laufender Partie öffnet der Pokal neben dem Raumnamen den Endstand. Während der Vorbereitung steht er neben **Zur Startseite**. Über die Glocke bei **Deine Räume** findest du zudem frühere auf diesem Gerät erfasste Endstände mit Datum, Uhrzeit und deinem Ausgang. Neu eingeladene Personen sehen nur Ergebnisse ihrer eigenen Partien.
+
+Schatzsuche in neu gestarteten Räumen bietet Heiß/Warm/Kalt, nächste Spur, fünf eigene Suchzüge und den Kettenbonus. Versteckte Minen können Gastgeber unter **Varianten** mit Schiffsboni kombinieren. Jede Person bestätigt Flotte und Minen auf dem eigenen Gerät direkt hintereinander. Beide Spielregeln erfordern auf allen Handys Farbfeld 1.25.0 oder neuer.
+
+## Aufstellraster und eigener Wartestatus · 1.22.3
+
+Das eigene Flottenraster passt A–O/1–7 vollständig ein und lässt sich unabhängig vom späteren Brett zoomen. Koordinaten und authentifizierte Bestätigung bleiben erhalten; Viewports senden keine zusätzliche Raumaktion. Der Wartestatus folgt auf die erforderlichen eigenen Schritte, der erste Wurf wartet weiter auf gemeinsame Bereitschaft. Das neue lokale Aufstellungs-UI erweitert weder Netzwerkoptionen noch die bisherige Computerfreigabe versteckter Minen.
+
+
+## Alle umgesetzten Varianten · 1.21.0
+
+Der Gastgeber kann vor Partie starten zusätzlich Schiffsboni, Entdeckermodus, öffentliche Aufträge und Farben neu mischen wählen. Schiffe genau zwei Personen, andere Varianten 2–6; alle bestehenden Zusatzregeln kombinierbar. Ein dritter Beitritt bei bereits gewählten Schiffsboni verlangt deren Abschaltung in der Lobby. Laufende Spiele behalten ihre Auswahl.
+
+Alle Mitglieder benötigen echte variants-v1-Registrierung ab 1.21.0; Warnungen nennen unbestätigte Namen und bitten um erneutes Öffnen. Nur das eigene Token registriert Fähigkeiten oder bearbeitet die eigene Flotte; Start/Optionen bleiben hostexklusiv. fleet prüft Spiel-ID, Runde, aktuelle Revision und eigenes Bereitflag. Beide Flotten bestätigen, dann normal spielen. Server sendet private Projektionen, keine gegnerische Flotte auch bei offenen Punkten. CAS-Konflikt, falsche Partie oder fremder Zugang ändern keinen Stand. Kein neuer SQL-Schritt oder Raumtransport.
+
+
+## Menüreihenfolge 1.19.4
+
+Im Menü Zusammen steht Internet – Spielraum zuerst, danach Offline – mehrere Handys und Ein Handy weitergeben. Die drei bestehenden Ziele, Beschriftungen und Abläufe bleiben erhalten. Reine DOM-Reihenfolge; keine zusätzliche Anfrage, Spiel-/Push- oder Speicheränderung.
+
+
+## Kompakte Karten 1.19.1
+
+Online steht zusammen mit Code und bestätigter Spielerzahl in der Metazeile. Raum- und Teilnehmernamen umbrechen vollständig; der aktuelle Gastgeber bleibt fett mit ♛. Neutrale Kartenfläche und kleine Aktionen ersetzen die großen Farbflächen. Zugang entfernen in Alle Räume bleibt bestätigt und gerätelokal; Raumabrufe und Berechtigungen bleiben gleich.
+
+
+## Viele Räume und Teilnehmer
+
+Die Startseite zeigt höchstens drei gespeicherte Partien, bekannte eigene Zuggelegenheiten zuerst. Alle Räume enthält alle Zugänge mit Online-/Offline-Filter, Suche nach Raumname/Code/Person und zehn Einträgen pro Seite. Karten zeigen Online · Internet-Raum und die Teilnehmer; der aktuelle Host ist fett mit ♛, auch nach Gastgeberwechsel. Teilnehmernamen kommen im bestehenden authentifizierten Index, ausschließlich nach Prüfung des jeweiligen Raumtokens. Keine neuen Polls, keine verlorenen Zugänge durch Filtern.
+
 
 ## Direktnamen 1.18.0
 
@@ -9,17 +46,14 @@ Direktpartien verwenden nun dieselbe kontextuelle Beenden-/Verlassen-Bestätigun
 
 ## Neue Partien mit Zusatzregeln
 
-Nach Erstellen/Beitreten wählt der Gastgeber in der Lobby **Random**, **Minenangriff** und **Bonusfelder** vor **Partie starten**; die drei Optionen sind kombinierbar für 2–6 Personen und offene/verdeckte Punkte. Im Erstellungsdialog steht jetzt ausdrücklich, dass die Wahl anschließend im Raum erfolgt. Bei einer alten App aktualisieren und diesen Raum auf jedem Handy erneut öffnen; vorhandene Fähigkeitsregistrierung bleibt authentifiziert pro Mitglied. Laufende Partien behalten ihre Regeln. Der verdeckte Modus erlaubt währenddessen nur das eigene Blatt, keine fremden Blätter oder Punktestände.
+Nach Erstellen/Beitreten wählt der Gastgeber in der Lobby **Random**, **Minenangriff** und **Schatzsuche** vor **Partie starten**; die drei Optionen sind kombinierbar für 2–6 Personen und offene/verdeckte Punkte. Im Erstellungsdialog steht jetzt ausdrücklich, dass die Wahl anschließend im Raum erfolgt. Bei einer alten App aktualisieren und diesen Raum auf jedem Handy erneut öffnen; vorhandene Fähigkeitsregistrierung bleibt authentifiziert pro Mitglied. Laufende Partien behalten ihre Regeln. Der verdeckte Modus erlaubt währenddessen nur das eigene Blatt, keine fremden Blätter oder Punktestände.
 
-## Neu 1.17.0: Bonusfelder, Random und gemeinsame Minen
+## Neu 1.17.0: Schatzsuche, Random und gemeinsame Minen
 
-Drei geheime **Bonusfelder** vergeben je +2 an alle ersten Finder desselben Wurfs; Bekanntgabe erst nach der gemeinsamen Wertung, Punkte bleiben trotz Minen erhalten. **Random** erzeugt bei jedem neuen Start ein gemeinsames, gespeichert fortsetzbares Brett. Die optionale **Mine** trifft ein gewähltes Zielfeld bei allen aktiven Gegnern, einmal pro Person für insgesamt fünf Punkte. Die Explosion dauert drei Sekunden; Schadensmarkierungen bleiben bis Ende des nächsten Wurfs. Leere Ziele verursachen beim jeweiligen Gegner keinerlei Schaden.
+Drei geheime **Schatzsuche** vergeben je +2 an alle ersten Finder desselben Wurfs; Bekanntgabe erst nach der gemeinsamen Wertung, Punkte bleiben trotz Minen erhalten. **Random** erzeugt bei jedem neuen Start ein gemeinsames, gespeichert fortsetzbares Brett. Die optionale **Mine** trifft ein gewähltes Zielfeld bei allen aktiven Gegnern, einmal pro Person für insgesamt fünf Punkte. Die Explosion dauert drei Sekunden; Schadensmarkierungen bleiben bis Ende des nächsten Wurfs. Leere Ziele verursachen beim jeweiligen Gegner keinerlei Schaden.
 
-**Partie verlassen** gibt sofort einen einmaligen Verlaufseintrag mit −10 Punkten und Niederlage. Die anderen spielen weiter; die letzte aktive Person gewinnt sofort. Im Internet wandert die Gastgeberrolle weiter. Offline bleibt das ursprüngliche Gastgeber-Handy als Zuschauer und Verbindung geöffnet; Verbindungsverlust pausiert sicher, ohne neue Autorität zu erfinden. Alle beteiligten Apps für neue Regeln auf 1.17.0 aktualisieren. [Bonusfelder](bonus-fields.md) · [Minen](mines.md) · [Random](random-board.md) · [Aussteigen](leaving.md).
+**Partie verlassen** gibt sofort einen einmaligen Verlaufseintrag mit −10 Punkten und Niederlage. Die anderen spielen weiter; die letzte aktive Person gewinnt sofort. Im Internet wandert die Gastgeberrolle weiter. Offline bleibt das ursprüngliche Gastgeber-Handy als Zuschauer und Verbindung geöffnet; Verbindungsverlust pausiert sicher, ohne neue Autorität zu erfinden. Alle beteiligten Apps für neue Regeln auf 1.17.0 aktualisieren. [Schatzsuche](bonus-fields.md) · [Minen](mines.md) · [Random](random-board.md) · [Aussteigen](leaving.md).
 
-
-
-Bei einer Revanche ist **Noch einmal spielen** nur der Weg zurück in die Lobby. Erst der nächste bestätigte Start informiert die anderen Teilnehmenden einmal per Push, auch wenn sie noch nicht dran sind. Benachrichtigungen müssen aktiviert und beide Apps auf 1.15.0 aktualisiert sein. Eigene Züge haben Vorrang, sichtbare Apps bleiben still und das Minutenlimit gilt. Derselbe Raumcode und persönliche Zugänge bleiben erhalten.
 
 ## Mehrere Räume behalten und wieder öffnen
 
@@ -49,7 +83,7 @@ Der Gastgeber öffnet **Raumnamen ändern** in der Lobby oder tippt während des
 
 Vor dem Start können bis zu sechs Personen mit demselben Code beitreten. Nur der Gastgeber sieht **Entfernen** neben anderen Personen. Eine Rückfrage in der App erklärt, dass der bisherige Zugang ungültig wird. Das Entfernen ist keine dauerhafte Sperre: Mit Code darf die Person erneut beitreten und erhält einen neuen Zugang. Der Gastgeber bleibt im Raum.
 
-Während einer Partie kommen keine neuen Personen hinzu. Freiwilliges Aussteigen zählt −10 und lässt die übrigen weiterspielen. Der aktuelle Gastgeber öffnet nach Spielende mit **Noch einmal spielen** die Lobby. Ausgestiegene werden dabei entfernt; ihre alten Zugänge autorisieren nicht mehr. [Details](leaving.md).
+Während einer Partie kommen keine neuen Personen hinzu. Jede Person kann ausdrücklich mit −10 Punkten aussteigen. Nach Spielende öffnet der aktuelle Gastgeber mit **Noch einmal spielen** die Lobby; Ausgestiegene werden dabei entfernt und ihre bisherigen Zugänge autorisieren nicht mehr. Der gleiche Code kann danach für einen neuen Beitritt verwendet werden.
 
 ## Spielbrett für die nächste Partie
 
@@ -77,7 +111,7 @@ Auf jedem Handy wird nur dessen eigene Rolle für das lokale Profil erfasst. Abg
 
 1.8.2: Reproduktion eines älteren Raums mit aktueller Gastgeber- und veralteter Gastregistrierung. Ein normaler authentifizierter Gast-GET ohne `hello` gibt die Bretter frei; Host-GET allein bestätigt keinen Gast. Wiederholte gleiche Meldungen schreiben nicht. Tests umfassen fremde Zugänge, fehlende Header, unbekannte Fähigkeiten, echte ältere Clients, parallel gespeicherte Züge/Namen, Gastentfernung, begrenzte Versionskonflikte und fehlende Räume. Keine Push-Ausgabe für diese Aktualisierung. Die Browser-Vorschau für 1.8.2 war trotz gemeldetem Start nicht erreichbar (Verbindung abgelehnt); der Übergang wurde daher über die echte API-Route mit SQLite-Testdaten geprüft, nicht im Browser abgenommen. Physische Android-Prüfung bleibt offen.
 
-API-Integration prüft vollständige Partien, optionale und alte unbenannte Räume, Normalisierung/Grenzen, Hostrechte, Versionskonflikte, unveränderte Enginezustände beim Umbenennen, nachträgliche Brettfähigkeiten, nächste Partie mit anderem Brett, Lobby-Entfernen, ungültige alte Zugänge und erneuten Beitritt. Browser-QA verwendet getrennte Clients gegen die echte lokale Raum-API und prüft Anzeige, Umbenennen, offene Auswahl, Gästeansicht und Querformat. Updateausgaben mit einem simulierten fertigen Worker sind gesonderte UI-Tests. Browser-Ergebnis: 51 Würfe bis Spielende, danach im selben Code Mosaik gewählt, Gast entfernt, verständlicher Zugangswechsel und erneuter Beitritt. Eigene und Gästeauswahl blieben beim Umbenennen jeweils mit fünf markierten Feldern erhalten. Langer Name im Querformat: Bildnachweis (private QA screenshot omitted). Der Update-Banner (private QA screenshot omitted) zeigt eine simulierte neuere Worker-Version; „Später“ und die Rückfrage bei offener Auswahl wurden geprüft. Echte Android-/Push-/Hotspot-Abnahme bleibt offen.
+API-Integration prüft vollständige Partien, optionale und alte unbenannte Räume, Normalisierung/Grenzen, Hostrechte, Versionskonflikte, unveränderte Enginezustände beim Umbenennen, nachträgliche Brettfähigkeiten, nächste Partie mit anderem Brett, Lobby-Entfernen, ungültige alte Zugänge und erneuten Beitritt. Browser-QA verwendet getrennte Clients gegen die echte lokale Raum-API und prüft Anzeige, Umbenennen, offene Auswahl, Gästeansicht und Querformat. Updateausgaben mit einem simulierten fertigen Worker sind gesonderte UI-Tests. Browser-Ergebnis: 51 Würfe bis Spielende, danach im selben Code Mosaik gewählt, Gast entfernt, verständlicher Zugangswechsel und erneuter Beitritt. Eigene und Gästeauswahl blieben beim Umbenennen jeweils mit fünf markierten Feldern erhalten. Langer Name im Querformat: Bildnachweis. Der Update-Banner zeigt eine simulierte neuere Worker-Version; „Später“ und die Rückfrage bei offener Auswahl wurden geprüft. Echte Android-/Push-/Hotspot-Abnahme bleibt offen.
 
 Neue eigene Spielgelegenheiten werden bei aktiviertem Web Push auch an länger geschlossene Apps gemeldet. Ab 1.9.8 kann die Nachricht bis zu 24 Stunden auf ein nicht erreichbares Handy warten; vor der Anzeige muss der Zug noch aktuell und ungelesen sein. Beide Geräte aktualisieren. Keine periodischen Erinnerungen und keine zusätzlichen Hintergrundabrufe. [Regeln und offene Geräteprüfung](notifications.md).
 
@@ -98,4 +132,3 @@ Produktionsprüfung am 5.11.2026: Ein erhaltener Bestandsraum mit bereits verstr
 1.11.0 ersetzt die dauerhafte Aufbewahrung aus 1.10.2 durch echte Inaktivitäts-Bereinigung, ohne den alten Fehler einer festen Frist ab Erstellung wieder einzuführen. Tests simulieren Kalendergrenzen; reale Android-/Hotspot-/Push-Abnahme bleibt eigenständig.
 
 253 Tests einschließlich 24 neuer Prüfungen für Raumregister, Entwürfe, Cleanup/Rennen, parallele Spiele und Mehrraum-Benachrichtigungen bestanden. Raum- und Kopplungs-API-Integrationen, JavaScript, TypeScript und Dokumentationsprüfung erfolgreich. Die neue Migration ist mit frischer SQLite-Datenbank geprüft; Kalendergrenzen werden kontrolliert simuliert. Kein realer Zweiwochenbetrieb und keine neue physische Android-/Push-/Hotspot-Abnahme.
-

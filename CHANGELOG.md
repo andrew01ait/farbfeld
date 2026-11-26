@@ -1,6 +1,306 @@
 # Änderungsprotokoll
 
-<!-- farbfeld-version: 1.18.0 -->
+<!-- farbfeld-version: 1.34.2 -->
+
+## 1.34.2 – 2026-11-26
+
+- Öffentliche Farbfeld-Website mit Regeln, Spielmodi und Beispielbildern. **Jetzt spielen** führt direkt zur App.
+- Das Impressum zeigt Telefon und E-Mail nach einer bewussten Formularaktion. Die Startseite liefert eine Sitemap, Suchmaschinen-Metadaten und eine Linkvorschau.
+- Die App verlinkt Website und Impressum. Der Offline-Start über `/play` und der Offline-Rückfall alter Startseiten-Lesezeichen bleiben verfügbar.
+
+## 1.34.1 – 2026-11-26
+
+- Luftangriff verwendet dieselbe Anordnung für Titel, Status, Punkte und Hilfe wie die anderen Spielkarten. Die Freischaltungen stehen direkt unter dem Titel. **Ziel wählen** erscheint bei einem freien Angriff.
+- Die Hilfe erklärt die Freischaltungen der laufenden Partie, die Zielwahl, den Einsatz von 5 Punkten und die Schadensmarkierungen.
+
+## 1.34.0 – 2026-11-26
+
+- Acht Kapitel führen in 27 Clips durch Spielstart, Aufstellung, Spielanzeigen und Wertung. Die Beispiele zeigen die Bedienelemente in Computerpartie und Internet-Lobby.
+- Jedes Kapitel erklärt das Ziel und die Punkte. Minen- und Flottenaufstellung, Schusskarte, Schatzspur und Auftragsfortschritt lassen sich Schritt für Schritt ansehen.
+
+## 1.33.0 – 2026-11-26
+
+- Das Fragezeichen öffnet die **Spielanleitung** mit acht kurzen Spielclips. Grundspiel und Zusatzregeln haben jeweils ein eigenes Kapitel mit Beispiel und Regeln. Die Clips gehören zum Offline-Download.
+- Bei neuen Partien kann ein gegnerischer Farbabschluss ebenso wie das Erreichen von 70 Feldern auf einem Gegnerbrett je einen Luftangriff freischalten. Jeder Einsatz kostet 5 Punkte. Bereits gestartete Spiele und neue Netzwerkpartien mit älteren Apps bleiben bei der bisherigen Regel.
+
+## 1.32.4 – 2026-11-21
+
+- Spaltenbuchstaben und Punktzahlen über und unter dem Spielbrett skalieren beim Pinch-Zoom und über die Zoomtasten gemeinsam mit den Feldbreiten. Das H steht mittig über der Startspalte.
+- Einpassen berechnet im Querformat die Höhe der Beschriftungszeilen aus der Zielbreite.
+
+## 1.32.3 – 2026-11-21
+
+- Minenexplosionen und Luftangriffe holen die sichtbaren Trefferfelder vor dem Effekt ins Bild. Der Ausschnitt berücksichtigt seitlichen Zoom, das Ereignisbanner und die feste Würfelleiste.
+- Bei einem gleichzeitigen Schuss bestimmt der sichtbare Minentreffer den Ausschnitt. Im Direktspiel bleibt der Effekt nach der Bestätigung im gerenderten Spielfeld.
+
+## 1.32.2 – 2026-11-20
+
+- **Zum Spielfeld** sitzt im Hoch- und Querformat unten rechts. Bei fester Würfelleiste steht das Gitter-Symbol unten rechts in einer eigenen Aussparung neben den Spielaktionen.
+
+## 1.32.1 – 2026-11-20
+
+- Ein bestätigter Farbabschluss erscheint im Ereignisbanner mit einem animierten Häkchen in der abgeschlossenen Farbe. Das Banner fasst gleichzeitige Abschlüsse zusammen.
+- Bei einem eigenen Schatzfund zeigt das Banner sofort das animierte Geschenk und den Hinweis auf die Wertung. Beim gewerteten eigenen öffentlichen Auftrag erscheint eine animierte Fahne.
+- **Zum Spielfeld** bleibt als schwebender Knopf erreichbar und springt zum angezeigten Brett. Während der Feldauswahl steht er über der festen Würfelleiste.
+
+## 1.32.0 – 2026-11-20
+
+- Die Karten **Luftangriff** und **Versteckte Minen** erklären den Schaden, die wieder angekreuzten Felder und die Markierungsfrist des sichtbaren Spielfelds. Die Feldmarkierungen bleiben direkt im Raster.
+- Ereignisbanner zeigen Luftangriffe, Minenexplosionen, versenkte Schiffe, Schatzfunde, Schatzketten und bestätigte eigene Aufträge bis zu sechs Sekunden. Der Flugzeuganflug dauert 2,2 Sekunden, die Bombe landet vor der Druckwelle.
+
+## 1.31.2 – 2026-11-20
+
+- Die Zeitfelder der PC-Diagnose sind breiter. **−100** und **+100** verstellen jeden Wert in 100-ms-Schritten. Die Eingabe bleibt millisekundengenau.
+- **Zeit nach dem letzten Schritt** bezeichnet den Abschnitt vom letzten Eintrag bis zum Ende der Wiedergabe.
+
+## 1.31.1 – 2026-11-20
+
+- **Statistik → Ergebnisse** zeigt Siege, Niederlagen, geteilte Siege, Platzierung und Mitspielende direkt in der Liste. Ältere Partien mit uneindeutiger Zuordnung zeigen **Ausgang unbekannt**.
+- Ein Tipp auf eine Partie zeigt den gespeicherten Stand mit Punkten und übrigen Jokern. Die Rückkehr zur Liste erhält die Scrollposition. Verdeckte fremde Punkte beim Ausstieg bleiben verdeckt.
+
+## 1.31.0 – 2026-11-20
+
+- In der PC-Diagnose sind der Zeitabstand je Zeitleistenschritt, der Vorlauf und der Ausklang einstellbar. **Mit Zeiten abspielen** zeigt die aufgezeichnete Spielansicht mit den gewählten Abständen.
+- Die gemessenen Zeiten lassen sich zurücksetzen. Kopiertes Feedback enthält den Zeitentwurf. Im selben Bild aufgezeichnete Effekte werden gemeinsam wiedergegeben.
+
+## 1.30.1 – 2026-11-20
+
+- Jeder öffentliche Auftrag zeigt bereits eingeklappt den eigenen bestätigten Fortschritt und seine Frist. Die Details verwenden denselben Zähler.
+- **Letztes Ergebnis ansehen** ist als Pokal neben dem Raumnamen erreichbar. In der Aufstellung und beim Warten steht er bei der Navigation.
+
+## 1.30.0 – 2026-11-19
+
+- Der Update-Hinweis auf der Startseite zeigt bis zu zwei Stichpunkte zur angebotenen Version. **Details** öffnet den Abschnitt **Versionshinweise** in den Einstellungen.
+- In den Einstellungen stehen ausführlichere Hinweise zur installierten und vorherigen Version. Wenn ein Update bereit ist, erscheinen dessen Hinweise zuerst. Ältere App-Versionen zeigen beim Wechsel auf 1.30.0 noch ihren bisherigen Update-Hinweis.
+
+## 1.29.1 – 2026-11-19
+
+- Die [PC-Diagnose](https://farbfeld-andrew.endruuu.chatgpt.site/diagnose) öffnet **Animationen testen** direkt. Sie lädt die Spielansicht, die seitliche Zeitleiste und die Standbilder aus derselben Version, auch wenn die installierte App noch eine ältere Ansicht aus ihrem Offline-Cache zeigt.
+- Die Beispielpartien verwenden die gewählten Darstellungseinstellungen und arbeiten mit eigenen Daten im Arbeitsspeicher.
+
+## 1.29.0 – 2026-11-19
+
+- Am PC steht **Ablauf prüfen** mit der Zeitleiste direkt rechts neben der Debug-Spielansicht. Die Ereignisse erscheinen nach der Wiedergabe in derselben Spalte.
+- Ein Klick auf ein Ereignis zeigt links den erfassten Ausschnitt und markiert die dort sichtbaren Elemente. **Zur Spielansicht**, **Bis hier abspielen** und **Feedback kopieren** bleiben direkt im Prüfbereich.
+
+## 1.28.0 – 2026-11-19
+
+- **Ablauf prüfen** in der Debug-Spielansicht öffnet eine Zeitleiste mit Brett, Bildausschnitt, Scrollbefehl und gemessener Bewegung. Die Einträge markieren, wann Treffer, Karten, Dialoge und Meldungen ins Bild kamen.
+- **Moment ansehen**, **Bis hier abspielen** und **Feedback kopieren** halten einen konkreten Prüfschritt mit Szenennamen, Zeitpunkt, Version und Startansicht fest. Die Analyse bleibt in der Debug-Beispielpartie.
+
+## 1.27.0 – 2026-11-19
+
+- **Spielansicht öffnen** in der Animationsvorschau zeigt die vollständige Partie mit Originalbrett, Moduskarten, Scrollwechseln, Toasts und Einblendungen. Die Wiedergabe beginnt an der gewählten Scrollposition.
+- 24 Beispielszenen umfassen zusätzlich Schatzhinweise und Wertung, Farbabschluss, Entdeckermodus, Auftrag, Endergebnis sowie die Emoji-Reaktion. Luftangriff und Minen lassen sich aus verschiedenen Spielperspektiven prüfen.
+- Alle Szenen und zwölf Ansichtsgrößen wurden im Chromium geprüft. Die Prüfung zeigt auch, dass die Schusskarte nach dem letzten versenkten Schiff sofort zuklappt. [Responsive QA](docs/responsive-qa.md#animationen-in-der-vollständigen-spielansicht--1270)
+
+## 1.26.0 – 2026-11-19
+
+- **Einstellungen → Hilfe & Diagnose → Animationen testen** spielt elf feste Beispiele für Luftangriff, versteckte Minen, Schiffsboni, Farbmischung und Würfelwurf ab. Die Vorschau nutzt die Spieleffekte und wird bei jedem Abspielen neu aufgebaut.
+- Alle elf Szenen, die Wiederholung und die Trennung von einer laufenden Partie sind im Browser geprüft. [Responsive QA](docs/responsive-qa.md)
+
+## 1.25.3 – 2026-11-18
+
+- Der Zugzähler steht unter **Deine Räume**. Glocke, **Alle Räume** und **Raum hinzufügen** bleiben auch auf schmalen Handys auf einer Höhe. [Responsive QA](docs/responsive-qa.md)
+
+## 1.25.2 – 2026-11-18
+
+- Die Glocke öffnet **Ergebnisse** mit bis zu 20 abgeschlossenen Partien auf diesem Gerät. Die jüngsten Abschlüsse stehen oben und zeigen Datum, Uhrzeit und den eigenen Ausgang. Bei älteren Ergebnissen ohne Zeitpunkt des Spielendes steht die Erfassungszeit.
+- Ein Antippen öffnet den passenden Endstand. Der Internet-Raumindex kann nach einer Revanche den aktuellen und den vorherigen Abschluss liefern. Offene eigene Züge stehen separat neben der Glocke.
+- Geprüft mit API-Revanche und Direkt-Wiederverbindung sowie zwölf Chromium-Ansichten. [Responsive QA](docs/responsive-qa.md)
+
+## 1.25.1 – 2026-11-18
+
+- Die Glocke zählt Partien mit einem eigenen offenen Zug. Nach der Bestätigung sinkt der Zähler sofort, sobald du auf die anderen wartest. Im Dialog steht zusätzlich die Gesamtzahl laufender Partien. Die Browserprüfung mit zwei Testspielräumen und zwölf Ansichtsgrößen ist in [Responsive QA](docs/responsive-qa.md) dokumentiert.
+
+## 1.25.0 – 2026-11-18
+
+- Internet-Räume und Direktpartien behalten beim Rückspiel das letzte fertige Ergebnis. Es erscheint beim Öffnen auch nach dem Rückspielstart und bleibt wieder aufrufbar.
+- Die Glocke neben „Deine Räume“ zeigt laufende Partien und ungesehene Ergebnisse. Von dort lässt sich der Endstand öffnen.
+- Die Schusskarte unter Schiffsboni zeigt Zeilen 1–7 links. Einpassen zeigt weiterhin alle 105 Felder.
+- Ein-Handy-, Direkt- und Internetpartien unterstützen Schatzhinweise und versteckte Minen. Bei Kombination bestätigt jede Person Flotte und Minen direkt hintereinander. Alle aktiven Personen müssen vor dem ersten Wurf fertig sein.
+- Aktualisierte Netzwerkpartien erfordern Farbfeld 1.25.0 auf allen Geräten. Der genaue Prüfumfang steht in [Responsive QA](docs/responsive-qa.md).
+
+## 1.24.0 – 2026-11-12
+
+- Neue Partien ziehen drei gemeinsame Aufgaben aus 40: je ein Spalten-, Stern- und Farbziel, verteilt auf Wurf 12, Wurf 20 und Spielende. Auftragshilfe zeigt den vollständigen Pool; laufende Ziele bleiben erhalten.
+- Erledigte Schiffs-/Schatz-/Auftrags-/Minen-Detailkarten schließen einmal automatisch und können dauerhaft wieder geöffnet werden. Keine 0-Punkte-Prämien an Discovery, Mischung oder versteckten Minen; Luftangriff zeigt nur angefallene Kosten.
+- Endergebnis mit Personenauswahl und Vergleich sämtlicher tatsächlicher Punktekategorien gegen die eigene Person, einschließlich signierter Differenzen und korrekter −10-Forfeit-Behandlung.
+- Hauptbrett mit größeren A–O und Zeilen 1–7 in einer zusätzlichen schmalen Spur innerhalb derselben Fit-Breite. Zoom-/Zell-/Versenkungsgeometrie angepasst; Fit-Aktionen bleiben über der Würfelleiste erreichbar.
+- 566 Regressionen/448 unabhängige vollständige Wertungskombinationen, TypeScript und beide API-Integrationen bestanden. 48 Browseransichten, sechs zusätzliche Zoomzustände und echter letzter Treffer/Sechser-Ergebnisvergleich erfolgreich; Browser-/Gerätegrenzen separat in Responsive QA.
+
+## 1.23.2 – 2026-11-12
+
+- Jeder tatsächliche Schatz ist offen, selbst/gleichzeitig gefunden oder von der anderen Seite vergeben. Vergebene Schätze werden durchgestrichen und als nicht mehr verfügbar gekennzeichnet; ein unerreichbarer Kettenbonus wird erklärt.
+- Die letzten fünf eigenen bestätigten Suchzüge mit Koordinaten und historischer Temperatur bleiben nach Speichern/Neuladen und nach Ende der Suche sichtbar. Ältere Spielstände übernehmen ihre eine gespeicherte Messung beim nächsten Suchzug; frühere nicht gespeicherte Temperaturen werden nicht nachträglich erfunden.
+- Bounded optional hunt.history, eigene defensive Ansichten und strikte Importprüfung. Die bisherigen Wertungen, Geheimhaltung, menschlichen Spielmodi und Netzwerkprojektionen bleiben erhalten.
+- 546 Regressionen einschließlich 448 unabhängiger vollständiger Wertungskombinationen, TypeScript und beide API-Integrationen bestanden. 84 Browser-Komponentenansichten und tatsächlicher Controller-Zug mit Neuladen ebenfalls erfolgreich; kein physischer Androidtest.
+
+## 1.23.1 – 2026-11-12
+
+- Automatische versteckte Minen wechseln nicht mehr zum gegnerischen Blatt. Dauerhafte Berichte im eigenen Panel nennen Betroffene und entfernte Kreuze; Auslöse-/Schadensfelder nur im offenen Spiel. Verdeckte Spiele zeigen die ausdrücklich gewünschte Anzahl ohne Positionen.
+- Ältere laufende Computer-Schatzsuchen bekommen ab dem nächsten bestätigten Zug Hinweise, mit unverändert maximal sechs Bonuspunkten. Neue Schatzketten behalten maximal neun; Laden/Passen/ungültige Züge verändern nichts.
+- Temperatur nennt konkrete eigene Suchfelder wie „Heiß: H1“, plus sichtbare Erklärung für 1/2–3/4+ waagrechte/senkrechte Schritte. Bestehende Messungen bleiben lesbar; keine geheimen Zielkoordinaten in UI/Bot.
+- Featurekarten in Handy-Hoch-/Querformat gestrafft: volle Zeilen für offene Berichte/Details, kompakte Auftragsfristen, erhaltene Punkte-/Hilfespalten und Karten-Zoom/Einpassen.
+- 540/540 Regressionen mit 448 unabhängigen vollständigen Wertungskombinationen, TypeScript und beide API-Integrationen bestanden; anschließend 61 fokussierte UI-Prüfungen nach reiner Text-/CSS-Kürzung. 96 Komponenten- und 24 vollständige Spielansichten plus echter Controller-Zug/Minenbericht/Neuladen geprüft. Physische Android-Abnahme separat; keine neue menschliche Minen-/Hinweisfreigabe.
+
+## 1.23.0 – 2026-11-12
+
+- Neue Computer-Schatzsuche für die drei versteckten Bonusfelder: bestätigte Warm/kalt-Messung, nächste grobe Spaltenband-Spur und einmalig +3 beim dritten eigenen Fund (maximal 9).
+- Kompakte native Bonuskarte mit Dreierfortschritt, historischer Messung, Hilfe und bewahrtem Aufklappzustand; eigene Hinweise nach dem Zug, Kettenabschluss erst nach Wertung.
+- Mittel/Schwer planen mit ausschließlich eigenen bereits erhaltenen Hinweisen. Keine geheimen Koordinaten, fremden Hinweise oder Zukunftszufälle; Leicht unverändert.
+- Strikte Speicherprüfung, keine nachträgliche Erweiterung alter Partien und keine menschliche Freigabe. Schäden/Neuladen/Import bewahren Messungen und permanente Prämien.
+- 530 Regressionen einschließlich 448 vollständiger Featurekombinationen, TypeScript, Dokumentationsguard und beide API-Prüfungen bestanden. Browsermatrix wegen instabiler Testvorschau unvollständig; Umfang und offene Geräte-/Layoutabnahme in docs/responsive-qa.md.
+
+## 1.22.5 – 2026-11-12
+
+- Fragezeichen und eigene Punkte in allen Spielkarten bündig: Hilfe- und Pfeilspalte bleiben auch ohne Aufklapppfeil reserviert. Auftragsfristen, verdeckte Punkte und separate Hilfs-/Aufklappaktionen erhalten.
+- Bisherige Bonusfelder heißen jetzt **Schatzsuche**, einschließlich Einrichtung/Lobby, Spielkarte, Regeln, Fundmeldung, Ergebnis, zugänglicher Namen und Fehlerhilfen. Drei geheime Schätze mit je +2 Punkten, Gleichstände, Positionen und gespeicherte Schlüssel bleiben unverändert.
+- 518 Regressionen mit 448 unabhängigen vollständigen Wertungskombinationen, TypeScript und beide API-Integrationen bestanden. 84 echte Komponentenansichten in zwölf Größen/sechs Designs ohne Spaltenversatz, Überlappung oder Seitenüberlauf. Physische Android-Abnahme separat; keine neue menschliche Minenfreigabe.
+
+## 1.22.4 – 2026-11-12
+
+- Gemeinsamen Schiffsanker in Buttons, Spielpanel, Variantenwahl und Ergebnis korrigiert: unterer Bogen einschließlich Kontur vollständig innerhalb der SVG-Fläche. Größen, Aktionen, Spielregeln und Punkte unverändert.
+- 19 fokussierte Regressionen bestanden; 36 echte Komponentenansichten mit 144 Ankern in zwölf Größen/sechs Designs, Panel geschlossen und geöffnet, ohne Konturbeschnitt oder Seitenüberlauf. Physische Android-Abnahme separat. 1.22.3-Aufstellung/Schrittfolge erhalten; keine neue menschliche Minenfreigabe.
+
+## 1.22.3 – 2026-11-12
+
+- Flotten- und Minenaufstellung starten vollständig eingepasst: alle 105 Felder mit A–O und Zeilen 1–7, auch bei geringer Querformat-Höhe. Eigener Zwei-Finger-Zoom von 100 bis 260 Prozent, −/+/Einpassen, erhaltene Vergrößerung/Ausschnitte bei Auswahl-Neudarstellung. Keine versehentliche Platzierung während des Pinch.
+- Eigene Vorbereitung wählt zuerst eigene Schiffe, dann eigene Minen und erst anschließend Warten auf andere. Private Übergabe erst nach den nötigen eigenen Schritten; globaler Start wartet weiter auf alle Bestätigungen. Versteckte Minen bleiben gegen Computer, keine neue menschliche Freigabe oder Capability.
+- 518 Regressionen einschließlich vier neuer Vorbereitungsprüfungen sowie 448 vollständiger Wertungskombinationen, TypeScript und beide API-Integrationen erfolgreich. 72 echte Browseransichten, 16 simulierte Zwei-Touch-Fälle, zwei unterdrückte unbeabsichtigte Platzierungen und reale Randfeld-/Bestätigungsaktionen. Physische Android-/Mehrgeräteabnahme separat. Weiter Schema 1, Direktprotokoll 2 und 42 Offline-Dateien.
+
+## 1.22.2 – 2026-11-11
+
+- Schadenslegende verständlicher: „Wieder angekreuzt“ bezeichnet nach der Explosion erneut gesetzte Kreuze; zugängliche Zellbeschriftung angepasst.
+
+- Schiffsboni-Karte beim Öffnen automatisch vollständig eingepasst; unabhängiger Zwei-Finger-Zoom, −/+ und Einpassen, skalierende Treffer-/Wassersymbole und Beschriftung. Geöffneter Zustand bleibt erhalten.
+- Regelhilfe **?** in jedem Spielelement, auch Bonusfelder ohne Fund. Aufklapppfeil und Hilfe bleiben getrennt; eigenes Punkteraster und einzeilige geschlossene Minenanzeige erhalten.
+- Ganze Schiffe sinken wieder, als horizontaler/vertikaler SVG-Rumpf in exakt seiner CSS-Grid-Fläche. Reduzierte Bewegung und der Schutz verdeckter gegnerischer Schusspositionen bleiben erhalten.
+- 514 Regressionen einschließlich neuer Grid-/Verdeckungsprüfung, TypeScript, 46 gerenderte Layoutansichten, acht Pinch-Fälle, sieben tatsächliche Hilfedialoge und acht Versenkungsansichten. Einzelumfang in docs/responsive-qa.md; physische Android-Abnahme separat.
+
+## 1.22.1 – 2026-11-11
+
+- Schiffsboni: Treffer/Wasser/Versenkung als direkt zellgebundene SVG-Impulse, ohne feste Bildschirmpositionen oder große Textglyphen. Permanente Treffer als klarer roter Ring mit Kreuz.
+- Verdeckte Partien verbergen gegnerische Schüsse einschließlich Treffer, Wracks, Salven, Ortsanimationen und Trefferlabels bis Spielende. Auch Raum-/Direktprojektionen entfernen diese fremden Ortsdaten, behalten eigene Angriffe und decken am Spielende vollständig auf. Autorität, Wertung und vorhandene Feldformen bleiben erhalten.
+
+- Versteckte Minen jetzt als einheitliche Aufklappkarte: Punkte rechts, geschlossen maximal eine kurze Statuszeile, vollständige Erklärung in den Details und erhaltener Öffnungszustand.
+
+- Luftangriff, Bonusfelder und alle weiteren Spielelemente mit engeren Titel-/Fortschrittszeilen, kompakten Statuschips und weniger Außenabstand. Eigene Punkte rechts, Auftragsfristen und 44-Pixel-Hilfe/Zielwahl bleiben erhalten.
+- Flotte und geheime Minen teilen jetzt Auswahlkarten, beschriftetes A–O/1–7-Raster, Koordinatenwahl, Zufallsverteilung und Bestätigung. Flotten behalten ihre Drehfunktion; alle bestehenden Aktionen und Vorbereitungsbestätigungen unverändert.
+- 513 Regressionen, TypeScript, Raum- und Kopplungs-API, 144 gerenderte Layoutansichten, 20 BoardView-Zoom-/Verdeckungsfälle und drei zusätzliche Typografiefälle; Einzelumfang in docs/responsive-qa.md. Physische Android-Abnahme separat. Kein Spielregel-, Wertungs-, Schema-, Protokoll- oder Offline-Dateizahlwechsel.
+
+## 1.22.0 – 2026-11-11
+
+- Bestehender Minenangriff heißt jetzt Luftangriff, mit Flugzeugsymbol, Überflug und anschließendem zellgebundenem Einschlag. Freischaltung, fünf Punkte Einsatz, alle Gegner und bestehende Daten-/Protokollnamen bleiben erhalten.
+- Neue optionale versteckte Minen zunächst nur gegen Computer: zwei geheime Positionen je Seite vor dem ersten Wurf, manuell oder zufällig, Speicherung vor Anzeige und Sperre nach Bestätigung. Eigene Minen sind sicher. Kapazitätsregel für späteren genehmigten Mehrspieler: zwei bei 2–3, eine bei 4–6 Personen.
+- Bestätigte normale/Zusatzfelder lösen gegnerische Minen einmalig aus. Gemeinsamer tatsächlicher Schaden und chronologische Neuverteilung normaler Spalten/Farben/Sterne, ohne zusätzliche Fünf-Punkte-Gebühr; permanente Schiffs-/Fund-/Auftrags-/Bonuspunkte bleiben erhalten. Keine Explosionskette, feste Koordinaten trotz Mischung. Zwei Minen im selben Zug funktionieren ohne Doppelzählung.
+- Eigene kleine Minensymbole, einheitliche Statusbox mit Punkten rechts und Fortschritt darunter. Zellskalierender Bodenblitz, Splitter und Druckwellen; ruhige reduzierte Bewegung und bestehende Drei-Sekunden-Bereinigung. Kein gegnerischer Geheimdatenzugriff durch UI oder Computerplanung.
+- 509 Regressionen mit 448 vollständigen unabhängig nachgerechneten Kombinationen auf allen vier Brettern, TypeScript und beide API-Integrationen. 48 zusätzliche Minenansichten in zwölf Größen/sechs Designs, zehn tatsächliche simulierte Zwei-Finger-Zoomfälle und reale UI-Bestätigungen/Wiederaufnahme. Zusätzlich vorbereitende 48 Luftangriffsdialoge. Physische Android-/Mehrgeräteabnahme separat; neue menschliche Minenfreigabe bleibt offen. Kein DB-, Direktprotokoll- oder Offline-Dateizahlwechsel.
+
+## 1.21.3 – 2026-11-11
+
+- Bisheriger Minenangriff heißt in Einrichtung, Spiel, Hilfe, Ergebnis und Lobby jetzt Luftangriff. Flugzeugsymbol und zellgebundener Überflug mit anschließendem Einschlag; Regeln, Kosten, alle Gegner und Daten-/Protokollschlüssel unverändert.
+- Quellschritt für die anschließende 1.22.0; noch keine separate öffentliche 1.21.3-Veröffentlichung. 492 Regressionen, TypeScript, beide API-Integrationen und 48 gerenderte Zieldialoge bestanden. Bestätigter Einsatz: eigene Auswahl und Kreuze erhalten, genau fünf Punkte.
+
+## 1.21.2 – 2026-11-11
+
+- Minenwahl: Raster und Koordinaten zuerst, präziser Ziel-/Kostenknopf, Details eingeklappt; Fokus, Rasterposition und offene Regeln bleiben erhalten. Kein Zielwechsel während ausstehender Bestätigung.
+- Bestätigte Explosion direkt an den betroffenen Zellen, nur tatsächlicher Schaden; blaues leeres Ziel, kompakter Hinweis oben und unveränderte drei Sekunden. Kein erneutes Animieren älterer Schäden, keine verdeckten fremden Ergebnisse.
+- Zellskalierender Minus-Kreis/rote gestrichelte Kontur für entfernte Kreuze, grüne durchgehende Kontur für Wiederauffüllen, konkrete Ablauf-Runde. Eigener letzter Angriff bleibt mit Ziel/Ergebnis im Minenkasten. Engine, Einsatz fünf Punkte und normaler Zug unverändert.
+- 492/492 Regressionen, TypeScript und beide API-Integrationen bestanden. 72 gerenderte Ansichten plus extremer Zoom, echte UI-Bestätigung mit erhaltenem Entwurf und verborgenem Ergebnis; physische Android-/Mehrgeräteabnahme separat.
+
+## 1.21.1 – 2026-11-11
+
+- Farben neu mischen tauscht ganze gleich große freie Farbgruppen. Größere Gruppen bleiben zusammen; kleine Inseln können sich verbinden. Einzelne sind erlaubt, geometrisch isolierte Lücken und fehlende Tauschpartner bleiben begrenzt gültig.
+- Exakte freie Farbanzahlen, belegte Farben, Punkte und Koordinaten bleiben erhalten. Auch bestehende zerstreute Spielstände nutzen die Verbesserung ab der nächsten planmäßigen Mischung, in allen bereits freigegebenen Mehrspielermodi und gegen Computer.
+- Fünf gezielte Geometrie-/Punkte-/Persistenztests prüfen 768 Ausgangsblätter, wiederholte Mischungen, alle vier Autoritätsmodi, alte große Regionen, echte Einzel-Lücken und ungültigen/begrenzten Zufall. 489/489 Regressionen, TypeScript und beide API-Integrationen bestanden; 24 gerenderte Appansichten in zwölf Größen. Vollständiger Prüfumfang in docs/responsive-qa.md. Physische Android-/Mehrgeräteabnahme separat.
+
+## 1.21.0 – 2026-11-11
+
+- Alle vier umgesetzten Varianten nach ausdrücklicher Freigabe auch für menschliche Ein-Handy-, Direkt- und Internetpartien. Schiffe exakt zwei, Entdecken/Aufträge/Mischen 2–6 Personen.
+- Hostoptionen, echte variants-v1-Unterstützung, eigene authentifizierte Flottenaktionen, getrennte Bestätigungen und private Projektionen; beide Flotten vor erstem Wurf erforderlich. Gastgeräte erhalten keine fremde Flotte; verdeckte Pläne, vorgemerkte Aufträge und gegnerische Fehlschüsse bleiben verborgen.
+- Eigene Fähigkeiten, Angriffskarten, Treffer-/Versenkt-Effekte und Punkte unabhängig vom Spielerindex; private Übergabe an einem Handy. Kompakter Flottenkopf und 44-Pixel-Lobbyschalter.
+- 484 Regressionen, 320 vollständig gespielte Kombinationen mit unabhängiger Wertung, TypeScript und beide API-Integrationen bestanden. 300 Browseransichten, echte lokale Raumaktionen und synthetische Direkt-Wiederaufnahme. Keine neue physische Mehrgeräteabnahme.
+- Schema 1, Direktprotokoll 2, 42 Offline-Dateien, bestehende Wertungsregeln und Runtime-/DB-Bindings erhalten. Alle Geräte für neue Varianten aktualisieren.
+
+## 1.20.6 – 2026-11-11
+
+- Spielende als deutlichen fokussierten Dialog und als Ergebnis vor den Regelkarten anzeigen; Symbole für alle Punktebestandteile und separater Vergleich. Kein Wiederöffnen bei Poll/Blattwechsel nach Schließen.
+- Jeder Regelkopf zeigt rechts eigene bestätigte Punkte mit P, Fortschritt und Aufgaben darunter; verdeckte Werte bis Ende verborgen.
+- Restfrist jedes öffentlichen Auftrags auch eingeklappt, inklusive letzter gültiger Runde und eindeutiger Ablaufanzeige.
+- 470 Regressionen, TypeScript und gerenderte Handy-/Tablet-/Desktop-Matrix samt sechs Designs bestanden; Dokumentationsguard und Build. Keine Regel-/Wertungs-/Transportänderung; physische Android-Abnahme separat. Menschliche Variantenfreigabe ausdrücklich genehmigt, folgt separat.
+
+## 1.20.5 – 2026-11-11
+
+- Rote Schiffstreffer als skalierbare SVGs innerhalb zellabhängiger Schiffsrahmen zeichnen.
+- 120 tatsächliche Browserfälle mit simulierten Zwei-Finger-Ereignissen bei 30–260 Prozent Zoom in beiden Orientierungen und allen sechs Designs. Zoomknöpfe und Einpassen geprüft.
+- 460 bestehende Regressionen und TypeScript bestanden; Dokumentationsguard und Produktionsbuild. Regeln, Punkte und Treffer unverändert; physischer Android-Pinch bleibt separat.
+
+## 1.20.4 – 2026-11-11
+
+- Geöffnete Schiffsboni im niedrigen Querformat über volle Breite unter die kompakten Statuskarten legen.
+- Angaben links, komplette Angriffskarte und Legende rechts; native Bedienung, Auswahl und Regeln erhalten.
+- 107 gerenderte Ansichten samt Grenzgrößen, allen Designs und Orientierungswechseln geprüft; bestehende Regression, TypeScript, Dokumentationsguard und Build. Physische Android-Abnahme separat.
+
+## 1.20.3 – 2026-11-11
+
+- Raumdialog beim Öffnen gespeicherter Computer-, Solo- und Ein-Handy-Partien schließen.
+- Hilfe-Fragezeichen optisch verkleinern; 44-Pixel-Antippfläche erhalten.
+- Schiff-Fehlschüsse als blaue Felder mit dunklem Ring, klarer Legende und zugänglichen Namen darstellen.
+- Browserregression für alle lokalen Einstiege und Größenmatrix; vollständige bestehende Regression, TypeScript, Dokumentationsguard und Produktionsbuild. Physische Android-Abnahme separat; Regeln und Punkte unverändert.
+
+## 1.20.2 – 2026-11-11
+
+- Farbwahl: freie Farbe und Zahlenwürfel reichen zur Auswahl. Ein fehlender oder inzwischen entfernter Farbwürfelindex wird aus den wirklich verfügbaren Würfeln zugeordnet; ein gültiger bewusst gewählter Index bleibt erhalten. Behebt „Wähle zuerst deine Würfel“ beim gemeldeten Grün-/Viererzug. Fünf freie Farben in einer gemeinsamen Zeile.
+- Jede aktive Regel erhält eine eigene kompakte Box oberhalb des Spielfelds, gemeinsam mit Minen und Bonusfeldern. Schiffs-/Auftragsdetails aufklappbar; offene Ansicht bleibt beim Auswählen erhalten. Keine doppelten Boxen unter dem Blatt.
+- Sechs neue Regressionen für den Screenshotfall, Auswahlreihenfolge, entfernte Würfel, Ladungs-/Jokerprüfung, unveränderte Würfelentfernung und sichere Einzelkarten. Gesamtregression und Browsermatrix im QA-Protokoll.
+- Keine Änderung an Spiel-/Punkt-/Speicher-/Netzwerkregeln, keine neue Mehrspielerfreigabe. Weiter 42 atomare Offline-Dateien.
+
+## 1.20.1 – 2026-11-11
+
+- Auswahlkarten visuell vereinheitlicht: Symbol links, Beschreibung mittig, gut erkennbares Häkchen rechts; gleichmäßige kompakte Abstände. Spezifische Dialogstile verhindern gestapelte Checkboxen und übergroße Eingabefelder.
+- Passende lokale SVG-Symbole auch für verdeckten Punktestand, Minen und Bonusfelder, einschließlich bestehender Mehrspieler-Lobby-Optionen. Native Checkboxen, ganze antippbare Labels, Namens-/Beschreibungsverknüpfung, Tastaturfokus und Systemfarben-Fallback erhalten.
+- Gleiche Options-IDs und Auswahlwerte. Keine Änderungen an Regeln, Punkten, Speicher, API, Push oder Mehrspielerfreigabe. Weiter 42 atomare Offline-Dateien. Tatsächliche Prüfungen und Vorschaugrenzen im QA-Protokoll.
+
+## 1.20.0 – 2026-11-11
+
+- Vier kombinierbare Varianten ausschließlich gegen Computer: Schiffsboni (fünf Schiffe, kleine höher gewertet, nur versenkt), exklusive Entdeckerfähigkeiten, öffentliche Aufträge als Wettlauf mit Fristen und Neumischung freier Farben nach je fünf vollständigen Runden.
+- Flottenplatzierung manuell/zufällig, getrennte Treffer-/Versenkt-Animationen, sichtbare Fundorte, Fähigkeiten im Würfelbereich, Auftragsfortschritt und Misch-Countdown. Verdeckte Punkte bleiben bis Spielende verborgen.
+- Minen erhalten bestätigte Schüsse, Versenkungen, Funde/Ladungen und erfüllte Aufträge; normale Punkte werden weiter korrigiert. Individuelle Farbpläne speichern, prüfen und überall korrekt verwenden. Kein Doppelbonus beim Wiederauffüllen.
+- 19 gezielte Variantenregressionen und komplette Partien aller 128 Kombinationen mit Minen, Bonusfeldern und verdeckten Punkten; unabhängig nachgerechnete Wertung. Weitere Prüfbelege im QA-Protokoll. Physische Android- und Spielbalance-Abnahme separat.
+- Spiel-/Backupschema 1 und Direktprotokoll 2 bleiben; 42 atomare Offline-Dateien, keine Migration, neue Abhängigkeit oder Push-Art. Color Swap und weitere Ideen bleiben zurückgestellt. Echte Mehrspielerfreigabe erst nach ausdrücklichem Nutzer-OK.
+
+## 1.19.4 – 2026-11-11
+
+- Internet – Spielraum steht beim Öffnen von Zusammen an erster Stelle. Danach folgen Offline – mehrere Handys und Ein Handy weitergeben. Bestehende Ziele/Beschriftungen unverändert.
+- Reine DOM-Reihenfolge, keine Spiel-, Speicher-, API- oder Pushänderung. Syntax, TypeScript, Dokumentationsguard, Build und gerenderte Menüzustände werden geprüft.
+
+## 1.19.3 – 2026-11-11
+
+- Beitrittsdialog gestrafft: eigener Name und Offline-QR zuerst, Kopplungscode/Internet und WLAN-Hilfe aufklappbar. Kontextueller Zurück-/Verwerfen-Footer.
+- Beenden bietet bestätigtes lokales Verwerfen auch ohne Gegenstelle, während ausstehender Aktionen und bei alten Clients. Nur Direktstand/Zugang dieses Geräts entfernen; übrige Partien/Statistiken erhalten. Gemeinsames Verlassen mit −10 Punkten unverändert.
+- Schutz vor veralteter Bestätigung und Speicherfehlern. Kein neuer Spiel-/Pushversand, keine Migration oder Protokolländerung. Hotspot-Kopplung und Erstellen ohne Internet durch Nutzer bestätigt; neue UI separat geprüft.
+
+## 1.19.2 – 2026-11-11
+
+- Wartende Personen in Direktpartien sehen die sechs gemeinsamen Würfel sofort nach dem Wurf, bevor die aktive Person ihre erste Kombination bestätigt. Kompakte nicht interaktive Vorschau oberhalb der Punkte.
+- Zugrechte, normale Auswahl, Pause/Abgleich, verdeckte Werte und das Ausblenden nach eigenem bestätigten Zug bleiben erhalten. Kein zusätzlicher Wurf, Transport oder Push.
+- Nutzerbestätigte Wiederkopplung einer bestehenden OnePlus-Partie dokumentiert; automatische Erholung nach WLAN-Verlust variierte. Hotspot und physische Abnahme der Vorschau separat. Prüfungen im QA-Protokoll.
+
+## 1.19.1 – 2026-11-11
+
+- Schlankere Raumkarten auf Startseite und in Alle Räume: neutrale Spielfläche, kleinere Abstände, keine großen saisonalen Flächen und keine Modus-Kapseln.
+- Modus, Code/Personenzahl oder Wurf teilen eine Metazeile. Vollständige Namen und fett/♛ markierter Gastgeber bleiben sichtbar. Öffnen und Zugang entfernen bleiben 44-Pixel-Aktionen; die bisherige Bestätigung zum Entfernen bleibt erhalten.
+- Erklärender Sortierhinweis und zusätzliche Startseiten-Zusammenfassung entfernt. Drei Startkarten, Priorität offener Züge, Suche/Filter und Zehnerseiten unverändert.
+- Keine Spielmechanik, API, Speicherung, Migration oder Push-Änderung; Testumfang und gerenderte Größen im QA-Protokoll.
+
+## 1.19.0 – 2026-11-11
+
+- Startseite auf höchstens drei gespeicherte Partien begrenzt, bekannte offene Züge zuerst. Gesamtzahl schließt Internet-, Direkt- und lokale Partien ein; weitere offene Züge bleiben als Anzahl sichtbar.
+- Alle Räume bündelt sämtliche gespeicherten Partien mit lokaler Suche nach Namen, Raumcode oder Person, Online-/Offline-Filter und zehn Einträgen pro Seite. Keine zusätzlichen Netzwerkabfragen für Suche/Filter/Blättern.
+- Jede Karte kennzeichnet Online · Internet-Raum, Offline · Direktpartie oder Offline · Dieses Handy. Teilnehmernamen stehen in den Rauminfos, der aktuelle Gastgeber fett mit ♛; Direkt-Gastgeber bleibt der ursprüngliche Host.
+- Teilnehmerliste ergänzt den vorhandenen authentifizierten Sammelabruf und den lokalen Übersichtscache. Keine Tokens, Blätter oder verdeckten Punkte in der Ergänzung; fehlender/verweigerter Zugang liefert keine Namen. Alte namenlose Übersichtsdaten bleiben lesbar.
+- Kein Schemawechsel, keine Migration, Push-Art oder zusätzliche Offline-Datei. Browser-/Regressionsprüfung und physische Grenzen im QA-Protokoll.
 
 ## 1.18.0 – 2026-11-10
 

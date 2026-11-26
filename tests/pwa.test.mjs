@@ -5,7 +5,8 @@ import vm from 'node:vm';
 const root=new URL('../public/',import.meta.url);
 const {APP_VERSION}=await import('../public/game/pwa.js');
 const currentCache=`farbfeld-v${APP_VERSION}`;
-const offlineAssetCount=JSON.parse(await fs.readFile(new URL('version.json',root),'utf8')).offlineAssetCount;
+const release=JSON.parse(await fs.readFile(new URL('version.json',root),'utf8'));
+const {offlineAssetCount}=release;
 async function harness(failingPath=null){
  let online=true,stalled=false,fetchCalls=0;const stores=new Map(),events={},removed=[];
  const cache={async put(key,res){stores.set(String(key),res.clone());},async match(key){return stores.get(String(key))?.clone();}};
@@ -15,9 +16,10 @@ async function harness(failingPath=null){
   if(!online)throw Error('offline');const path=typeof input==='string'?input:new URL(input.url).pathname;
   if(typeof input==='string')assert.equal(options.credentials,'include','private Site assets require credentialed requests');
   if(path===failingPath)return new Response('Sign in required',{status:403,headers:{'Content-Type':'text/plain'}});
+  if(path==='/')return new Response('Öffentliche Farbfeld-Startseite',{headers:{'Content-Type':'text/html'}});
   const file=path==='/play'?'play.html':path.replace(/^\//,'');
   const bytes=await fs.readFile(new URL(file,root));
-  const type=path.endsWith('.js')?'text/javascript':path.endsWith('.css')?'text/css':path==='/play'?'text/html':path.endsWith('.json')?'application/json':path.endsWith('.webmanifest')?'application/manifest+json':path.endsWith('.svg')?'image/svg+xml':'image/png';
+  const type=path.endsWith('.js')?'text/javascript':path.endsWith('.css')?'text/css':path==='/play'?'text/html':path.endsWith('.json')?'application/json':path.endsWith('.webmanifest')?'application/manifest+json':path.endsWith('.svg')?'image/svg+xml':path.endsWith('.mp4')?'video/mp4':path.endsWith('.jpg')?'image/jpeg':'image/png';
   const res=new Response(bytes,{headers:{'Content-Type':type}});Object.defineProperty(res,'url',{value:'https://farbfeld.test'+path});return res;
  };
  const self={location:new URL('https://farbfeld.test'),addEventListener(name,fn){events[name]=fn;},async skipWaiting(){},clients:{async claim(){}}};
@@ -39,6 +41,23 @@ test('Offline-Download aller echten Dateien und Neustart über neue/alte Verknü
  for(const path of ['/game/ducky.svg','/game/engine.js','/game/stats.js','/game/room-status.js','/game/room-book.js','/game/boards.js','/game/reactions.js','/game/notification-policy.js','/game/notification-worker.js','/game/notifications.js','/game/game-info.js','/game/computer.js','/game/view-state.js','/game/board-view.js','/game/pwa.js','/game/direct-game.js','/game/direct-connection.js','/game/direct.js','/game/direct-ui.js','/game/direct-check.js','/game/direct-diagnostics.js','/game/mine-ui.js','/game/bonus-fields.js','/game/bonus-ui.js','/game/qr.js','/game/vendor/qrcode.js','/game/vendor/jsqr.js'])assert.equal((await h.cached(path)).status,200);
  assert.equal(await h.cached('/api/rooms?code=TEST'),null);
 });
+test('Die öffentliche Startseite bleibt mit installiertem Service Worker online erreichbar',async()=>{
+ const h=await harness();await h.install();
+ assert.match(await (await h.cached('/','navigate')).text(),/Öffentliche Farbfeld-Startseite/);
+ assert.match(await (await h.cached('/play','navigate')).text(),/data-farbfeld-app/);
+});
+test('Spielanleitung liefert Vorschaubilder und vollständige Videodateien aus dem Offline-Cache',async()=>{
+ const h=await harness();await h.install();h.setOffline();
+ assert.equal((await h.cached('/game/tutorial.js')).status,200);
+ const clips=(await fs.readdir(new URL('game/tutorial/',root))).filter(name=>name.endsWith('.mp4'));
+ assert.equal(clips.length,27);
+ for(const clip of clips){
+  const video=await h.cached('/game/tutorial/'+clip);
+  assert.equal(video.headers.get('Content-Type'),'video/mp4');
+  assert.equal(Buffer.from(await video.arrayBuffer()).subarray(4,8).toString(),'ftyp');
+  assert.equal((await h.cached('/game/tutorial/'+clip.replace(/\.mp4$/,'.jpg'))).headers.get('Content-Type'),'image/jpeg');
+ }
+});
 test('App startet aus dem vollständigen Cache auch bei hängendem Internet im WLAN-Hotspot',async()=>{
  const h=await harness();await h.install();const before=h.fetchCalls;h.setStalled();
  const response=await h.cached('/play?direct=1','navigate');
@@ -55,6 +74,15 @@ test('Offline ohne vollständigen Cache zeigt eine verständliche Meldung',async
  const h=await harness();h.setOffline();const response=await h.cached('/play','navigate');
  assert.equal(response.status,503);assert.match(await response.text(),/einmal online/);
 });
+test('Der vollständige Cache liefert offline nur Versionshinweise desselben Releases',async()=>{
+ const h=await harness();await h.install();h.setOffline();
+ const before=h.fetchCalls;
+ assert.deepEqual((await h.status()).releaseNotes,release.releaseNotes);
+ assert.equal(h.fetchCalls,before);
+ h.stores.set('/version.json',Response.json({...release,version:'9.9.9'}));
+ const mixed=await h.status();
+ assert.equal(mixed.ready,true);assert.equal(mixed.releaseNotes,undefined);
+});
 test('Eine installierte App startet auch offline ohne erneute Registrierung',async()=>{
  const {MessageChannel}=await import('node:worker_threads');
  const source=(await fs.readFile(new URL('game/pwa.js',root),'utf8')).replaceAll('export ','');
@@ -69,8 +97,8 @@ test('Eine installierte App startet auch offline ohne erneute Registrierung',asy
 
 async function updateHarness({online=true,servedVersion=APP_VERSION,onChange=()=>{}}={}){
  const {MessageChannel}=await import('node:worker_threads');
- const events={},timers=[],calls={register:0,update:0,reload:0};let now=1000000;
- const worker={postMessage(_message,ports){ports[0].postMessage({ready:true,version:servedVersion});ports[0].close();}};
+ const events={},timers=[],calls={register:0,update:0,reload:0};let now=1000000,servedNotes;
+ const worker={postMessage(_message,ports){ports[0].postMessage({ready:true,version:servedVersion,...(servedNotes?{releaseNotes:servedNotes}:{})});ports[0].close();}};
  const registration={active:worker,async update(){calls.update++;}};
  const navigator={onLine:online,serviceWorker:{async getRegistration(){return registration;},async register(){calls.register++;return registration;},addEventListener(){}}};
  const location={reload(){calls.reload++;}};
@@ -80,7 +108,7 @@ async function updateHarness({online=true,servedVersion=APP_VERSION,onChange=()=
  vm.createContext(context);
  const source=(await fs.readFile(new URL('game/pwa.js',root),'utf8')).replaceAll('export ','');
  vm.runInContext(source+'\nthis.pwa=createPwa(onChange);',context);
- return {pwa:context.pwa,calls,events,timers,navigator,document,registration,advance(ms){now+=ms;},setVersion(version){servedVersion=version;}};
+ return {pwa:context.pwa,calls,events,timers,navigator,document,registration,advance(ms){now+=ms;},setVersion(version,notes){servedVersion=version;servedNotes=notes;}};
 }
 test('Vollständiger Offline-Cache wird vor einem hängenden Update im scheinbar aktiven WLAN bestätigt',async()=>{
  let ready;const localReady=new Promise(resolve=>{ready=resolve;});
@@ -97,6 +125,17 @@ test('Neue Offline-Version wird angeboten, ohne eine laufende Partie neu zu lade
  assert.equal(h.pwa.state.version,APP_VERSION);
  assert.equal(h.pwa.state.status,'update');assert.equal(h.pwa.state.availableVersion,'9.9.9');
  assert.match(h.pwa.state.message,/9\.9\.9/);assert.equal(h.calls.reload,0);
+});
+test('Ein Versionswechsel übernimmt passende Hinweise und zeigt bei älteren Workern keine veralteten Texte',async()=>{
+ const h=await updateHarness({online:false});
+ const notes={highlights:['Kurze Änderung.'],details:['Ausführliche Änderung.']};
+ h.setVersion('9.8.0',{'9.8.0':notes,[APP_VERSION]:release.releaseNotes[APP_VERSION]});await h.pwa.check();
+ assert.equal(h.pwa.state.availableVersion,'9.8.0');assert.deepEqual(h.pwa.state.availableNotes,notes);
+ assert.deepEqual(h.pwa.state.installedNotes[APP_VERSION],release.releaseNotes[APP_VERSION]);
+ h.setVersion('9.9.0');await h.pwa.check();
+ assert.equal(h.pwa.state.availableVersion,'9.9.0');assert.equal(h.pwa.state.availableNotes,null);
+ assert.deepEqual(h.pwa.state.installedNotes[APP_VERSION],release.releaseNotes[APP_VERSION]);
+ assert.equal(h.calls.register,0);
 });
 test('Ein älterer aktiver Cache wird nicht als neue Version zum Zurückstufen angeboten',async()=>{
  const statuses=[],h=await updateHarness({servedVersion:'0.9.0',onChange:state=>statuses.push(state.status)});

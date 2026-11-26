@@ -1,9 +1,24 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {createGame,BOARD,finishRound,score,rollGame,applyMove,findMove} from '../public/game/engine.js';
-import {projectGame,isHidden,isScoreHidden,scoreBreakdown,columnStatus,colorAnnouncements,colorCompletionText} from '../public/game/game-info.js';
+import {createGame,BOARD,finishRound,score,rollGame,applyMove,findMove,leaveGame} from '../public/game/engine.js';
+import {projectGame,isHidden,isScoreHidden,scoreBreakdown,columnStatus,colorAnnouncements,colorCompletionText,stampFinishedGame,gameResultRecord,archiveFinishedGame} from '../public/game/game-info.js';
 import {mayInspect} from '../public/game/view-state.js';
 function game(hiddenScores=false){const g=createGame(['A','B','C'],'room',[],{hiddenScores});g.gameId='test';return g;}
+test('An exact finish time survives projection, rematch archiving and later observation',()=>{
+ const g=game(true),at=1700000000000;
+ assert.equal(stampFinishedGame(g,at),g);
+ assert.equal(gameResultRecord(g,0),null);
+ const exited=leaveGame(g,0),early=gameResultRecord(projectGame(exited,0),0,{observedAt:at-1000});
+ assert.equal(early.completed,false);assert.equal(early.finishedAt,undefined);
+ assert.deepEqual(early.players[1],{name:'B',hidden:true});
+ const ended=stampFinishedGame(leaveGame(exited,2),at);
+ assert.equal(stampFinishedGame(ended,at+999),ended);
+ const last=archiveFinishedGame(ended),result=gameResultRecord(last,0,{observedAt:at+1000,title:'Proberunde'});
+ assert.equal(result.finishedAt,at);assert.equal(result.date,new Date(at).toISOString());
+ assert.equal(result.completed,true);assert.equal(result.forfeit,true);assert.equal(result.title,'Proberunde');
+ assert.equal(result.players[1].total,score(ended.players[1],ended).total);
+ assert.equal(gameResultRecord(last,-1),null);
+});
 test('Punkteaufschlüsselung entspricht der Regelwertung, einschließlich Nullpunkten in Spalte H',()=>{
  const g=game();g.players[0].columns[7]=0;g.players[0].colors.g=3;g.players[0].jokers=6;
  const d=scoreBreakdown(g,0,0),s=score(g.players[0]);for(const key of ['columns','colors','jokers','penalty','total','stars'])assert.equal(d[key],s[key]);

@@ -1,6 +1,44 @@
 # Farbfeld
 
-<!-- farbfeld-version: 1.18.0 -->
+<!-- farbfeld-version: 1.34.2 -->
+
+## Farbfeld 1.34.2
+
+Die öffentliche Website erklärt das Spiel, die Modi und Zusatzregeln mit Bildern aus der Spielanleitung. `/play` öffnet die App und `/play?anleitung` die Anleitung mit 27 Clips. [Website](https://farbfeld-andrew.endruuu.chatgpt.site/) · [Spiel starten](https://farbfeld-andrew.endruuu.chatgpt.site/play)
+
+- Spiele solo, gegen drei Computerstärken, an einem gemeinsamen Gerät, direkt per WLAN und QR-Code oder in Internet-Spielräumen.
+- Wähle Classic, Flusslauf, Mosaik oder Random. Je nach Spielmodus stehen Schatzsuche, Schiffsboni, Aufträge, Entdeckermodus, Farbmischung, versteckte Minen und Luftangriffe zur Wahl.
+- Eigener Zug, vergangene Ergebnisse und Revanchen sind in Spielräumen und der App-Startansicht erreichbar. In den Einstellungen stehen die Versionshinweise.
+
+Die PWA enthält 101 atomar gespeicherte Offline-Dateien. Die Server-Konfiguration für eine eigene Website steht im [Deployment-Guide](deployment.md).
+
+[Priorisierte Spielideen und nächster Planungsschritt](docs/roadmap.md): Battleship zuerst; Challenge-Code ausgeschlossen, vorab platzierte Minen noch offen.
+
+
+## Menüreihenfolge 1.19.4
+
+Im Menü Zusammen steht Internet – Spielraum zuerst, danach Offline – mehrere Handys und Ein Handy weitergeben. Die drei bestehenden Ziele, Beschriftungen und Abläufe bleiben erhalten. Reine DOM-Reihenfolge; keine zusätzliche Anfrage, Spiel-/Push- oder Speicheränderung.
+
+
+## Direkt beitreten und ohne Gegenstelle verwerfen
+
+Beim Beitreten stehen Name und QR-Kopplung im Vordergrund. Kopplungscode mit Internet sowie WLAN-Hilfe sind aufklappbar. In einer Direktpartie bietet Beenden auch ohne Verbindung Auf diesem Gerät verwerfen; erst die zusätzliche Bestätigung löscht den Direktzugang lokal. Andere Handys behalten ihren Stand. Verbundenes gemeinsames Verlassen mit −10 Punkten bleibt getrennt. Nutzerbestätigt: zwei Handys per Hotspot ohne Internet gekoppelt und Direktpartie erstellt.
+
+
+## Gemeinsamen Direktwurf sofort sehen
+
+Wartende Personen sehen alle sechs Würfel sofort nach dem bestätigten Wurf als kompakte Vorschau oberhalb der Punkte. Die würfelnde Person wählt weiterhin zuerst; danach erscheinen die normalen Auswahlaktionen. Die Wiederkopplung einer bestehenden Partie auf OnePlus Open/7T wurde vom Nutzer bestätigt. Nach WLAN-Verlust gelang einmal die direkte Fortsetzung, einmal war erneutes Koppeln nötig; Hotspot ohne Internet bleibt separat zu prüfen.
+
+
+## Schlanke Raumkarten
+
+Gespeicherte Räume erscheinen als kompakte neutrale Karten, passend zum Spielbereich. Modus, Raumcode/Spielerzahl stehen in einer gemeinsamen Metazeile; Namen und Gastgeber bleiben vollständig sichtbar. In Alle Räume ist Zugang entfernen ein beschriftetes Symbol mit derselben ausdrücklichen Bestätigung. Der erklärende Sortierhinweis und die zusätzliche Startseiten-Zusammenfassung entfallen. Drei Startkarten, Priorität, Suche, Filter und Zehnerseiten bleiben erhalten.
+
+
+## Deine Räume: kompakt und eindeutig
+
+Die Startseite zeigt höchstens drei gespeicherte Partien, bekannte offene Züge zuerst. Alle Räume enthält sämtliche Online-, Direkt- und lokalen Partien mit Suche nach Name, Raumcode oder Person, Online-/Offline-Filter und zehn Einträgen pro Seite. Jede Karte zeigt Modus und Teilnehmer; ♛ und Fettschrift kennzeichnen den aktuellen Gastgeber. Weitere offene Züge außerhalb der Vorschau bleiben als Anzahl sichtbar.
+
 
 ## Direktpartie benennen und verlassen
 
@@ -46,7 +84,7 @@ Drei geheime **Bonusfelder** vergeben je +2 an alle ersten Finder desselben Wurf
 
 An installable, offline-ready dice game PWA with solo play, computer opponents, local and online multiplayer, and push notifications.
 
-[Play Farbfeld](https://farbfeld-andrew.endruuu.chatgpt.site/play) · [Version 1.18.0](public/version.json) · [Documentation](docs/README.md)
+[Play Farbfeld](https://farbfeld-andrew.endruuu.chatgpt.site/play) · [Version 1.34.2](public/version.json) · [Documentation](docs/README.md)
 
 The game interface is in German. Farbfeld needs no user account. It is an independent implementation of the basic rules of *Noch mal!* by Inka and Markus Brand (Schmidt Spiele), using its own interface and assets; this repository is not an official publisher release.
 
@@ -54,7 +92,7 @@ The game interface is in German. Farbfeld needs no user account. It is an indepe
 
 - Solo play, computer opponents with three strengths, and shared-device games.
 - Internet rooms and local WebRTC multiplayer for up to six players.
-- Three boards, six themes, optional concealed scores, and local statistics.
+- Four board choices, six themes, optional concealed scores, and local statistics.
 - Installable PWA with offline caching, portrait/landscape layouts and board zoom.
 - Opt-in Web Push for your turn, game end, and a newly started Internet rematch. Notifications are silent by default and limited to one per minute.
 - Dated JSON backups, persistent room access on each device, and QR-based direct pairing.
@@ -104,7 +142,7 @@ The tests use synthetic rooms, in-memory/local databases, generated cryptographi
 | `tests/` | Rules, API, storage, PWA, Web Push and compatibility regressions |
 | `docs/` | Architecture and feature guides |
 
-The PWA atomically prepares 36 offline assets. <!-- PWA enthält 40 atomar vorbereitete Offline-Dateien. -->
+The PWA atomically prepares 36 offline assets. <!-- PWA enthält 101 atomar vorbereitete Offline-Dateien. -->
 
 ## Deployment
 

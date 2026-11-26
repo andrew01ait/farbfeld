@@ -1,6 +1,15 @@
 # Source and documentation workflow
 
-<!-- farbfeld-version: 1.18.0 -->
+<!-- farbfeld-version: 1.34.2 -->
+
+## Keep the public review branch current
+
+With each hosted game release, review and publish the corresponding shared source and documentation on the GitHub review branch. Check the remote commit and its tree. Hosted deployment and GitHub review each have their own verification.
+
+## Review 1.19.0
+
+Die Raumübersicht bleibt eine reine Anzeige-/Indexergänzung; neue Spielmechaniken werden nicht umgesetzt. Gemeinsamer Code und generische Dokumentation werden separat als geprüfter Änderungsvorschlag vorbereitet. PR #1 mit Client 1.18.0 wurde bereits ausdrücklich freigegeben und übernommen. Keine automatische Synchronisierung oder Freigabe weiterer Main-Änderungen daraus ableiten.
+
 
 ## Entwurf für die laufende Änderung
 
